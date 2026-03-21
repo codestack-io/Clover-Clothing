@@ -19,7 +19,7 @@ const AuthButtons = () => {
                 <Link href={`/auth/login?callbackUrl=${pathname}`} className="btn btn-ghost">Login</Link>  
             </>
             )}
-           
+        
         </div>
     );
 };

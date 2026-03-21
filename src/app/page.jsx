@@ -5,26 +5,26 @@ import Brands from "@/components/Brands/Brands";
 import TopCategoriesSection from "@/components/TopCategories/TopCategories";
 import { getServerSession } from "next-auth";
 
-import { authOption } from "./lib/authOption";
+import { authOptions } from "./lib/authOptions";
 
 export default async function Home() {
-  const session= await getServerSession(authOption);
+  const session= await getServerSession(authOptions);
   return (
     <div className="space-y-30">
      
       
       <section>
         <Banner></Banner>
-      </section>
-       <section>
         <Brands></Brands>
-      </section>
-      <section>
-      <div className="w-full py-5">
+        <div className="w-full">
       <TopCategoriesSection />
       </div>
         <Products limit={8} />
       </section>
+       
+        
+      
+     
      
     </div>
   );

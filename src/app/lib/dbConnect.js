@@ -9,6 +9,7 @@ export const Collection = {
   USERS:"users",
   CART:"cart",
   ORDER:"order",
+  HELP: "help",
 };
 
 let client;

@@ -1,21 +1,21 @@
-"use client"
-import React, { useState, useRef, useEffect } from 'react';
-import NavLink from '../Buttons/NavLink';
-import Logo from '../Logo/Logo';
-import Link from 'next/link';
+"use client";
+import React, { useState, useRef, useEffect } from "react";
+import NavLink from "../Buttons/NavLink";
+import Logo from "../Logo/Logo";
+import Link from "next/link";
 import { IoMdCart } from "react-icons/io";
-import AuthButtons from '../Buttons/AuthButtons';
+import AuthButtons from "../Buttons/AuthButtons";
 import { MdOutlineProductionQuantityLimits } from "react-icons/md";
 import { FaHome } from "react-icons/fa";
-import { FcAbout } from "react-icons/fc";
-import { RiPageSeparator } from "react-icons/ri";
 
+import { RiPageSeparator } from "react-icons/ri";
 
 const Navbar = () => {
   const [showPages, setShowPages] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const pagesRef = useRef(null);
 
-  // Close dropdown when clicking outside
+  // Close pages dropdown on outside click
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (pagesRef.current && !pagesRef.current.contains(event.target)) {
@@ -23,141 +23,138 @@ const Navbar = () => {
       }
     };
     document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
+    return () =>
+      document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  const nav = <>
-    <li className='text-gray-700 font-sans text-lg'>
-      <NavLink href={"/"}><FaHome />Home</NavLink>
-    </li>
-    <li className='text-gray-700 font-sans text-lg'>
-      <NavLink href={"/Products"} > <MdOutlineProductionQuantityLimits /> Products</NavLink>
-    </li>
-    <li className='text-gray-700 font-sans text-lg'>
-      <NavLink href={"/about"}><FcAbout />About</NavLink>
-    </li>
-    
+  const navLinks = (
+    <>
+      <li className="text-gray-700 font-sans text-lg">
+        <NavLink href={"/"}>
+          <FaHome /> Home
+        </NavLink>
+      </li>
+      <li className="text-gray-700 font-sans text-lg">
+        <NavLink href={"/Products"}>
+          <MdOutlineProductionQuantityLimits /> Products
+        </NavLink>
+      </li>
+      
 
-    {/* Clickable Pages Dropdown */}
-    <li
-      className="relative text-gray-700 font-sans text-lg"
-      onMouseEnter={() => setShowPages(true)}
-      onMouseLeave={() => setShowPages(false)}
-    >
-      {/* Button */}
-      <button className="flex items-center gap-1 font-medium hover:text-black transition">
-        <RiPageSeparator /> Pages
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          className="h-4 w-4 mt-0.5"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M19 9l-7 7-7-7"
-          />
-        </svg>
-      </button>
-
-      {/* Dropdown */}
-      <ul
-        className={`absolute top-full left-0 mt-2 w-52 bg-white border border-gray-200 rounded-xl shadow-xl z-50 transition-all duration-200 ${
-          showPages
-            ? "opacity-100 visible translate-y-0"
-            : "opacity-0 invisible -translate-y-2"
-        }`}
+      {/* Pages Dropdown */}
+      <li
+        className="relative text-gray-700 font-sans text-lg"
+        ref={pagesRef}
+        onMouseEnter={() => setShowPages(true)}
+        onMouseLeave={() => setShowPages(false)}
       >
-        <li>
-          <Link
-            href="/compare"
-            className="flex items-center gap-2 px-4 py-3 hover:bg-gray-100 transition rounded-lg"
+        <button className="flex items-center gap-1 font-medium hover:text-black transition">
+          <RiPageSeparator /> Pages
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="h-4 w-4 mt-0.5"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
           >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-4 w-4 text-gray-500"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M12 4v16m8-8H4"
-              />
-            </svg>
-            Compare
-          </Link>
-        </li>
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M19 9l-7 7-7-7"
+            />
+          </svg>
+        </button>
 
-        <li>
-          <Link
-            href="/my-account/orders"
-            className="flex items-center gap-2 px-4 py-3 hover:bg-gray-100 transition rounded-lg"
-          >
-            <IoMdCart className="h-5 w-5 text-gray-500" />
-            My Orders
-          </Link>
-        </li>
-
-        <li>
-          <Link
-            href="/review"
-            className="flex items-center gap-2 px-4 py-3 hover:bg-gray-100 transition rounded-lg"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-4 w-4 text-gray-500"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
+        <ul
+          className={`absolute top-full left-0 mt-2 w-52 bg-white border border-gray-200 rounded-xl shadow-xl z-50 transition-all duration-200 ${
+            showPages
+              ? "opacity-100 visible translate-y-0"
+              : "opacity-0 invisible -translate-y-2"
+          }`}
+        >
+          <li>
+            <Link
+              href="/compare"
+              className="flex items-center gap-2 px-4 py-3 hover:bg-gray-100 transition rounded-lg"
             >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M5 13l4 4L19 7"
-              />
-            </svg>
-            Review
-          </Link>
-        </li>
-      </ul>
-    </li>
-  </>;
+              Compare
+            </Link>
+          </li>
+          <li>
+            <Link
+              href="/my-account/orders"
+              className="flex items-center gap-2 px-4 py-3 hover:bg-gray-100 transition rounded-lg"
+            >
+              My Orders
+            </Link>
+          </li>
+          <li>
+            <Link
+              href="/review"
+              className="flex items-center gap-2 px-4 py-3 hover:bg-gray-100 transition rounded-lg"
+            >
+              Review
+            </Link>
+          </li>
+        </ul>
+      </li>
+    </>
+  );
 
   return (
-    <div className="navbar bg-gray-200 shadow-sm">
-      <div className="navbar-start">
-        <div className="dropdown">
-          <div tabIndex={0} role="button" className="btn btn-ghost lg:hidden">
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"> 
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h8m-8 6h16" /> 
-            </svg>
-          </div>
-          <ul
-            tabIndex="-1"
-            className="menu menu-sm dropdown-content bg-gray-200 rounded-box z-1 mt-3 w-52 p-2 shadow">
-            {nav}
-          </ul>
-        </div>
-        <Logo/>
+    <div className="navbar gap-110 bg-gray-200 shadow-sm px-4">
+      {/* Mobile Menu */}
+      <div className="navbar-start flex items-center justify-between w-full lg:w-auto">
+        <Logo />
+
+        {/* Hamburger Button */}
+        <button
+          className="lg:hidden btn btn-ghost"
+          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="h-6 w-6"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M4 6h16M4 12h16M4 18h16"
+            />
+          </svg>
+        </button>
       </div>
+
+      {/* Desktop Menu */}
       <div className="navbar-center hidden lg:flex">
-        <ul className="menu menu-horizontal px-1">
-          {nav}
-        </ul>
+        <ul className="menu menu-horizontal px-1">{navLinks}</ul>
       </div>
-      <div className="navbar-end space-x-4">
-        <Link href={"/Cart"} className='"btn btn-ghost"'>
+
+      {/* Right Side Icons */}
+      <div className="navbar-end space-x-4 hidden lg:flex">
+        <Link href={"/Cart"} className="btn btn-ghost">
           <IoMdCart />
         </Link>
         <AuthButtons />
       </div>
+
+      {/* Mobile Dropdown */}
+      {mobileMenuOpen && (
+        <div className="lg:hidden absolute top-full left-0 w-full bg-gray-200 shadow-md z-50">
+          <ul className="flex flex-col p-4 gap-2">{navLinks}</ul>
+          <div className="flex items-center gap-4 px-4 mt-2">
+            <Link href={"/Cart"} className="btn btn-ghost">
+              <IoMdCart />
+            </Link>
+            <AuthButtons />
+          </div>
+        </div>
+      )}
     </div>
   );
 };

@@ -1,6 +1,6 @@
 "use server"
 
-import { authOption } from "@/app/lib/authOption";
+import { authOptions } from "@/app/lib/authOptions";
 import { ObjectId } from "mongodb";
 import { getServerSession } from "next-auth";
 
@@ -12,7 +12,7 @@ const { dbConnect, Collection } = require("@/app/lib/dbConnect")
 
 export const handleCart = async ({ productId }) => {
 
-  const { user } = await getServerSession(authOption) || {};
+  const { user } = await getServerSession(authOptions) || {};
   if (!user) return { success: false };
 
   const cartCollection = await dbConnect(Collection.CART);
@@ -59,7 +59,7 @@ export const handleCart = async ({ productId }) => {
   }
 };
 export const getCart = cache(async () =>{
-    const {user} = (await getServerSession(authOption))|| {} ;
+    const {user} = (await getServerSession(authOptions))|| {} ;
     if(!user) return [];
      
     const cartCollection = await dbConnect(Collection.CART);
@@ -80,7 +80,7 @@ export const getCart = cache(async () =>{
 export const deleteItemsFromCart = async(id)=>{
     
   const cartCollection = await dbConnect(Collection.CART);
-    const {user} = (await getServerSession(authOption))|| {} ;
+    const {user} = (await getServerSession(authOptions))|| {} ;
     if(!user) return {success:false};
 
     if(id?.length !=24){
@@ -98,7 +98,7 @@ export const deleteItemsFromCart = async(id)=>{
 };
 
 export const increaseItemDb = async(id,quantity)=>{
-  const {user} = (await getServerSession(authOption))|| {} ;
+  const {user} = (await getServerSession(authOptions))|| {} ;
     if(!user) return {success:false};
 
     if(quantity>10){   
@@ -121,7 +121,7 @@ export const increaseItemDb = async(id,quantity)=>{
 }
 
 export const decreaseItemDb = async(id,quantity)=>{
-  const {user} = (await getServerSession(authOption))|| {} ;
+  const {user} = (await getServerSession(authOptions))|| {} ;
     if(!user) return {success:false};
 
     if(quantity <= 1){
@@ -143,7 +143,7 @@ export const decreaseItemDb = async(id,quantity)=>{
 
 };
 export const clearCart = async ()=>{
-   const {user} = (await getServerSession(authOption))|| {} ;
+   const {user} = (await getServerSession(authOptions))|| {} ;
     if(!user) return {success:false};
      const query = {email:user?.email};
      const cartCollection = await dbConnect(Collection.CART);

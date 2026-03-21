@@ -3,7 +3,7 @@ import GoogleProvider from "next-auth/providers/google";
 import { dbConnect,Collection } from "./dbConnect";
 import { loginUser } from "./loginUser"; 
 
-export const authOption = {
+export const authOptions = {
   // Configure one or more authentication providers
   providers: [
     CredentialsProvider({
