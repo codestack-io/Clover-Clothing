@@ -6,6 +6,7 @@ import TopCategoriesSection from "@/components/TopCategories/TopCategories";
 import { getServerSession } from "next-auth";
 
 import { authOptions } from "./lib/authOptions";
+import SocialLinks from "@/components/SocialLinks/SocialLinks";
 
 export default async function Home() {
   const session= await getServerSession(authOptions);
@@ -20,6 +21,12 @@ export default async function Home() {
       <TopCategoriesSection />
       </div>
         <Products limit={8} />
+        <SocialLinks
+         facebook="https://www.facebook.com/profile.php?id=61587012395509"
+         instagram="https://www.instagram.com/Clover-"
+         tiktok="https://www.tiktok.com/Clover-clothing" >
+         
+         </SocialLinks>
       </section>
        
         

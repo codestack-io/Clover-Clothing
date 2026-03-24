@@ -16,6 +16,10 @@ const CartButton = ({ product }) => {
   const { data: session,status } = useSession();
 
   const handleAddToCart = async () => {
+       if (!product || !product._id) {
+      console.error("Product is missing:", product);
+      return;
+    }
 
     setLoading(true);
 

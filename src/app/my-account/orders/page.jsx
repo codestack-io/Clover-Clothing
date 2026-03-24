@@ -1,11 +1,11 @@
 import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
-import { authOptionss } from "../../api/auth/[...nextauth]/route";
+import { authOptions } from "../../lib/authOptions";
 import OrderCard from "../../../components/Card/OrderCard";
 import { dbConnect, Collection } from "../../lib/dbConnect";
 
 export default async function MyOrdersPage() {
-  const session = await getServerSession(authOptionss);
+  const session = await getServerSession(authOptions);
 
   if (!session) redirect("/login");
 
