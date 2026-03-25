@@ -16,39 +16,46 @@ const CartButton = ({ product }) => {
   const { data: session,status } = useSession();
 
   const handleAddToCart = async () => {
-       if (!product || !product._id) {
-      console.error("Product is missing:", product);
-      return;
-    }
+  if (!product || !product._id) {
+    console.error("Product is missing:", product);
+    return;
+  }
 
-    setLoading(true);
+  // ✅ NEW: check size
+  if (!product.size) {
+    Swal.fire("Please select a size first!");
+    return;
+  }
 
-    if (status === "unauthenticated") {
-      router.push(`/auth/login?callbackUrl=${pathname}`);
-      return;
-    }
+  setLoading(true);
 
-    const result = await handleCart({ productId: product._id });
+  if (status === "unauthenticated") {
+    router.push(`/auth/login?callbackUrl=${pathname}`);
+    return;
+  }
 
-    if (result?.success) {
+  // ✅ SEND SIZE ALSO
+  const result = await handleCart({ 
+    productId: product._id,
+    size: product.size,
+  });
 
-      Swal.fire("Added to cart successfully", product?.name, "success");
+  if (result?.success) {
+    Swal.fire("Added to cart successfully", product?.name, "success");
 
-      // 🔹 fetch similar products
-      const res = await fetch(
-        `/api/products/compare?cottonType=${product.cottonType}&id=${product._id}`
-      );
+    const res = await fetch(
+      `/api/products/compare?cottonType=${product.cottonType}&id=${product._id}`
+    );
 
-      const data = await res.json();
+    const data = await res.json();
+    setCompareProducts(data);
 
-      setCompareProducts(data);
+  } else {
+    Swal.fire("Oops!! Something went wrong", product?.name, "error");
+  }
 
-    } else {
-      Swal.fire("Oops!! Something went wrong", product?.name, "error");
-    }
-
-    setLoading(false);
-  };
+  setLoading(false);
+};
 
   return (
     <div>

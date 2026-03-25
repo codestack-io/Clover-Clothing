@@ -7,7 +7,6 @@ import { IoMdCart } from "react-icons/io";
 import AuthButtons from "../Buttons/AuthButtons";
 import { MdOutlineProductionQuantityLimits } from "react-icons/md";
 import { FaHome } from "react-icons/fa";
-
 import { RiPageSeparator } from "react-icons/ri";
 
 const Navbar = () => {
@@ -15,30 +14,22 @@ const Navbar = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const pagesRef = useRef(null);
   const [showProducts, setShowProducts] = useState(false);
-const productsRef = useRef(null);
+  const productsRef = useRef(null);
 
-  // Close pages dropdown on outside click
+  // Close dropdowns on outside click
   useEffect(() => {
-  const handleClickOutside = (event) => {
-    if (
-      pagesRef.current &&
-      !pagesRef.current.contains(event.target)
-    ) {
-      setShowPages(false);
-    }
+    const handleClickOutside = (event) => {
+      if (pagesRef.current && !pagesRef.current.contains(event.target)) {
+        setShowPages(false);
+      }
+      if (productsRef.current && !productsRef.current.contains(event.target)) {
+        setShowProducts(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
-    if (
-      productsRef.current &&
-      !productsRef.current.contains(event.target)
-    ) {
-      setShowProducts(false);
-    }
-  };
-
-  document.addEventListener("mousedown", handleClickOutside);
-  return () =>
-    document.removeEventListener("mousedown", handleClickOutside);
-}, []);
   const navLinks = (
     <>
       <li className="text-gray-700 font-sans text-lg">
@@ -46,97 +37,75 @@ const productsRef = useRef(null);
           <FaHome /> Home
         </NavLink>
       </li>
+
+      {/* Products Mega Menu */}
       <li
-  className="relative text-gray-700 font-sans text-lg"
-  ref={productsRef}
-  onMouseEnter={() => setShowProducts(true)}
-  onMouseLeave={() => setShowProducts(false)}
->
-  <button className="flex items-center gap-1 font-medium hover:text-black transition">
-    <MdOutlineProductionQuantityLimits /> Products
-  </button>
+        className="relative text-gray-700 font-sans text-lg"
+        ref={productsRef}
+        onMouseEnter={() => setShowProducts(true)}
+        onMouseLeave={() => setShowProducts(false)}
+      >
+        <button className="flex items-center gap-1 font-medium hover:text-black transition">
+          <MdOutlineProductionQuantityLimits /> Products
+        </button>
 
-  {/* Mega Dropdown */}
-  <div
-    className={`absolute left-0 top-full mt-3 w-[700px] bg-white border border-gray-200 rounded-2xl shadow-2xl p-6 z-50 transition-all duration-200 ${
-      showProducts
-        ? "opacity-100 visible translate-y-0"
-        : "opacity-0 invisible -translate-y-2"
-    }`}
-  >
-    <div className="grid grid-cols-3 gap-6">
+        <div
+          className={`absolute left-0 top-full mt-3 w-[700px] bg-white border border-gray-200 rounded-2xl shadow-2xl p-6 z-50 transition-all duration-200 ${
+            showProducts
+              ? "opacity-100 visible translate-y-0"
+              : "opacity-0 invisible -translate-y-2"
+          }`}
+        >
+          <div className="grid grid-cols-3 gap-6">
 
-      {/* Category 1 */}
-      <div>
-        <h3 className="font-semibold text-gray-900 mb-3">
-          100% Cotton
-        </h3>
-        <ul className="space-y-2 text-sm">
-          <li>
-            <Link href="/products/cotton">
-              Basic Cotton Tee
-            </Link>
-          </li>
-          <li>
-            <Link href="/products/cotton">
-              Cotton Hoodie
-            </Link>
-          </li>
-        </ul>
-      </div>
+            {/* Category 1 */}
+            <div>
+              <h3 className="font-semibold text-gray-900 mb-3">100% Cotton</h3>
+              <ul className="space-y-2 text-sm">
+                <li>
+                  <Link href="/products/cotton">Basic Cotton Tee</Link>
+                </li>
+                <li>
+                  <Link href="/products/cotton">Cotton Hoodie</Link>
+                </li>
+              </ul>
+            </div>
 
-      {/* Category 2 */}
-      <div>
-        <h3 className="font-semibold text-gray-900 mb-3">
-          Organic Cotton
-        </h3>
-        <ul className="space-y-2 text-sm">
-          <li>
-            <Link href="/products/organic">
-              Eco T-Shirt
-            </Link>
-          </li>
-          <li>
-            <Link href="/products/organic">
-              Organic Hoodie
-            </Link>
-          </li>
-        </ul>
-      </div>
+            {/* Category 2 */}
+            <div>
+              <h3 className="font-semibold text-gray-900 mb-3">Organic Cotton</h3>
+              <ul className="space-y-2 text-sm">
+                <li>
+                  <Link href="/products/organic">Eco T-Shirt</Link>
+                </li>
+                <li>
+                  <Link href="/products/organic">Organic Hoodie</Link>
+                </li>
+              </ul>
+            </div>
 
-      {/* Category 3 */}
-      <div>
-        <h3 className="font-semibold text-gray-900 mb-3">
-          Premium Cotton
-        </h3>
-        <ul className="space-y-2 text-sm">
-          <li>
-            <Link href="/PC/premium?cottonType=Soft Cotton">
-              Soft Cotton
-            </Link>
-          </li>
-          <li>
-            <Link href="/PC/premium?cottonType=Light Cotton">
-              Light Cotton
-            </Link>
-          </li>
-           <li>
-            <Link href="/PC/premium?cottonType=Silk Cotton">
-            Silk Cotton
-            </Link>
-          </li>
-           <li>
-            <Link href="/PC/premium?cottonType=Handloom Cotton">
-              Handloom Cotton
-            </Link>
-          </li>
-        </ul>
-      </div>
+            {/* Category 3 */}
+            <div>
+              <h3 className="font-semibold text-gray-900 mb-3">Premium Cotton</h3>
+              <ul className="space-y-2 text-sm">
+                <li>
+                  <Link href="/PC/premium?cottonType=Soft Cotton">Soft Cotton</Link>
+                </li>
+                <li>
+                  <Link href="/PC/premium?cottonType=Light Cotton">Light Cotton</Link>
+                </li>
+                <li>
+                  <Link href="/PC/premium?cottonType=Silk Cotton">Silk Cotton</Link>
+                </li>
+                <li>
+                  <Link href="/PC/premium?cottonType=Handloom Cotton">Handloom Cotton</Link>
+                </li>
+              </ul>
+            </div>
 
-    </div>
-  </div>
-</li>
-      
+          </div>
+        </div>
+      </li>
 
       {/* Pages Dropdown */}
       <li
@@ -154,43 +123,27 @@ const productsRef = useRef(null);
             viewBox="0 0 24 24"
             stroke="currentColor"
           >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M19 9l-7 7-7-7"
-            />
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
           </svg>
         </button>
 
         <ul
           className={`absolute top-full left-0 mt-2 w-52 bg-white border border-gray-200 rounded-xl shadow-xl z-50 transition-all duration-200 ${
-            showPages
-              ? "opacity-100 visible translate-y-0"
-              : "opacity-0 invisible -translate-y-2"
+            showPages ? "opacity-100 visible translate-y-0" : "opacity-0 invisible -translate-y-2"
           }`}
         >
           <li>
-            <Link
-              href="/compare"
-              className="flex items-center gap-2 px-4 py-3 hover:bg-gray-100 transition rounded-lg"
-            >
+            <Link href="/compare" className="flex items-center gap-2 px-4 py-3 hover:bg-gray-100 transition rounded-lg">
               Compare
             </Link>
           </li>
           <li>
-            <Link
-              href="/my-account/orders"
-              className="flex items-center gap-2 px-4 py-3 hover:bg-gray-100 transition rounded-lg"
-            >
+            <Link href="/my-account/orders" className="flex items-center gap-2 px-4 py-3 hover:bg-gray-100 transition rounded-lg">
               My Orders
             </Link>
           </li>
           <li>
-            <Link
-              href="/review"
-              className="flex items-center gap-2 px-4 py-3 hover:bg-gray-100 transition rounded-lg"
-            >
+            <Link href="/review" className="flex items-center gap-2 px-4 py-3 hover:bg-gray-100 transition rounded-lg">
               Review
             </Link>
           </li>
@@ -217,12 +170,7 @@ const productsRef = useRef(null);
             viewBox="0 0 24 24"
             stroke="currentColor"
           >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M4 6h16M4 12h16M4 18h16"
-            />
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
           </svg>
         </button>
       </div>

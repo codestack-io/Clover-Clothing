@@ -1,24 +1,21 @@
 "use client";
 
-
-
+import { useState } from "react";
 import { createOrder } from "@/Action/Server/Order";
 import { useSession } from "next-auth/react";
-import React, { useState } from "react";
 import Swal from "sweetalert2";
 import { useRouter } from "next/navigation";
 
-const CheckoutForm = ({ cartItems = [] }) => {
-  const session =  useSession();
+const CheckoutForm = ({ cartItems }) => {
+  const { data: session } = useSession();
   const router = useRouter();
+
   const [formData, setFormData] = useState({
-    name: "",
-    email: "",
     phone: "",
     address: "",
     city: "",
     postalCode: "",
-    paymentMethod: "cod",
+    paymentMethod: "cash",
   });
 
   const handleChange = (e) => {
@@ -31,66 +28,69 @@ const CheckoutForm = ({ cartItems = [] }) => {
     0
   );
 
-  const handleSubmit = async(e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    const form =  e.target
 
     const order = {
-      Name :form.name.value,
-      Email:form.email.value,
-      PhoneNumber: form.phone.value,
-      Address:form.address.value,
-      City:form.city.value,
-      PostalCode:form.postalCode.value,
-      paymentMethod:form.paymentMethod.value,
-
+      name: session?.user?.name,
+      email: session?.user?.email,
+      ...formData,
+      items: cartItems,
+      totalPrice,
     };
-    
-    console.log("Order Placed:", order);
-    const result = await createOrder(order);
-    if(result.success){
-      Swal.fire("success","order added");
-      router.push("/")
 
-    }else{
-      Swal.fire("sorry","something went wrong");
-      router.push("/cart")
+    const result = await createOrder(order);
+
+    if (result.success) {
+      Swal.fire("Success", "Order placed!");
+
+      // ✅ Payment handling
+      if (formData.paymentMethod === "stripe") {
+        const res = await fetch("/api/checkout-session", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ cartItems }),
+        });
+
+        const data = await res.json();
+        if (data.url) window.location.href = data.url;
+
+      } else if (formData.paymentMethod === "bkash") {
+        router.push("/payment/bkash");
+
+      } else if (formData.paymentMethod === "nagad") {
+        router.push("/payment/nagad");
+
+      } else {
+        router.push("/success"); // Cash on delivery
+      }
+
+    } else {
+      Swal.fire("Error", "Something went wrong");
     }
   };
-  if(!session ){
-    return <h2>loading..</h2>
-  }
+
+  if (!session) return <h2>Loading...</h2>;
 
   return (
     <div className="max-w-6xl mx-auto p-6 grid md:grid-cols-3 gap-8">
-      
-      {/* Checkout Form */}
-      <form
-        onSubmit={handleSubmit}
-        className="md:col-span-2 bg-white p-6 rounded-lg shadow"
-      >
+
+      {/* FORM */}
+      <form onSubmit={handleSubmit} className="md:col-span-2 bg-white p-6 rounded-lg shadow">
         <h2 className="text-2xl font-semibold mb-6">Checkout</h2>
 
-        {/* Customer Info */}
         <div className="grid md:grid-cols-2 gap-4">
           <input
             type="text"
-            name="name"
-            placeholder="Full Name"
-            value={session?.data?.user?.name || ""}
-            //onChange={handleChange}
-            required
-            className="border p-3 rounded w-full"
+            value={session.user.name}
             readOnly
+            className="border p-3 rounded w-full"
           />
 
           <input
             type="email"
-            name="email"
-            placeholder="Email"
-             value={session?.data?.user?.email || ""}
-            onChange={handleChange}
-            required
+            value={session.user.email}
+            readOnly
             className="border p-3 rounded w-full"
           />
         </div>
@@ -98,13 +98,12 @@ const CheckoutForm = ({ cartItems = [] }) => {
         <input
           type="text"
           name="phone"
-          placeholder="phone"
+          placeholder="Phone"
           onChange={handleChange}
           required
           className="border p-3 rounded w-full mt-4"
         />
 
-        {/* Address */}
         <textarea
           name="address"
           placeholder="Shipping Address"
@@ -131,30 +130,24 @@ const CheckoutForm = ({ cartItems = [] }) => {
           />
         </div>
 
-        {/* Payment */}
+        {/* ✅ CLEAN Payment */}
         <div className="mt-6">
           <h3 className="font-semibold mb-3">Payment Method</h3>
 
-          <label className="flex items-center gap-2 mb-2">
-            <input
-              type="radio"
-              name="paymentMethod"
-              value="cod"
-              checked={formData.paymentMethod === "cod"}
-              onChange={handleChange}
-            />
-            Cash on Delivery
-          </label>
-
-          <label className="flex items-center gap-2">
-            <input
-              type="radio"
-              name="paymentMethod"
-              value="online"
-              onChange={handleChange}
-            />
-            Online Payment
-          </label>
+          {["bkash", "nagad", "stripe", "cash"].map((method) => (
+            <label key={method} className="flex items-center gap-2 mb-2">
+              <input
+                type="radio"
+                name="paymentMethod"
+                value={method}
+                checked={formData.paymentMethod === method}
+                onChange={handleChange}
+              />
+              {method === "cash"
+                ? "Cash on Delivery"
+                : method.charAt(0).toUpperCase() + method.slice(1)}
+            </label>
+          ))}
         </div>
 
         <button
@@ -165,22 +158,13 @@ const CheckoutForm = ({ cartItems = [] }) => {
         </button>
       </form>
 
-      {/* Order Summary */}
+      {/* SUMMARY */}
       <div className="bg-white p-6 rounded-lg shadow h-fit">
         <h3 className="text-xl font-semibold mb-4">Order Summary</h3>
 
-        {cartItems.length === 0 && (
-          <p className="text-gray-500">No items in cart</p>
-        )}
-
         {cartItems.map((item) => (
-          <div
-            key={item._id}
-            className="flex justify-between border-b py-2 text-sm"
-          >
-            <span>
-              {item.title} x {item.quantity}
-            </span>
+          <div key={item._id} className="flex justify-between border-b py-2 text-sm">
+            <span>{item.title} x {item.quantity}</span>
             <span>${item.price * item.quantity}</span>
           </div>
         ))}

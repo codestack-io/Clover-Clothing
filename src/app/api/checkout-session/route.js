@@ -5,12 +5,9 @@ import { stripe } from "@/lib/stripe";
 export async function POST(req) {
   try {
     const body = await req.json();
-
-    console.log("BODY:", body); // 👈 DEBUG
-
     const { cartItems } = body;
 
-    // ❌ If empty → error
+    // ✅ Validate cart
     if (!cartItems || cartItems.length === 0) {
       return NextResponse.json(
         { error: "Cart is empty" },
@@ -18,20 +15,23 @@ export async function POST(req) {
       );
     }
 
-  const headersList = await headers();
-const origin = headersList.get("origin");
+    // ✅ FIX: headers() is NOT async
+    const headersList = headers();
+    const origin = headersList.get("origin") || "http://localhost:3000";
 
+    // ✅ FIX: correct item fields
     const line_items = cartItems.map((item) => ({
       price_data: {
         currency: "usd",
         product_data: {
-          name: item.name || "Product",
+          name: item.title || "Product",
         },
-        unit_amount: item.price * 100,
+        unit_amount: Math.round(item.price * 100), // safer
       },
       quantity: item.quantity || 1,
     }));
 
+    // ✅ Create Stripe session
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ["card"],
       mode: "payment",
@@ -43,9 +43,12 @@ const origin = headersList.get("origin");
     return NextResponse.json({ url: session.url });
 
   } catch (err) {
-    console.error("Stripe Error:", err);
+    console.error("🔥 Stripe Error:", err);
+
     return NextResponse.json(
-      { error: err.message },
+      {
+        error: err.message || "Internal Server Error",
+      },
       { status: 500 }
     );
   }

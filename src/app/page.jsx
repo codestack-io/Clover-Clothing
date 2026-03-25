@@ -20,7 +20,7 @@ export default async function Home() {
         <div className="w-full">
       <TopCategoriesSection />
       </div>
-        <Products limit={8} />
+        <Products limit={9} />
         <SocialLinks
          facebook="https://www.facebook.com/profile.php?id=61587012395509"
          instagram="https://www.instagram.com/Clover-"

@@ -4,6 +4,8 @@ import { useEffect, useState, useMemo } from "react";
 import ProductCard from "../Card/ProductCard";
 import ProductSkeleton from "../Skeleton/ProductSkeleton";
 import LayoutSwitcher from "../LayoutSwicher/LayoutSwitcher";
+import { FaSeedling } from "react-icons/fa";
+import { RiSeedlingFill } from "react-icons/ri";
 
 const Products = ({ limit }) => {
   const [products, setProducts] = useState([]);
@@ -67,7 +69,7 @@ const Products = ({ limit }) => {
       <LayoutSwitcher layout={layout} setLayout={setLayout} />
 
       {/* SORT BAR */}
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6 mb-10 border-b pb-6">
+      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-10 border-b pb-6">
         {/* Product Count */}
         <p className="text-gray-600 font-medium">
           {products.length} Products
@@ -96,7 +98,7 @@ const Products = ({ limit }) => {
       {/* PRODUCTS GRID */}
       <div className={`grid gap-6 ${getGridCols()}`}>
         {isLoading
-          ? Array(limit || 8)
+          ? Array(limit || 9)
               .fill(0)
               .map((_, index) => <ProductSkeleton key={index} />)
           : displayedProducts.map((product) => (
@@ -115,12 +117,12 @@ const Products = ({ limit }) => {
 
       {/* SEE MORE BUTTON */}
       {!isLoading && limit && products.length > limit && (
-        <div className="flex justify-center mt-8">
+        <div className="flex justify-center mt-7">
           <button
             onClick={() => setShowAll(!showAll)}
             className="px-6 py-3 bg-black text-white rounded-lg hover:bg-gray-800 transition"
           >
-            {showAll ? "Show Less" : "See More"}
+            {showAll ? <FaSeedling /> : <RiSeedlingFill />}
           </button>
         </div>
       )}

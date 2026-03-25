@@ -10,14 +10,17 @@ const { dbConnect, Collection } = require("@/app/lib/dbConnect")
 
 
 
-export const handleCart = async ({ productId }) => {
+export const handleCart = async ({ productId,size }) => {
+
+  if (!size) {
+  return { success: false, message: "Size is required" };
+}
 
   const { user } = await getServerSession(authOptions) || {};
   if (!user) return { success: false };
 
   const cartCollection = await dbConnect(Collection.CART);
-
-  const query = { email: user?.email, productId };
+const query = { email: user?.email, productId, size };
 
   const isAdded = await cartCollection.findOne(query);
 
@@ -43,15 +46,16 @@ export const handleCart = async ({ productId }) => {
       return { success: false, message: "Product not found" };
     }
 
-    const newData = {
-      productId: product._id.toString(),
-      email: user?.email,
-      title: product.name,
-      quantity: 1,
-      image: product.image,
-      price: product.price,
-      username: user?.name,
-    };
+   const newData = {
+  productId: product._id.toString(),
+  email: user?.email,
+  title: product.name,
+  quantity: 1,
+  image: product.image,
+  price: product.price,
+  username: user?.name,
+  size, 
+};
 
     const result = await cartCollection.insertOne(newData);
 

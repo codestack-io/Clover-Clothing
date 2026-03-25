@@ -4,7 +4,7 @@ import React from "react";
 
 const TopCategoriesSection = () => {
   return (
-    <div className="w-full bg-gray-100 py-10">
+    <div className="w-full bg-gray-100 py-2">
       
       
       {/* Line + Title + Line */}

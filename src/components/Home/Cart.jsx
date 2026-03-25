@@ -3,10 +3,13 @@
 import React, { useState, useMemo } from "react";
 import CartItem from "../Card/CartItem";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+
 
 export default function Cart({ cartItems = [] }) {
   const [items, setItems] = useState(cartItems);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const router = useRouter();
 
   const totalItems = useMemo(
     () => items.reduce((sum, item) => sum + item.quantity, 0),
@@ -123,14 +126,14 @@ export default function Cart({ cartItems = [] }) {
         </div>
 
         {/* Confirm Order Button */}
-        <button
-          onClick={() => setIsModalOpen(true)}
-          className="block w-full mt-6 bg-green-600 text-white py-3 rounded-lg font-semibold hover:bg-green-700 transition"
-        >
-          Confirm Order
-        </button>
+      <button
+  onClick={() => router.push("/CheckOut")}
+  className="block w-full mt-6 bg-green-600 text-white py-3 rounded-lg font-semibold hover:bg-green-700 transition"
+>
+  Confirm Order
+</button>
 
-        {/* Payment Modal */}
+        {/* Payment Modal
         {isModalOpen && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
             <div className="bg-white rounded-xl shadow-lg p-6 w-80">
@@ -166,7 +169,7 @@ export default function Cart({ cartItems = [] }) {
               </button>
             </div>
           </div>
-        )}
+        )} */}
       </div>
     </div>
   );

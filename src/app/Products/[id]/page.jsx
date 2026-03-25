@@ -4,12 +4,12 @@ import ViewDetails from "@/components/Buttons/ViewDetails";
 import Image from "next/image";
 import React from "react";
 import ProductActions from "@/components/productAction";
-import SizeSelector from "@/components/SizeSelector/sizeSelector";
 
 import Link from "next/link";
 
 export async function generateMetadata({ params }) {
   const { id } = await params;
+   
   
   const product = await getSingleProduct(id);
 
@@ -153,16 +153,8 @@ const ProductDetails = async ({ params }) => {
               </table>
             </div>
           )}
-
-          <div>
-  <SizeSelector
-    onSelect={(size) => {
-      console.log("Selected size:", size);
-      // You can later store this in state/cart
-    }}
-  />
-
-<ProductActions product={{ ...products, id: products?._id.toString() }} />
+<div>
+  <ProductActions product={{ ...products, id: products?._id.toString() }} />
 </div>
 
           {/* Dedicated Compare button */}
