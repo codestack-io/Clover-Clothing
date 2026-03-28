@@ -1,54 +1,58 @@
 import { NextResponse } from "next/server";
-import { headers } from "next/headers";
 import { stripe } from "@/lib/stripe";
+import { getServerSession } from "next-auth/next";
+import { authOptions } from "@/app/lib/authOptions";
+import { dbConnect, Collection } from "@/app/lib/dbConnect";
+import { ObjectId } from "mongodb";
 
 export async function POST(req) {
   try {
-    const body = await req.json();
-    const { cartItems } = body;
-
-    // ✅ Validate cart
-    if (!cartItems || cartItems.length === 0) {
-      return NextResponse.json(
-        { error: "Cart is empty" },
-        { status: 400 }
-      );
+    const session = await getServerSession(authOptions);
+    if (!session?.user) {
+      return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
     }
 
-    // ✅ FIX: headers() is NOT async
-    const headersList = headers();
-    const origin = headersList.get("origin") || "http://localhost:3000";
+    const { cartItems, orderId } = await req.json();
+    console.log("Incoming body:", { cartItems, orderId });
 
-    // ✅ FIX: correct item fields
+    if (!cartItems || cartItems.length === 0) {
+      return NextResponse.json({ error: "Cart is empty" }, { status: 400 });
+    }
+
+    if (!orderId) {
+      return NextResponse.json({ error: "Order ID is required" }, { status: 400 });
+    }
+
+    const collection = await dbConnect(Collection.ORDER);
+    const order = await collection.findOne({ _id: new ObjectId(orderId) });
+    if (!order) return NextResponse.json({ error: "Order not found" }, { status: 404 });
+
     const line_items = cartItems.map((item) => ({
       price_data: {
         currency: "usd",
-        product_data: {
-          name: item.title || "Product",
-        },
-        unit_amount: Math.round(item.price * 100), // safer
+        product_data: { name: item.title },
+        unit_amount: Math.round((Number(item.price) || 0) * 100),
       },
-      quantity: item.quantity || 1,
+      quantity: item.quantity,
     }));
 
-    // ✅ Create Stripe session
-    const session = await stripe.checkout.sessions.create({
+    const origin = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
+
+    const stripeSession = await stripe.checkout.sessions.create({
       payment_method_types: ["card"],
       mode: "payment",
       line_items,
-      success_url: `${origin}/success?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${origin}/cancel`,
+      metadata: { orderId: order._id.toString() },
+      success_url: `${origin}/success?session_id={CHECKOUT_SESSION_ID}&orderId=${order._id}&method=stripe`,
+      cancel_url: `${origin}/checkout`,
+      customer_email: session.user.email,
     });
 
-    return NextResponse.json({ url: session.url });
-
+    return NextResponse.json({ url: stripeSession.url });
   } catch (err) {
     console.error("🔥 Stripe Error:", err);
-
     return NextResponse.json(
-      {
-        error: err.message || "Internal Server Error",
-      },
+      { error: err.message || "Internal Server Error" },
       { status: 500 }
     );
   }

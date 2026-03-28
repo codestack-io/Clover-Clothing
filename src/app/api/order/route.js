@@ -1,60 +1,83 @@
 import { dbConnect, Collection } from "@/app/lib/dbConnect";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/app/lib/authOptions";
+import { NextResponse } from "next/server";
+import { ObjectId } from "mongodb";
 
+// GET ORDERS
 export async function GET() {
   try {
     const session = await getServerSession(authOptions);
 
     if (!session) {
-      return new Response(JSON.stringify({ success: false, error: "Unauthorized" }), {
-        status: 401,
-        headers: { "Content-Type": "application/json" },
-      });
+      return NextResponse.json({ success: false, error: "Unauthorized" }, { status: 401 });
     }
 
     const collection = await dbConnect(Collection.ORDER);
 
     const orders = await collection
-      .find({ email: session.user.email })
+      .find({ "user.email": session.user.email })
       .sort({ createdAt: -1 })
       .toArray();
 
-    return new Response(JSON.stringify({ success: true, orders }), {
-      status: 200,
-      headers: { "Content-Type": "application/json" },
-    });
-
+    return NextResponse.json({ success: true, orders });
   } catch (error) {
     console.error(error);
-    return new Response(JSON.stringify({ success: false, error: error.message }), {
-      status: 500,
-      headers: { "Content-Type": "application/json" },
-    });
+    return NextResponse.json({ success: false, error: error.message }, { status: 500 });
   }
 }
 
+// POST ORDER
 export async function POST(req) {
   try {
     const body = await req.json();
+    const { orderId, paymentId, paymentMethod } = body;
 
-    const { paymentId, paymentMethod } = body;
+    const collection = await dbConnect(Collection.ORDER);
 
-    const result = await createOrder({
-      paymentId,
-      paymentMethod,
-    });
+    if (orderId) {
+      // ✅ Update existing order after Stripe payment
+      const order = await collection.findOne({ _id: new ObjectId(orderId) });
 
-    return NextResponse.json({
-      success: true,
-      order: result,
-    });
+      if (!order) {
+        return NextResponse.json({ success: false, error: "Order not found" }, { status: 404 });
+      }
 
+      await collection.updateOne(
+        { _id: order._id },
+        { $set: { status: "paid", paymentId, paymentMethod } }
+      );
+
+      return NextResponse.json({ success: true, orderId: order._id });
+    } else {
+      // ✅ Create a new pending order BEFORE Stripe checkout
+      const { items, totalPrice, phone, address, city, postalCode, user } = body;
+
+      if (!items || items.length === 0) {
+        return NextResponse.json({ success: false, error: "Cart is empty" }, { status: 400 });
+      }
+
+      const newOrder = {
+        user,
+        items,
+        totalPrice,
+        phone,
+        address,
+        city,
+        postalCode,
+        paymentMethod: paymentMethod || "pending",
+        status: "pending",
+        createdAt: new Date(),
+      };
+
+      const result = await collection.insertOne(newOrder);
+
+      return NextResponse.json({
+        success: true,
+        orderId: result.insertedId.toString(), 
+        message: "Order created (pending payment)",
+      });
+    }
   } catch (error) {
-    console.error(error);
-    return NextResponse.json(
-      { success: false, error: error.message },
-      { status: 500 }
-    );
+    console.error("🔥 Order POST error:", error);
+    return NextResponse.json({ success: false, error: error.message }, { status: 500 });
   }
 }

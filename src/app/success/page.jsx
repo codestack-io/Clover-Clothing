@@ -8,72 +8,67 @@ import "sweetalert2/dist/sweetalert2.min.css";
 export default function Success() {
   const searchParams = useSearchParams();
   const session_id = searchParams.get("session_id");
+  const orderId = searchParams.get("orderId"); 
   const method = searchParams.get("method"); 
 
   useEffect(() => {
     const handleSuccess = async () => {
-      if (!session_id && method !== "stripe") {
-        // If online payment, session_id is required
+      if (method === "stripe" && !session_id) {
         await Swal.fire({
           icon: "error",
-          title: "Oops!",
-          text: "Invalid or missing session. Please try again.",
-          confirmButtonText: "Go Home",
+          title: "Invalid payment",
+          text: "Missing Stripe session.",
         });
         window.location.href = "/";
         return;
       }
 
       try {
-        // ✅ Call order creation API
+        // ✅ Call backend to finalize order using session_id
         const res = await fetch("/api/order", {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            paymentId: session_id || null,
-            paymentMethod: method || "Unknown",
-          }),
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ orderId, paymentId: session_id ,paymentMethod: method}),
         });
 
-        const text = await res.text();
-console.log("Response:", text);
+        let data;
+        try {
+         const text = await res.text();   // read once
+    data = JSON.parse(text);         // parse JSON
+  } catch (err) {
+    console.error("❌ Failed to parse response:", err);
+    throw new Error("Server returned invalid response");
+  }
 
-let data;
-try {
-  data = JSON.parse(text);
-} catch (err) {
-  console.error("Not JSON:", text);
-}
 
-        if (!data.success) {
+        if (!data?.success) {
           await Swal.fire({
             icon: "error",
             title: "Order Failed",
-            text: "Something went wrong while creating your order.",
+            text: data?.error || "Something went wrong.",
           });
           return;
         }
 
-        // ✅ Show success message
+        // ✅ SUCCESS ALERT
         await Swal.fire({
-          title: "Payment Successful! 🎉",
-          html: `<p>Thank you for your purchase.</p>
-                 <p>Payment Method: <strong>${method}</strong></p>
-                 ${session_id ? `<p>Session ID: <strong>${session_id}</strong></p>` : ""}`,
+          title: "Payment Successful 🎉",
+          html: `
+            <p>Thank you for your purchase.</p>
+            <p><strong>Method:</strong> ${method}</p>
+            ${session_id ? `<p><strong>Session:</strong> ${session_id}</p>` : ""}
+          `,
           icon: "success",
-          confirmButtonText: "View Orders",
         });
 
-        // ✅ Redirect to orders page
         window.location.href = "/my-account/orders";
+
       } catch (error) {
-        console.error(error);
+        console.error("🔥 Error:", error);
         await Swal.fire({
           icon: "error",
           title: "Oops!",
-          text: "Something went wrong. Please contact support.",
+          text: "Something went wrong.",
         });
       }
     };

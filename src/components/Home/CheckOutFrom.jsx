@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { createOrder } from "@/Action/Server/Order";
 import { useSession } from "next-auth/react";
 import Swal from "sweetalert2";
 import { useRouter } from "next/navigation";
@@ -10,6 +9,7 @@ const CheckoutForm = ({ cartItems }) => {
   const { data: session } = useSession();
   const router = useRouter();
 
+  // Form fields for shipping/payment
   const [formData, setFormData] = useState({
     phone: "",
     address: "",
@@ -23,117 +23,150 @@ const CheckoutForm = ({ cartItems }) => {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
+  if (!session) return <h2>Loading...</h2>;
+  if (!cartItems || !cartItems.length)
+    return (
+      <div className="text-center mt-10">
+        <h2 className="text-2xl font-semibold">Your cart is empty</h2>
+      </div>
+    );
+
   const totalPrice = cartItems.reduce(
     (sum, item) => sum + item.price * item.quantity,
     0
   );
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const handlePlaceOrder = async () => {
+    if (!session?.user) {
+      Swal.fire("Error", "User not logged in");
+      return;
+    }
 
-    const order = {
-      name: session?.user?.name,
-      email: session?.user?.email,
-      ...formData,
-      items: cartItems,
-      totalPrice,
-    };
+    if (!cartItems.length) {
+      Swal.fire("Error", "Cart is empty!");
+      return;
+    }
 
-    const result = await createOrder(order);
+    // 1️⃣ Create pending order in DB
+    const res = await fetch("/api/order", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        items: cartItems,
+        totalPrice,
+        ...formData,
+        user: {
+          email: session.user.email,
+          name: session.user.name,
+        },
+      }),
+    });
 
-    if (result.success) {
-      Swal.fire("Success", "Order placed!");
+    const data = await res.json();
+    if (!data.success) {
+      Swal.fire("Error", "Failed to create order");
+      return;
+    }
 
-      // ✅ Payment handling
-      if (formData.paymentMethod === "stripe") {
-        const res = await fetch("/api/checkout-session", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ cartItems }),
-        });
+    const orderId = data.orderId;
 
-        const data = await res.json();
-        if (data.url) window.location.href = data.url;
+    // 2️⃣ Redirect to Stripe if selected
+    if (formData.paymentMethod === "stripe") {
+      const stripeRes = await fetch("/api/checkout-session", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+         cartItems: cartItems.map((i) => ({
+            title: i.title,
+            price: i.price,
+            quantity: i.quantity,
+          })),
+          orderId,
+        }),
+      });
 
-      } else if (formData.paymentMethod === "bkash") {
-        router.push("/payment/bkash");
+      const stripeData = await stripeRes.json();
+      console.log("Stripe response:", stripeData);
+      if (stripeData.url) {
+        window.location.href = stripeData.url;
 
-      } else if (formData.paymentMethod === "nagad") {
-        router.push("/payment/nagad");
-
+       
+        return;
       } else {
-        router.push("/success"); // Cash on delivery
+        Swal.fire("Error", "Stripe checkout failed");
+        return;
       }
+    }
 
+    // 3️⃣ Other payment methods
+    if (formData.paymentMethod === "bkash") {
+      router.push("/payment/bkash");
+    } else if (formData.paymentMethod === "nagad") {
+      router.push("/payment/nagad");
     } else {
-      Swal.fire("Error", "Something went wrong");
+      router.push("/success"); // Cash on delivery
     }
   };
 
-  if (!session) return <h2>Loading...</h2>;
-
   return (
     <div className="max-w-6xl mx-auto p-6 grid md:grid-cols-3 gap-8">
-
       {/* FORM */}
-      <form onSubmit={handleSubmit} className="md:col-span-2 bg-white p-6 rounded-lg shadow">
+      <form className="md:col-span-2 bg-white p-6 rounded-lg shadow">
         <h2 className="text-2xl font-semibold mb-6">Checkout</h2>
 
-        <div className="grid md:grid-cols-2 gap-4">
-          <input
-            type="text"
-            value={session.user.name}
-            readOnly
-            className="border p-3 rounded w-full"
-          />
-
-          <input
-            type="email"
-            value={session.user.email}
-            readOnly
-            className="border p-3 rounded w-full"
-          />
-        </div>
+        <input
+          type="text"
+          value={session.user.name || ""}
+          readOnly
+          className="border p-3 rounded w-full mb-2"
+        />
+        <input
+          type="email"
+          value={session.user.email || ""}
+          readOnly
+          className="border p-3 rounded w-full mb-4"
+        />
 
         <input
           type="text"
           name="phone"
           placeholder="Phone"
+          value={formData.phone}
           onChange={handleChange}
           required
-          className="border p-3 rounded w-full mt-4"
+          className="border p-3 rounded w-full mb-4"
         />
-
         <textarea
           name="address"
           placeholder="Shipping Address"
+          value={formData.address}
           onChange={handleChange}
           required
-          className="border p-3 rounded w-full mt-4"
+          className="border p-3 rounded w-full mb-4"
         />
 
-        <div className="grid md:grid-cols-2 gap-4 mt-4">
+        <div className="grid md:grid-cols-2 gap-4">
           <input
             type="text"
             name="city"
             placeholder="City"
+            value={formData.city}
             onChange={handleChange}
             className="border p-3 rounded w-full"
           />
-
           <input
             type="text"
             name="postalCode"
             placeholder="Postal Code"
+            value={formData.postalCode}
             onChange={handleChange}
             className="border p-3 rounded w-full"
           />
         </div>
 
-        {/* ✅ CLEAN Payment */}
+        {/* Payment Method */}
         <div className="mt-6">
           <h3 className="font-semibold mb-3">Payment Method</h3>
-
           {["bkash", "nagad", "stripe", "cash"].map((method) => (
             <label key={method} className="flex items-center gap-2 mb-2">
               <input
@@ -151,7 +184,8 @@ const CheckoutForm = ({ cartItems }) => {
         </div>
 
         <button
-          type="submit"
+          type="button"
+          onClick={handlePlaceOrder}
           className="mt-6 w-full bg-black text-white py-3 rounded hover:bg-gray-800"
         >
           Place Order
@@ -161,10 +195,11 @@ const CheckoutForm = ({ cartItems }) => {
       {/* SUMMARY */}
       <div className="bg-white p-6 rounded-lg shadow h-fit">
         <h3 className="text-xl font-semibold mb-4">Order Summary</h3>
-
         {cartItems.map((item) => (
           <div key={item._id} className="flex justify-between border-b py-2 text-sm">
-            <span>{item.title} x {item.quantity}</span>
+            <span>
+              {item.title} x {item.quantity}
+            </span>
             <span>${item.price * item.quantity}</span>
           </div>
         ))}
