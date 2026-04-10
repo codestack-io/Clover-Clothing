@@ -1,7 +1,7 @@
 import Products from "@/components/Home/Products";
 import React from "react";
 
-export const  = {
+export const metadata = {
   title: "All Products",
   description:
     "Explore our wide range of clothing products at Clover Clothing. From trendy tops to stylish bottoms, find the perfect pieces to elevate your wardrobe.",

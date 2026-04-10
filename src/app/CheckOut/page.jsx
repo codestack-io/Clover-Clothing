@@ -1,3 +1,4 @@
+export const dynamic = "force-dynamic";
 import CheckOutFrom from '../../components/Home/CheckoutFrom';
 import { getCart } from '@/Action/Server/cart';
 
