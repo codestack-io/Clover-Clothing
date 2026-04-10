@@ -1,4 +1,5 @@
 import NextAuth from "next-auth";
+import { dbConnect, Collection } from "@/app/lib/dbConnect";
 import CredentialsProvider from "next-auth/providers/credentials";
 
 export const authOptions = {
@@ -10,16 +11,34 @@ export const authOptions = {
         password: { label: "Password", type: "password" },
       },
       async authorize(credentials) {
-        // Your login logic here
-        if (credentials.email === "admin@test.com" && credentials.password === "1234") {
-          return { id: 1, name: "Admin" };
-        }
+          const { email, password } = credentials;
+
+          // connect DB
+    const collection = await dbConnect(Collection.USERS);
+
+    // find user
+    const user = await collection.findOne({ email });
+
+    if (!user) {
+      throw new Error("User not found");
+    }
+
+    // compare password
+    const isValid = await bcrypt.compare(password, user.password);
+
+    if (!isValid) {
+      throw new Error("Invalid password");
+    }
         return null;
       },
+      
     }),
   ],
   session: {
     strategy: "jwt",
+  },
+   pages: {
+    signIn: "/auth/login",
   },
   secret: process.env.NEXTAUTH_SECRET,
 };
