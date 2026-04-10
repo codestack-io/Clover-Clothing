@@ -1,7 +1,9 @@
 import { dbConnect, Collection } from "@/app/lib/dbConnect";
 import { NextResponse } from "next/server";
-import { ObjectId } from "mongodb";
+import { ObjectId } from "mongodb"; 
 
+import { authOptions } from "@/app/lib/authOptions";
+import { getServerSession } from "next-auth";
 // GET ORDERS
 export async function GET() {
   try {
@@ -29,11 +31,16 @@ export async function GET() {
 export async function POST(req) {
   try {
     const body = await req.json();
-    const { orderId, paymentId, paymentMethod } = body;
+    
+       const { orderId, paymentId, paymentMethod } = body;
 
     const collection = await dbConnect(Collection.ORDER);
 
     if (orderId) {
+
+       if (!ObjectId.isValid(orderId)) {
+        return NextResponse.json({ success: false, error: "Invalid orderId" }, { status: 400 });
+      }
       // ✅ Update existing order after Stripe payment
       const order = await collection.findOne({ _id: new ObjectId(orderId) });
 
@@ -42,11 +49,11 @@ export async function POST(req) {
       }
 
       await collection.updateOne(
-        { _id: order._id },
-        { $set: { status: "paid", paymentId, paymentMethod } }
-      );
-
+  { _id: new ObjectId(orderId) },
+  { $set: { status: "paid", paymentId, paymentMethod, deliveryStatus: "delivered" } }
+);
       return NextResponse.json({ success: true, orderId: order._id });
+      
     } else {
       // ✅ Create a new pending order BEFORE Stripe checkout
       const { items, totalPrice, phone, address, city, postalCode, user } = body;
@@ -54,6 +61,7 @@ export async function POST(req) {
       if (!items || items.length === 0) {
         return NextResponse.json({ success: false, error: "Cart is empty" }, { status: 400 });
       }
+      
 
       const newOrder = {
         user,
@@ -65,13 +73,19 @@ export async function POST(req) {
         postalCode,
         paymentMethod: paymentMethod || "pending",
         status: "pending",
+        deliveryStatus: "on_the_way",
         createdAt: new Date(),
       };
 
       const result = await collection.insertOne(newOrder);
+      const createdOrder = await collection.findOne({ _id: result.insertedId });
+
+      
 
       return NextResponse.json({
         success: true,
+        order: createdOrder,
+
         orderId: result.insertedId.toString(), 
         message: "Order created (pending payment)",
       });

@@ -1,11 +1,9 @@
-"use server"
+"use server";
 
-import { clearCart, getCart } from "./cart";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/app/lib/authOptions";
 import { sendEmail } from "../../app/lib/sendEmail";
-
-
+import { clearCart } from "@/Action/Server/cart"; // ✅ single import
 import { generateInvoiceHTML } from "../../app/lib/orderInvoice";
 import { ObjectId } from "mongodb";
 
@@ -32,27 +30,27 @@ export const createOrder = async (payload) => {
   };
 
   const result = await orderCollection.insertOne(newOrder);
-
   if (!result.insertedId) return { success: false };
 
   // Update sold count
   const productCollection = await dbConnect(Collection.PRODUCTS);
   const operations = products.map((item) => ({
-    updateOne: {
-      filter: { _id: item._id },
-      update: { $inc: { sold: item.quantity } }
-    }
+    updateOne: { filter: { _id: item._id }, update: { $inc: { sold: item.quantity } } }
   }));
   await productCollection.bulkWrite(operations);
 
   // Clear cart
+  try {
   await clearCart();
+} catch (err) {
+  console.error("Failed to clear cart:", err);
+} // ✅ this uses the imported function
 
- const insertedOrder = {
-  ...newOrder,
-  _id: result.insertedId.toString(), // convert ObjectId to string
-  createdAt: newOrder.createdAt.toISOString() // convert Date to string
-};
+  const insertedOrder = {
+    ...newOrder,
+    _id: result.insertedId.toString(),
+    createdAt: newOrder.createdAt.toISOString()
+  };
 
   // Send invoice
   await sendEmail({

@@ -21,8 +21,11 @@ const Products = ({ limit }) => {
       try {
         const res = await fetch("/api/products");
       
-      if (!res.ok) throw new Error("Failed to fetch products");
-        const data = await res.json();
+      if (!res.ok) { const text = await res.text();
+           console.error("API Error:", res.status, text);
+          throw new Error("Failed to fetch products");}  
+        
+          const data = await res.json();
         setProducts(Array.isArray(data) ? data : []);
       } catch (error) {
         console.error("Failed to fetch products:", error);

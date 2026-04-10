@@ -42,7 +42,7 @@ export async function POST(req) {
       payment_method_types: ["card"],
       mode: "payment",
       line_items,
-      metadata: { orderId: order._id.toString() },
+      metadata: { orderId: order._id.toString(),method:"stripe" },
       success_url: `${origin}/success?session_id={CHECKOUT_SESSION_ID}&orderId=${order._id}&method=stripe`,
       cancel_url: `${origin}/checkout`,
       customer_email: session.user.email,
