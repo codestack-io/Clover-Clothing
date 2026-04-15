@@ -36,21 +36,26 @@ const CheckoutForm = ({ cartItems }) => {
     0
   );
 
-  const handlePlaceOrder = async () => {
+ const handlePlaceOrder = async () => {
+  try {
     if (!session?.user) {
       Swal.fire("Error", "User not logged in");
       return;
     }
 
-    if (!cartItems.length) {
+    if (!cartItems || cartItems.length === 0) {
       Swal.fire("Error", "Cart is empty!");
       return;
     }
 
-    // 1️⃣ Create pending order in DB
+    console.log("Cart Items:", cartItems); // ✅ DEBUG
+
+    // 1️⃣ Create Order
     const res = await fetch("/api/order", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+      },
       body: JSON.stringify({
         items: cartItems,
         totalPrice,
@@ -63,50 +68,53 @@ const CheckoutForm = ({ cartItems }) => {
     });
 
     const data = await res.json();
+    console.log("Order response:", data); // ✅ DEBUG
+
     if (!data.success) {
-      Swal.fire("Error", "Failed to create order");
+      Swal.fire("Error", data.error || "Failed to create order");
       return;
     }
 
     const orderId = data.orderId;
 
-    // 2️⃣ Redirect to Stripe if selected
+    // 2️⃣ Stripe Payment
     if (formData.paymentMethod === "stripe") {
       const stripeRes = await fetch("/api/checkout-session", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+        },
         body: JSON.stringify({
-         cartItems: cartItems.map((i) => ({
-            title: i.title,
-            price: i.price,
-            quantity: i.quantity,
-          })),
+          cartItems, // ✅ send full cartItems (NO mapping needed)
           orderId,
         }),
       });
 
       const stripeData = await stripeRes.json();
       console.log("Stripe response:", stripeData);
+
       if (stripeData.url) {
         window.location.href = stripeData.url;
-
-       
         return;
       } else {
-        Swal.fire("Error", "Stripe checkout failed");
+        Swal.fire("Error", stripeData.error || "Stripe checkout failed");
         return;
       }
     }
 
-    // 3️⃣ Other payment methods
+    // 3️⃣ Other Payments
     if (formData.paymentMethod === "bkash") {
       router.push("/payment/bkash");
     } else if (formData.paymentMethod === "nagad") {
       router.push("/payment/nagad");
     } else {
-      router.push("/success"); // Cash on delivery
+      router.push(`/success?orderId=${orderId}&method=cash`);
     }
-  };
+  } catch (error) {
+    console.error("Checkout Error:", error);
+    Swal.fire("Error", "Something went wrong");
+  }
+};
 
   return (
     <div className="max-w-6xl mx-auto p-6 grid md:grid-cols-3 gap-8">

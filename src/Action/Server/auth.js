@@ -15,9 +15,10 @@ export const postuser = async (payload) => {
   try {
     // Get MongoDB collection
     const collection = await dbConnect(Collection.USERS);
+    const normalizedEmail = email.toLowerCase();
 
     // Check if user already exists
-    const isExist = await collection.findOne({  email: payload.email  });
+    const isExist = await collection.findOne({  email: normalizedEmail  });
     if (isExist) {
       return { success: false, message: "User already exists" };
     }
@@ -29,7 +30,7 @@ export const postuser = async (payload) => {
     const newUser = {
       provider: "credentials",
       name,
-      email,
+      email : normalizedEmail,
       password: hashedPassword,
     };
 
@@ -55,7 +56,9 @@ export const loginUser = async(payload)=>{
   const { email, password } = payload;
   if(!email || !password ) return null;
 
-  const user = await dbConnect(Collection.USERS).findOne({ email: payload.email });
+   const collection = await dbConnect(Collection.USERS);
+    const normalizedEmail = email.toLowerCase();
+  const user = await dbConnect(Collection.USERS).findOne({ email: normalizedEmail  });
   if(!user) return null;
 
   const isMatched = await bcrypt.compare(password,user.password);

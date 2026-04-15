@@ -27,6 +27,7 @@ export default function LoginPage() {
       password,
       callbackUrl,
     });
+    console.log("Login result:", result);
 
     if (!result?.ok) {
       Swal.fire({

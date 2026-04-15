@@ -76,7 +76,12 @@ export async function POST(req) {
         deliveryStatus: "on_the_way",
         createdAt: new Date(),
       };
-
+      console.log("Sending order:", {
+  items,
+  totalPrice,
+  phone,
+  address,
+});
       const result = await collection.insertOne(newOrder);
       const createdOrder = await collection.findOne({ _id: result.insertedId });
 

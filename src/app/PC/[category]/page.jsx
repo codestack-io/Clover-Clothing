@@ -2,9 +2,11 @@
 import CartButton from "@/components/Buttons/CartButton";
 import ViewDetails from "@/components/Buttons/ViewDetails"; // ✅ import the component
 import { useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useState,use} from "react";
+
 
 export default function CategoryPage({ params }) {
+  const { category } = use(params); 
   const searchParams = useSearchParams();
   const cottonType = searchParams.get("cottonType");
 
@@ -33,7 +35,7 @@ export default function CategoryPage({ params }) {
   return (
     <div className="p-8 bg-gray-50 min-h-screen">
       <h1 className="text-3xl md:text-4xl font-extrabold text-gray-900 mb-8">
-        {cottonType || params.category}
+        {cottonType || category}
       </h1>
 
       {products.length === 0 && (

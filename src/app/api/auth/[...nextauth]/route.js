@@ -1,6 +1,7 @@
 import NextAuth from "next-auth";
 import { dbConnect, Collection } from "@/app/lib/dbConnect";
 import CredentialsProvider from "next-auth/providers/credentials";
+import bcrypt from "bcryptjs";
 
 export const authOptions = {
   providers: [
@@ -18,6 +19,7 @@ export const authOptions = {
 
     // find user
     const user = await collection.findOne({ email });
+  console.log(user);
 
     if (!user) {
       throw new Error("User not found");
@@ -25,11 +27,17 @@ export const authOptions = {
 
     // compare password
     const isValid = await bcrypt.compare(password, user.password);
+console.log("Password valid:", isValid);
+  if (!isValid) {
+  throw new Error("Invalid password");
+}
 
-    if (!isValid) {
-      throw new Error("Invalid password");
-    }
-        return null;
+// ✅ SUCCESS → return user
+return {
+  id: user._id.toString(),
+  email: user.email,
+  name: user.name || "User",
+};
       },
       
     }),

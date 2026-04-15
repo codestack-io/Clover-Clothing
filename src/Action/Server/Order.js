@@ -31,6 +31,11 @@ export const createOrder = async (payload) => {
 
   const result = await orderCollection.insertOne(newOrder);
   if (!result.insertedId) return { success: false };
+  // ✅ CLEAR CART AFTER ORDER CREATED
+const cartCollection = await dbConnect(Collection.CART);
+await cartCollection.deleteMany({ email: user.email });
+
+
 
   // Update sold count
   const productCollection = await dbConnect(Collection.PRODUCTS);

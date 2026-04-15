@@ -4,7 +4,6 @@ import { authOptions } from "@/app/lib/authOptions";
 import { ObjectId } from "mongodb";
 import { getServerSession } from "next-auth";
 
-import { cache, } from "react";
 
 const { dbConnect, Collection } = require("@/app/lib/dbConnect")
 
@@ -62,7 +61,7 @@ const query = { email: user?.email, productId, size };
     return { success: result.acknowledged };
   }
 };
-export const getCart = cache(async () =>{
+export const getCart = (async () =>{
     const {user} = (await getServerSession(authOptions))|| {} ;
     if(!user) return [];
      
