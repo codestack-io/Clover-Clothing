@@ -133,43 +133,7 @@ export default function Cart({ cartItems = [] }) {
   Confirm Order
 </button>
 
-        {/* Payment Modal
-        {isModalOpen && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-            <div className="bg-white rounded-xl shadow-lg p-6 w-80">
-              <h2 className="text-xl font-bold mb-4 text-gray-800">
-                Choose Payment Method
-              </h2>
-
-              <div className="flex flex-col gap-3">
-                {["Bkash", "Nagad", "Stripe", "Cash"].map((method) => (
-                  <button
-                    key={method}
-                    onClick={() => handlePaymentClick(method)}
-                    className={`w-full py-2 rounded-lg font-medium text-white transition ${
-                      method === "Stripe"
-                        ? "bg-blue-600 hover:bg-blue-700"
-                        : method === "Bkash"
-                        ? "bg-red-500 hover:bg-red-600"
-                        : method === "Nagad"
-                        ? "bg-purple-600 hover:bg-purple-700"
-                        : "bg-gray-600 hover:bg-gray-700"
-                    }`}
-                  >
-                    {method === "Cash" ? "Cash on Delivery" : method}
-                  </button>
-                ))}
-              </div>
-
-              <button
-                onClick={() => setIsModalOpen(false)}
-                className="mt-4 text-gray-500 hover:text-gray-700 w-full"
-              >
-                Cancel
-              </button>
-            </div>
-          </div>
-        )} */}
+      
       </div>
     </div>
   );
