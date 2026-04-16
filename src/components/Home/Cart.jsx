@@ -127,7 +127,7 @@ export default function Cart({ cartItems = [] }) {
 
         {/* Confirm Order Button */}
       <button
-  onClick={() => router.push("/CheckOut")}
+  onClick={() => router.push("/checkOut")}
   className="block w-full mt-6 bg-green-600 text-white py-3 rounded-lg font-semibold hover:bg-green-700 transition"
 >
   Confirm Order

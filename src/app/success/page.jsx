@@ -1,5 +1,5 @@
 "use client";
-
+import { clearCart } from "@/Action/Server/cart"; 
 import { useState, useEffect } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import Swal from "sweetalert2";
@@ -58,9 +58,7 @@ export default function Success() {
           setOrder(orderData.order);
 
           // 🔥 CLEAR CART HERE
-          await fetch("/api/cart/clear", {
-            method: "DELETE",
-          });
+        await clearCart();
 
           // 🔥 FORCE UI REFRESH
           router.refresh();

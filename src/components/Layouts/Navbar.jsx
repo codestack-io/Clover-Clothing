@@ -89,16 +89,16 @@ const Navbar = () => {
               <h3 className="font-semibold text-gray-900 mb-3">Premium Cotton</h3>
               <ul className="space-y-2 text-sm">
                 <li>
-                  <Link href="/PC/premium?cottonType=Soft Cotton">Soft Cotton</Link>
+                  <Link href="/pc/premium?cottonType=Soft Cotton">Soft Cotton</Link>
                 </li>
                 <li>
-                  <Link href="/PC/premium?cottonType=Light Cotton">Light Cotton</Link>
+                  <Link href="/pc/premium?cottonType=Light Cotton">Light Cotton</Link>
                 </li>
                 <li>
-                  <Link href="/PC/premium?cottonType=Silk Cotton">Silk Cotton</Link>
+                  <Link href="/pc/premium?cottonType=Silk Cotton">Silk Cotton</Link>
                 </li>
                 <li>
-                  <Link href="/PC/premium?cottonType=Handloom Cotton">Handloom Cotton</Link>
+                  <Link href="/pc/premium?cottonType=Handloom Cotton">Handloom Cotton</Link>
                 </li>
               </ul>
             </div>
@@ -182,7 +182,7 @@ const Navbar = () => {
 
       {/* Right Side Icons */}
       <div className="navbar-end space-x-4 hidden lg:flex">
-        <Link href={"/Cart"} className="btn btn-ghost">
+        <Link href={"/cart"} className="btn btn-ghost">
           <IoMdCart />
         </Link>
         <AuthButtons />
@@ -193,7 +193,7 @@ const Navbar = () => {
         <div className="lg:hidden absolute top-full left-0 w-full bg-gray-200 shadow-md z-50">
           <ul className="flex flex-col p-4 gap-2">{navLinks}</ul>
           <div className="flex items-center gap-4 px-4 mt-2">
-            <Link href={"/Cart"} className="btn btn-ghost">
+            <Link href={"/cart"} className="btn btn-ghost">
               <IoMdCart />
             </Link>
             <AuthButtons />

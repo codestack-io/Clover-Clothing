@@ -10,7 +10,7 @@ const ProductCard = ({ product }) => {
 
       {/* Product Image */}
       <figure className="relative overflow-hidden">
-        <Link href={`/Products/${product._id}`}>
+        <Link href={`/products/${product._id}`}>
           <Image
             src={product.image}
             alt={product.name}

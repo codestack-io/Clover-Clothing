@@ -2,7 +2,7 @@ export const dynamic = "force-dynamic";
 import CheckOutFrom from '../../components/Home/CheckoutFrom';
 import { getCart } from '@/Action/Server/cart';
 
-const CheckOutPage = async () => {
+const checkOutPage = async () => {
   let cartItems = [];
   try {
     cartItems = await getCart();
@@ -31,4 +31,4 @@ const CheckOutPage = async () => {
   );
 };
 
-export default CheckOutPage;
+export default checkOutPage;
