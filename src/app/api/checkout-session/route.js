@@ -1,13 +1,13 @@
 import { NextResponse } from "next/server";
 import { stripe } from "@/lib/stripe";
-import { getServerSession } from "next-auth/next";
+import { getserverSession } from "next-auth/next";
 import { authOptions } from "@/app/lib/authOptions";
 import { dbConnect, Collection } from "@/app/lib/dbConnect";
 import { ObjectId } from "mongodb";
 
 export async function POST(req) {
   try {
-    const session = await getServerSession(authOptions);
+    const session = await getserverSession(authOptions);
     if (!session?.user) {
       return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
     }
@@ -52,7 +52,7 @@ export async function POST(req) {
   } catch (err) {
     console.error("🔥 Stripe Error:", err);
     return NextResponse.json(
-      { error: err.message || "Internal Server Error" },
+      { error: err.message || "Internal server Error" },
       { status: 500 }
     );
   }

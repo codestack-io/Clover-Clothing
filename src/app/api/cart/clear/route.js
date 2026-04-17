@@ -1,11 +1,11 @@
 import { NextResponse } from "next/server";
 import { dbConnect, Collection } from "@/app/lib/dbConnect";
-import { getServerSession } from "next-auth";
+import { getserverSession } from "next-auth";
 import { authOptions } from "@/app/lib/authOptions";
 
 export async function DELETE() {
   try {
-    const session = await getServerSession(authOptions);
+    const session = await getserverSession(authOptions);
 
     if (!session?.user?.email) {
       return NextResponse.json(

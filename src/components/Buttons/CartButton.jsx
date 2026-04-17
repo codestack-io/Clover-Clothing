@@ -3,7 +3,7 @@
 import { usePathname, useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import React, { useState } from "react";
-import { handleCart } from "@/Action/Server/cart";
+import { handleCart } from "@/action/server/cart";
 import Swal from "sweetalert2";
 
 const CartButton = ({ product }) => {

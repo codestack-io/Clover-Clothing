@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter,useSearchParams } from "next/navigation";
-import { postuser } from "@/Action/Server/auth";
+import { postuser } from "@/action/server/auth";
 import { signIn } from "next-auth/react";  
 import SocialButton from "@/components/Buttons/SocialButton";
 import Swal from "sweetalert2";

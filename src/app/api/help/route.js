@@ -1,12 +1,12 @@
 import { NextResponse } from "next/server";
 import { dbConnect, Collection } from "@/app/lib/dbConnect";
-import { getServerSession } from "next-auth";
+import { getserverSession } from "next-auth";
 import { authOptionss } from "@/app/lib/nextauth";
 
 // GET all questions (admin) or user-specific questions
 export async function GET(req) {
   try {
-    const session = await getServerSession(authOptionss);
+    const session = await getserverSession(authOptionss);
 
     if (!session) {
       return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
@@ -28,14 +28,14 @@ export async function GET(req) {
     return NextResponse.json(questions);
   } catch (error) {
     console.error("GET ERROR:", error);
-    return NextResponse.json({ message: "Server error" }, { status: 500 });
+    return NextResponse.json({ message: "server error" }, { status: 500 });
   }
 }
 
 // PATCH to answer a question (admin only)
 export async function PATCH(req, { params }) {
   try {
-    const session = await getServerSession(authOptionss);
+    const session = await getserverSession(authOptionss);
     if (!session || session.user.role !== "admin") {
       return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
     }
@@ -59,6 +59,6 @@ export async function PATCH(req, { params }) {
     return NextResponse.json({ message: "Answered successfully" });
   } catch (error) {
     console.error("PATCH ERROR:", error);
-    return NextResponse.json({ message: "Server error" }, { status: 500 });
+    return NextResponse.json({ message: "server error" }, { status: 500 });
   }
 }

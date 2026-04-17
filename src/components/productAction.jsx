@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import SizeSelector from "./SizeSelector/sizeSelector";
 import CartButton from "./Buttons/CartButton";
 
-const ProductActions = ({ product }) => {
+const Productactions = ({ product }) => {
   const [selectedSize, setSelectedSize] = useState(null);
 
   return (
@@ -23,4 +23,4 @@ const ProductActions = ({ product }) => {
   );
 };
 
-export default ProductActions;
+export default Productactions;

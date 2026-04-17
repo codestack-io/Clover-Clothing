@@ -1,4 +1,4 @@
-import { MongoClient, ServerApiVersion } from "mongodb";
+import { MongoClient, serverApiVersion } from "mongodb";
 
 const uri = process.env.MONGODB_URI;
 const dbname = process.env.DBNAME;
@@ -22,7 +22,7 @@ if (!uri) {
 if (!global._mongoClientPromise) {
   client = new MongoClient(uri, {
     serverApi: {
-      version: ServerApiVersion.v1,
+      version: serverApiVersion.v1,
       strict: true,
       deprecationErrors: true,
     },
