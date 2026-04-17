@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter,useSearchParams } from "next/navigation";
-import { postuser } from "@/action/server/auth";
+import { postUser } from "@/action/server/auth";
 import { signIn } from "next-auth/react";  
 import SocialButton from "@/components/Buttons/SocialButton";
 import Swal from "sweetalert2";
@@ -24,7 +24,7 @@ export default function RegisterPage() {
 
   const payload = { name, email, password };
 
-    const registerResult = await postuser(payload);
+    const registerResult = await postUser(payload);
     
 
     if (registerResult ?.insertedId) {

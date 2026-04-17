@@ -3,11 +3,11 @@ import { NextResponse } from "next/server";
 import { ObjectId } from "mongodb"; 
 
 import { authOptions } from "@/app/lib/authOptions";
-import { getserverSession } from "next-auth";
+import { getServerSession } from "next-auth";
 // GET ORDERS
 export async function GET() {
   try {
-    const session = await getserverSession(authOptions);
+    const session = await getServerSession(authOptions);
 
     if (!session) {
       return NextResponse.json({ success: false, error: "Unauthorized" }, { status: 401 });

@@ -1,12 +1,12 @@
 import { NextResponse } from "next/server";
 import { dbConnect, Collection } from "@/app/lib/dbConnect";
-import { getserverSession } from "next-auth";
+import { getServerSession } from "next-auth";
 import { authOptionss } from "@/app/lib/nextauth";
 
 // GET all questions (admin) or user-specific questions
 export async function GET(req) {
   try {
-    const session = await getserverSession(authOptionss);
+    const session = await getServerSession(authOptionss);
 
     if (!session) {
       return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
@@ -35,7 +35,7 @@ export async function GET(req) {
 // PATCH to answer a question (admin only)
 export async function PATCH(req, { params }) {
   try {
-    const session = await getserverSession(authOptionss);
+    const session = await getServerSession(authOptionss);
     if (!session || session.user.role !== "admin") {
       return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
     }

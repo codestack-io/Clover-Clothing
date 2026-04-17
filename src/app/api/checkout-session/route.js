@@ -1,13 +1,13 @@
 import { NextResponse } from "next/server";
 import { stripe } from "@/lib/stripe";
-import { getserverSession } from "next-auth/next";
+import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/app/lib/authOptions";
 import { dbConnect, Collection } from "@/app/lib/dbConnect";
 import { ObjectId } from "mongodb";
 
 export async function POST(req) {
   try {
-    const session = await getserverSession(authOptions);
+    const session = await getServerSession(authOptions);
     if (!session?.user) {
       return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
     }

@@ -1,6 +1,6 @@
 "use server";
 
-import { getserverSession } from "next-auth";
+import { getServerSession } from "next-auth";
 import { authOptions } from "@/app/lib/authOptions";
 import { sendEmail } from "../../app/lib/sendEmail";
 import { clearCart } from "@/action/server/cart"; // ✅ single import
