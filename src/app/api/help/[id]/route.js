@@ -1,37 +1,66 @@
 import { NextResponse } from "next/server";
 import { dbConnect, Collection } from "@/app/lib/dbConnect";
-import { ObjectId } from "mongodb";
+import { getServerSession } from "next-auth";
+import { authOptionss } from "@/app/lib/nextauth";
 
+// GET all questions (admin) or user-specific questions
+export async function POST(req) {
+  try {
+    const session = await getServerSession(authOptionss);
+
+    if (!session) {
+      return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+    }
+
+    const { question } = await req.json();
+
+    if (!question) {
+      return NextResponse.json({ message: "Question required" }, { status: 400 });
+    }
+
+    const collection = await dbConnect(Collection.HELP);
+
+    await collection.insertOne({
+      question,
+      email: session.user.email,
+      status: "pending",
+      createdAt: new Date(),
+    });
+
+    return NextResponse.json({ message: "Saved successfully" });
+  } catch (error) {
+    console.error("POST ERROR:", error);
+    return NextResponse.json({ message: "server error" }, { status: 500 });
+  }
+}
+
+// PATCH to answer a question (admin only)
 export async function PATCH(req, { params }) {
   try {
-    const { id } = await params; 
+    const session = await getServerSession(authOptionss);
+    if (!session || session.user.role !== "admin") {
+      return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+    }
+
+    const { id } = params; // dynamic route /api/help/[id]
     const { answer } = await req.json();
 
-    console.log("ID:", id);
-    console.log("Answer:", answer);
+    if (!answer) {
+      return NextResponse.json({ message: "Answer required" }, { status: 400 });
+    }
 
     const collection = await dbConnect(Collection.HELP);
 
     const result = await collection.updateOne(
-      { _id: new ObjectId(id) }, 
-      {
-        $set: {
-          answer: answer,
-          status: "answered",
-        },
-      }
+      { _id: new ObjectId(id) },
+      { $set: { answer, status: "answered" } }
     );
 
-    console.log("Matched:", result.matchedCount);
-    console.log("Modified:", result.modifiedCount);
+    console.log("Update Result:", result);
 
-    return NextResponse.json({ message: "Updated", result });
-
+    return NextResponse.json({ message: "Answered successfully" });
   } catch (error) {
     console.error("PATCH ERROR:", error);
-    return NextResponse.json(
-      { message: "Error updating" },
-      { status: 500 }
-    );
+    return NextResponse.json({ message: "server error" }, { status: 500 });
   }
 }

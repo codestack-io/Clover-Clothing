@@ -4,7 +4,7 @@ import { getServerSession } from "next-auth";
 import { authOptionss } from "@/app/lib/nextauth";
 
 // GET all questions (admin) or user-specific questions
-export async function GET(req) {
+export async function POST(req) {
   try {
     const session = await getServerSession(authOptionss);
 
@@ -12,22 +12,24 @@ export async function GET(req) {
       return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
     }
 
-    const collection = await dbConnect(Collection.HELP);
+    const { question } = await req.json();
 
-    let query = {};
-    if (session.user.role !== "admin") {
-      // normal user sees only their questions
-      query.email = session.user.email;
+    if (!question) {
+      return NextResponse.json({ message: "Question required" }, { status: 400 });
     }
 
-    const questions = await collection
-      .find(query)
-      .sort({ createdAt: -1 })
-      .toArray();
+    const collection = await dbConnect(Collection.HELP);
 
-    return NextResponse.json(questions);
+    await collection.insertOne({
+      question,
+      email: session.user.email,
+      status: "pending",
+      createdAt: new Date(),
+    });
+
+    return NextResponse.json({ message: "Saved successfully" });
   } catch (error) {
-    console.error("GET ERROR:", error);
+    console.error("POST ERROR:", error);
     return NextResponse.json({ message: "server error" }, { status: 500 });
   }
 }

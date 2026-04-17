@@ -37,7 +37,7 @@ export async function POST(req) {
     }));
 
    const origin =
-  process.env.NEXT_PUBLIC_BASE_URL ||
+  process.env.NEXT_PUBLIC_BASE_VERCEL_URL ||
   (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "");
 
     const stripeSession = await stripe.checkout.sessions.create({
