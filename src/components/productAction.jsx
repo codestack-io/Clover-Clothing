@@ -4,23 +4,23 @@ import React, { useState } from "react";
 import SizeSelector from "./SizeSelector/sizeSelector";
 import CartButton from "./Buttons/CartButton";
 
-const Productactions = ({ product }) => {
+const ProductActions = ({ product }) => {
   const [selectedSize, setSelectedSize] = useState(null);
 
   return (
     <div>
-      {/* ✅ Size নির্বাচন */}
+      {/* ✅ Size /}
       <SizeSelector onSelect={setSelectedSize} />
 
-      {/* ✅ CartButton এখানে থাকবে */}
+      {/* ✅ CartButton */}
       <CartButton
         product={{
           ...product,
-          size: selectedSize, // ✅ size pass হচ্ছে
+          size: selectedSize, // ✅ size pass
         }}
       />
     </div>
   );
 };
 
-export default Productactions;
+export default ProductActions;

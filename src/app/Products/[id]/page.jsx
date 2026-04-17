@@ -3,7 +3,7 @@ import CartButton from "@/components/Buttons/CartButton";
 import ViewDetails from "@/components/Buttons/ViewDetails";
 import Image from "next/image";
 import React from "react";
-import Productactions from "@/components/productaction";
+import ProductActions from "@/components/productAction";
 
 import Link from "next/link";
 
@@ -154,7 +154,7 @@ const ProductDetails = async ({ params }) => {
             </div>
           )}
 <div>
-  <Productactions product={{ ...products, id: products?._id.toString() }} />
+  <ProductActions product={{ ...products, id: products?._id.toString() }} />
 </div>
 
           {/* Dedicated Compare button */}

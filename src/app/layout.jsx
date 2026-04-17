@@ -4,7 +4,7 @@ import Navbar from "@/components/Layouts/Navbar";
 import Footer from "@/components/Layouts/Footer";
 import TopBar from "@/components/TopBar/TopBar";
 import NextAuthProvider from "@/provider/NextAuthProvider";
-import { CartProvider } from "../context/Cartcontext";
+import { CartProvider } from "../context/CartContext";
 import { cn } from "@/lib/utils";
 
 const inter = Inter({subsets:['latin'],variable:'--font-sans'});
