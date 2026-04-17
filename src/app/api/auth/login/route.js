@@ -13,7 +13,7 @@ export async function POST(req) {
       );
     }
 
-    const collection = await dbConnect(Collection.USER);
+    const collection = await dbConnect(Collection.USERS);
     const user = await collection.findOne({ email });
 
     if (!user) {

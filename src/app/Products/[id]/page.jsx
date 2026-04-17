@@ -1,4 +1,4 @@
-import { getSingleProduct } from "@/action/server/Product";
+import { getSingleProduct } from "@/action/server/product";
 import CartButton from "@/components/Buttons/CartButton";
 import ViewDetails from "@/components/Buttons/ViewDetails";
 import Image from "next/image";

@@ -4,7 +4,7 @@ import { Collection } from "../../app/lib/dbConnect";
 import { dbConnect } from "../../app/lib/dbConnect";
 import bcrypt from "bcryptjs";
 
-export const postuser = async (payload) => {
+export const postUser = async (payload) => {
   const { email, password, name } = payload;
 
   // Validate payload
@@ -47,7 +47,7 @@ export const postuser = async (payload) => {
       return { success: false, message: "Failed to insert user" };
     }
   } catch (error) {
-    console.error("Error in postuser:", error);
+    console.error("Error in postUser:", error);
     return { success: false, message: "Internal server error" };
   }
 };
