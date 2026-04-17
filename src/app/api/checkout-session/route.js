@@ -36,7 +36,9 @@ export async function POST(req) {
       quantity: item.quantity,
     }));
 
-    const origin = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
+   const origin =
+  process.env.NEXT_PUBLIC_BASE_URL ||
+  (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "");
 
     const stripeSession = await stripe.checkout.sessions.create({
       payment_method_types: ["card"],
