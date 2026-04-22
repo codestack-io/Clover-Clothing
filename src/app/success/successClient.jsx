@@ -96,7 +96,7 @@ export default function SuccessClient() {
   }, [session_id, method, orderId, router]);
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-50 p-6">
+    <div className="relative flex flex-col items-center justify-center min-h-screen p-6 overflow-hidden bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 animate-gradient">
       <h1 className="text-2xl font-semibold text-gray-800 mb-6">
         Processing your payment...
       </h1>
