@@ -4,15 +4,15 @@ import React, { useState } from "react";
 import SizeSelector from "./SizeSelector/sizeSelector";
 import CartButton from "./Buttons/CartButton";
 
-const ProductActions = ({ product }) => {
+const productActions = ({ product }) => {
   const [selectedSize, setSelectedSize] = useState(null);
 
   return (
     <div>
-      {/* ✅ Size /}
+      { /* ✅ Size */ }
       <SizeSelector onSelect={setSelectedSize} />
 
-      {/* ✅ CartButton */}
+      { /* ✅ CartButton */ }
       <CartButton
         product={{
           ...product,
@@ -23,4 +23,4 @@ const ProductActions = ({ product }) => {
   );
 };
 
-export default ProductActions;
+export default productActions;

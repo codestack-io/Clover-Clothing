@@ -19,9 +19,9 @@ export async function POST(req) {
       return NextResponse.json({ error: "Cart is empty" }, { status: 400 });
     }
 
-    if (!orderId) {
-      return NextResponse.json({ error: "Order ID is required" }, { status: 400 });
-    }
+    if (!ObjectId.isValid(orderId)) {
+  return NextResponse.json({ error: "Invalid Order ID" }, { status: 400 });
+}
 
     const collection = await dbConnect(Collection.ORDER);
     const order = await collection.findOne({ _id: new ObjectId(orderId) });
@@ -38,7 +38,7 @@ export async function POST(req) {
 
    const origin =
   process.env.NEXT_PUBLIC_BASE_VERCEL_URL ||
-  (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "");
+  (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "http://localhost:3000");
 
     const stripeSession = await stripe.checkout.sessions.create({
       payment_method_types: ["card"],
@@ -49,6 +49,9 @@ export async function POST(req) {
       cancel_url: `${origin}/checkout`,
       customer_email: session.user.email,
     });
+    console.log("Origin:", origin);
+    console.log("Stripe Session:", stripeSession);
+
 
     return NextResponse.json({ url: stripeSession.url });
   } catch (err) {

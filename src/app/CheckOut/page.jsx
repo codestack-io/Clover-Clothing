@@ -1,5 +1,5 @@
 export const dynamic = "force-dynamic";
-import CheckOutFrom from '../../components/Home/CheckoutFrom';
+import CheckoutForm from '../../components/Home/CheckoutForm';
 import { getCart } from '@/action/server/cart';
 
 const checkoutPage = async () => {
@@ -26,7 +26,7 @@ const checkoutPage = async () => {
   return (
     <div>
       <h2 className="text-4xl font-bold mb-5">Checkout Page</h2>
-      <CheckOutFrom cartItems={formattedItems} />
+      <CheckoutForm cartItems={formattedItems} />
     </div>
   );
 };

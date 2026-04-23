@@ -2,7 +2,7 @@
 import { getToken } from "next-auth/jwt"; // correct; 
 import { NextResponse } from "next/server";
 
-const privateRoute = ["/dashboard", "/Cart", "/CheckOutFrom"];
+const privateRoute = ["/dashboard", "/Cart", "/CheckoutFrom"];
 
 export async function proxy(req) {
   try {
@@ -26,5 +26,5 @@ export async function proxy(req) {
 
 // Apply middleware to specific paths
 export const config = {
-  matcher: ["/dashboard/:path*", "/Cart/:path*", "/CheckOutFrom/:path*"],
+  matcher: ["/dashboard/:path*", "/Cart/:path*", "/CheckoutFrom/:path*"],
 };

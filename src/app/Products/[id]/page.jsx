@@ -8,12 +8,12 @@ import ProductActions from "@/components/productAction";
 import Link from "next/link";
 
 export async function generateMetadata({ params }) {
-  const { id } = await params;
+ const {id} = await params;
    
   
-  const product = await getSingleProduct(id);
+  const products = await getSingleProduct(id);
 
-  if (!product) {
+  if (!products) {
     return {
       title: "Product Not Found",
       robots: {
@@ -22,7 +22,8 @@ export async function generateMetadata({ params }) {
       },
     };
   }
-
+  
+  
   const {
     name,
     price,
@@ -30,7 +31,7 @@ export async function generateMetadata({ params }) {
     sold,
     image,
     discount = 0,
-  } = product;
+  } = products;
 
   const discountPrice = price - (price * discount) / 100;
 
@@ -41,6 +42,8 @@ export async function generateMetadata({ params }) {
       ? `Now available for ৳${discountPrice.toFixed(0)} (${discount}% OFF).`
       : `Available now for ৳${price}.`
   } Sold: ${sold} pieces. Order now!`;
+
+  console.log("PRODUCT:", products);
 
   return {
     title: `${name} | Your Store Name`,
@@ -85,7 +88,7 @@ export async function generateMetadata({ params }) {
 }
 
 const ProductDetails = async ({ params }) => {
-  const { id } = await params;
+ const {id} = await params;
   const products = await getSingleProduct(id);
 
   if (!products) {
@@ -98,11 +101,11 @@ const ProductDetails = async ({ params }) => {
     );
   }
 
-  const {
-    price,
-    sold = 0,
-    measurements = {}, // add measurements object
-  } = products;
+  // const {
+  //   price,
+  //   sold = 0,
+  //   measurements = {}, // add measurements object
+  // } = products;
 
   return (
     <div className="max-w-6xl mx-auto px-6 py-12 space-y-12">
@@ -137,24 +140,9 @@ const ProductDetails = async ({ params }) => {
             </p>
           </div>
 
-          {/* Measurement Scale Section */}
-          {measurements && Object.keys(measurements).length > 0 && (
-            <div className="mt-6">
-              <h2 className="text-xl font-semibold mb-2">Measurements</h2>
-              <table className="w-full text-left border border-gray-200 rounded-lg">
-                <tbody>
-                  {Object.entries(measurements).map(([key, value]) => (
-                    <tr key={key} className="border-b border-gray-200">
-                      <td className="py-2 px-4 font-medium capitalize">{key.replace(/_/g, ' ')}</td>
-                      <td className="py-2 px-4">{value} cm</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          )}
+    
 <div>
-  <ProductActions product={{ ...products, id: products?._id.toString() }} />
+  <ProductActions product={{ ...products, id: products?._id?.toString?.() || products?._id }} />
 </div>
 
           {/* Dedicated Compare button */}
