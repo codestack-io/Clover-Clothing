@@ -1,7 +1,6 @@
 "use server"
-
-import { authOptions } from "@/app/lib/authOptions";
 import { ObjectId } from "mongodb";
+import { authOptions } from "@/app/lib/authOptions";
 import { getServerSession } from "next-auth";
 
 
@@ -80,15 +79,45 @@ export const getCart = (async () =>{
 
   return cart;
 })
+export const placeOrderAndUpdateSold = async () => {
+  const { user } = (await getServerSession(authOptions)) || {};
+  if (!user) return { success: false };
+
+  const cartCollection = await dbConnect(Collection.CART);
+  const productCollection = await dbConnect(Collection.PRODUCTS);
+
+  const cartItems = await cartCollection.find({ email: user.email }).toArray();
+
+  if (!cartItems.length) {
+    return { success: false, message: "Cart is empty" };
+  }
+
+  for (const item of cartItems) {
+    await productCollection.updateOne(
+      { _id: new ObjectId(item.productId) },
+      {
+        $inc: {
+          sold: item.quantity, // ✅ THIS is your sold count fix
+        },
+      }
+    );
+  }
+  console.log(item.productId);
+
+  // clear cart after order
+  await cartCollection.deleteMany({ email: user.email });
+
+  return { success: true };
+};
 export const deleteItemsFromCart = async(id)=>{
     
   const cartCollection = await dbConnect(Collection.CART);
     const {user} = (await getServerSession(authOptions))|| {} ;
     if(!user) return {success:false};
 
-    if(id?.length !=24){
-        return {success:false};
-    }
+    if (!ObjectId.isValid(id)) {
+  return { success: false };
+}
 
     const query = {_id: new ObjectId(id), email: user?.email}
 
