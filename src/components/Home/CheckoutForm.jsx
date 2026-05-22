@@ -208,13 +208,13 @@ const CheckoutForm = ({ cartItems }) => {
             <span>
               {item.title} x {item.quantity}
             </span>
-            <span>${item.price * item.quantity}</span>
+            <span>৳ {item.price * item.quantity}</span>
           </div>
         ))}
 
         <div className="flex justify-between font-semibold mt-4">
           <span>Total</span>
-          <span>${totalPrice}</span>
+          <span>৳ {totalPrice}</span>
         </div>
       </div>
     </div>

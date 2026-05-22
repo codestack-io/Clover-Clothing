@@ -2,7 +2,7 @@
 
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay, Navigation, Pagination,EffectFade } from "swiper/modules";
-
+import Link from "next/link";
 import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
@@ -46,7 +46,9 @@ export default function HeroCarousel() {
         <h1 className="text-4xl md:text-6xl font-bold mb-6">
           Discover Your <span className="text-green-400">Style</span>
         </h1>
-        <button className="bg-green-500 hover:bg-green-600 transition-all duration-300 px-8 py-3 rounded-full text-lg font-semibold shadow-lg hover:scale-105"> Shop Now </button>
+        <Link href="/products" className="bg-green-500 hover:bg-green-600 transition-all duration-300 px-8 py-3 rounded-full text-lg font-semibold shadow-lg hover:scale-105">
+          Shop Now
+        </Link>
       </div>
             </div>
           </SwiperSlide>

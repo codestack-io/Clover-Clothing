@@ -73,32 +73,36 @@ const Products = ({ limit }) => {
       {/* Layout Switcher */}
       <LayoutSwitcher layout={layout} setLayout={setLayout} />
 
-      {/* SORT BAR */}
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-10 border-b pb-6">
-        {/* Product Count */}
-        <p className="text-gray-600 font-medium">
-          {products.length} Products
-        </p>
+{/* SORT BAR */}
+<div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6 mb-10 border-b pb-6">
 
-        {/* Price Slider */}
-        <div className="flex flex-col w-full md:w-80">
-          <div className="flex justify-between text-sm text-gray-500 mb-2">
-            <span>Price</span>
-            <span>৳{priceRange[0]} - ৳{priceRange[1]}</span>
-          </div>
+  {/* Product Count */}
+  <p className="text-gray-600 font-medium text-center md:text-left">
+    {products.length} Products
+  </p>
 
-          <input
-            type="range"
-            min="0"
-            max="10000"
-            value={priceRange[1]}
-            onChange={(e) =>
-              setPriceRange([priceRange[0], Number(e.target.value)])
-            }
-            className="w-full accent-black cursor-pointer"
-          />
-        </div>
-      </div>
+  {/* Price Slider */}
+  <div className="w-full md:w-80">
+    
+    <div className="flex justify-between text-sm text-gray-500 mb-2">
+      <span>Price</span>
+      <span>
+        ৳{priceRange[0]} - ৳{priceRange[1]}
+      </span>
+    </div>
+
+    <input
+      type="range"
+      min="0"
+      max="10000"
+      value={priceRange[1]}
+      onChange={(e) =>
+        setPriceRange([priceRange[0], Number(e.target.value)])
+      }
+      className="w-full accent-black cursor-pointer"
+    />
+  </div>
+</div>
 
       {/* PRODUCTS GRID */}
       <div className={`grid gap-6 ${getGridCols()}`}>
