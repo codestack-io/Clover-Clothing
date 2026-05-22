@@ -46,11 +46,18 @@ export const createOrder = async (payload) => {
 
 console.log("UPDATED SOLD:", result);
 
-  await productCollection.bulkWrite(operations);
+  
 
   // 3. Clear cart (ONLY ONCE)
   const cartCollection = await dbConnect(Collection.CART);
   await cartCollection.deleteMany({ email: user.email });
+   
+  // 4. Test email first
+ await sendEmail({
+   to: "stuacc486@gmail.com",
+   subject: "Testing Email",
+   html: "<h1>Email Works</h1>",
+ });
 
   // 4. Send invoice
   const insertedOrder = {
