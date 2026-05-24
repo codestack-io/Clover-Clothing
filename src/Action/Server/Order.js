@@ -1,7 +1,7 @@
 "use server";
 
 import { ObjectId } from "mongodb";
-import { sendEmail } from "../../app/lib/sendEmail";
+import { sendEmail } from "@/app/lib/sendEmail";
 import { generateInvoiceHTML } from "../../app/lib/orderInvoice";
 
 const { dbConnect, Collection } = require("@/app/lib/dbConnect");
@@ -52,25 +52,20 @@ console.log("UPDATED SOLD:", result);
   const cartCollection = await dbConnect(Collection.CART);
   await cartCollection.deleteMany({ email: user.email });
    
-  // 4. Test email first
- await sendEmail({
-   to: "stuacc486@gmail.com",
-   subject: "Testing Email",
-   html: "<h1>Email Works</h1>",
- });
+ 
 
-  // 4. Send invoice
-  const insertedOrder = {
-    ...newOrder,
-    _id: result.insertedId.toString(),
-    createdAt: newOrder.createdAt.toISOString(),
-  };
+  // // 4. Send invoice
+  // const insertedOrder = {
+  //   ...newOrder,
+  //   _id: result.insertedId.toString(),
+  //   createdAt: newOrder.createdAt.toISOString(),
+  // };
 
-  await sendEmail({
-    to: user.email,
-    subject: "Your Order Invoice",
-    html: generateInvoiceHTML(insertedOrder),
-  });
+  // await sendEmail({
+  //   to: user.email,
+  //   subject: "Your Order Invoice",
+  //   html: generateInvoiceHTML(insertedOrder),
+  // });
 
   return { success: true, order: insertedOrder };
 };

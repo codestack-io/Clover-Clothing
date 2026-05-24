@@ -3,11 +3,11 @@ const nextConfig = {
     remotePatterns: [
       {
         protocol: "https",
-        hostname: "images.pexels.com",
+        hostname: "cdn.imageurlgenerator.com",
       },
       {
         protocol: "https",
-        hostname: "image2url.com", // <-- add this line
+        hostname: "image2url.com",
       },
     ],
   },
