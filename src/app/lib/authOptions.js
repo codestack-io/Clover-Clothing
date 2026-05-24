@@ -81,22 +81,21 @@ export const authOptions = {
     },
 
     // ✅ Add role + email to token
-    async jwt({ token, user }) {
-      if (user) {
-        token.role = user.role || "user";
-        token.email = user.email;
-      }
-      return token;
-    },
+     async jwt({ token, user }) {
+    if (user) {
+      token.id = user._id?.toString();
+      token.role = user.role;
+    }
 
-    // ✅ Expose role in session
-    async session({ session, token }) {
-      if (session?.user) {
-        session.user.role = token.role;
-        session.user.email = token.email;
-      }
-      return session;
-    },
+    return token;
+  },
+
+  async session({ session, token }) {
+    session.user.id = token.id;
+    session.user.role = token.role;
+
+    return session;
+  },
   },
 
   session: {

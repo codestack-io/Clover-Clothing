@@ -1,66 +1,78 @@
 import { NextResponse } from "next/server";
-import { dbConnect, Collection } from "@/app/lib/dbConnect";
+import { ObjectId } from "mongodb";
 import { getServerSession } from "next-auth";
-import { authOptionss } from "@/app/lib/nextauth";
+import { authOptions } from "@/app/lib/authOptions";
+import { dbConnect, Collection } from "@/app/lib/dbConnect";
 
-// GET all questions (admin) or user-specific questions
-export async function POST(req) {
-  try {
-    const session = await getServerSession(authOptionss);
-
-    if (!session) {
-      return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
-    }
-
-    const { question } = await req.json();
-
-    if (!question) {
-      return NextResponse.json({ message: "Question required" }, { status: 400 });
-    }
-
-    const collection = await dbConnect(Collection.HELP);
-
-    await collection.insertOne({
-      question,
-      email: session.user.email,
-      status: "pending",
-      createdAt: new Date(),
-    });
-
-    return NextResponse.json({ message: "Saved successfully" });
-  } catch (error) {
-    console.error("POST ERROR:", error);
-    return NextResponse.json({ message: "server error" }, { status: 500 });
-  }
-}
-
-// PATCH to answer a question (admin only)
+// PATCH /api/help/:id  (Admin only)
 export async function PATCH(req, { params }) {
   try {
-    const session = await getServerSession(authOptionss);
-    if (!session || session.user.role !== "admin") {
-      return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+    // 1. Check session
+    const session = await getServerSession(authOptions);
+
+    if (!session) {
+      return NextResponse.json(
+        { success: false, message: "Unauthorized" },
+        { status: 401 }
+      );
     }
 
-    const { id } = params; // dynamic route /api/help/[id]
-    const { answer } = await req.json();
-
-    if (!answer) {
-      return NextResponse.json({ message: "Answer required" }, { status: 400 });
+    // 2. Admin check
+    if (session.user.role !== "admin") {
+      return NextResponse.json(
+        { success: false, message: "Forbidden: Admin only" },
+        { status: 403 }
+      );
     }
 
+    // 3. Get request body
+    const body = await req.json();
+    const { answer } = body;
+
+    if (!answer || answer.trim() === "") {
+      return NextResponse.json(
+        { success: false, message: "Answer is required" },
+        { status: 400 }
+      );
+    }
+
+    // 4. DB connection
     const collection = await dbConnect(Collection.HELP);
 
+    // 5. Update question
     const result = await collection.updateOne(
-      { _id: new ObjectId(id) },
-      { $set: { answer, status: "answered" } }
+      { _id: new ObjectId(params.id) },
+      {
+        $set: {
+          answer,
+          status: "answered",
+          answeredAt: new Date(),
+        },
+      }
     );
 
-    console.log("Update Result:", result);
+    // 6. Check if document was found
+    if (result.matchedCount === 0) {
+      return NextResponse.json(
+        { success: false, message: "Question not found" },
+        { status: 404 }
+      );
+    }
 
-    return NextResponse.json({ message: "Answered successfully" });
+    // 7. Success response
+    return NextResponse.json({
+      success: true,
+      message: "Answer submitted successfully",
+    });
   } catch (error) {
-    console.error("PATCH ERROR:", error);
-    return NextResponse.json({ message: "server error" }, { status: 500 });
+    console.error("PATCH /api/help/[id] error:", error);
+
+    return NextResponse.json(
+      {
+        success: false,
+        message: "Internal Server Error",
+      },
+      { status: 500 }
+    );
   }
 }

@@ -1,66 +1,45 @@
-import { NextResponse } from "next/server";
-import { dbConnect, Collection } from "@/app/lib/dbConnect";
 import { getServerSession } from "next-auth";
-import { authOptionss } from "@/app/lib/nextauth";
+import { authOptions } from "@/app/lib/authOptions";
+import { dbConnect, Collection } from "@/app/lib/dbConnect";
 
-// GET all questions (admin) or user-specific questions
-export async function POST(req) {
-  try {
-    const session = await getServerSession(authOptionss);
+export async function GET() {
+  const session = await getServerSession(authOptions);
 
-    if (!session) {
-      return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
-    }
-
-    const { question } = await req.json();
-
-    if (!question) {
-      return NextResponse.json({ message: "Question required" }, { status: 400 });
-    }
-
-    const collection = await dbConnect(Collection.HELP);
-
-    await collection.insertOne({
-      question,
-      email: session.user.email,
-      status: "pending",
-      createdAt: new Date(),
-    });
-
-    return NextResponse.json({ message: "Saved successfully" });
-  } catch (error) {
-    console.error("POST ERROR:", error);
-    return NextResponse.json({ message: "server error" }, { status: 500 });
+  if (!session) {
+    return Response.json({ error: "Unauthorized" }, { status: 401 });
   }
+
+  const collection = await dbConnect(Collection.HELP);
+
+  const isAdmin = session.user.role === "admin";
+
+  const query = isAdmin
+    ? {}
+    : { userId: session.user.id };
+
+  const data = await collection.find(query).toArray();
+
+  return Response.json(data);
 }
+export async function POST(req) {
+  const session = await getServerSession(authOptions);
 
-// PATCH to answer a question (admin only)
-export async function PATCH(req, { params }) {
-  try {
-    const session = await getServerSession(authOptionss);
-    if (!session || session.user.role !== "admin") {
-      return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
-    }
-
-    const { id } = params; // dynamic route /api/help/[id]
-    const { answer } = await req.json();
-
-    if (!answer) {
-      return NextResponse.json({ message: "Answer required" }, { status: 400 });
-    }
-
-    const collection = await dbConnect(Collection.HELP);
-
-    const result = await collection.updateOne(
-      { _id: new ObjectId(id) },
-      { $set: { answer, status: "answered" } }
-    );
-
-    console.log("Update Result:", result);
-
-    return NextResponse.json({ message: "Answered successfully" });
-  } catch (error) {
-    console.error("PATCH ERROR:", error);
-    return NextResponse.json({ message: "server error" }, { status: 500 });
+  if (!session) {
+    return Response.json({ error: "Unauthorized" }, { status: 401 });
   }
+
+  const { question } = await req.json();
+
+  const collection = await dbConnect(Collection.HELP);
+
+  await collection.insertOne({
+    userId: session.user.id,
+    email: session.user.email,
+    question,
+    answer: "",
+    status: "pending",
+    createdAt: new Date(),
+  });
+
+  return Response.json({ success: true });
 }

@@ -16,21 +16,25 @@ export default async function MyOrdersPage() {
     .sort({ createdAt: -1 })
     .toArray();
 
-    const serializedOrders = orders.map((order) => ({
-  ...order,
-  _id: order._id.toString(), // ✅ fix ObjectId
-  createdAt: order.createdAt?.toString(), // ✅ fix Date
-}));
+  const serializedOrders = orders.map((order) => ({
+    ...order,
+    _id: order._id.toString(),
+    createdAt: order.createdAt?.toString(),
+  }));
 
   return (
-    <div className="min-h-screen bg-gray-100 p-6">
-      <h1 className="text-2xl font-bold mb-6">My Orders</h1>
+    <div className="min-h-screen bg-gray-100 p-3 sm:p-6">
+      <div className="max-w-5xl mx-auto">
+        <h1 className="text-2xl font-bold mb-6">My Orders</h1>
 
-      {orders.length === 0 && <p>No orders found</p>}
+        {orders.length === 0 && <p>No orders found</p>}
 
-     {serializedOrders.map((order) => (
-  <OrderCard key={order._id} order={order} />
-))}
+        <div className="space-y-4">
+          {serializedOrders.map((order) => (
+            <OrderCard key={order._id} order={order} />
+          ))}
+        </div>
+      </div>
     </div>
   );
 }

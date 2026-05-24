@@ -50,12 +50,12 @@ const Navbar = () => {
         </button>
 
         <div
-          className={`absolute left-0 top-full mt-3 w-[700px] bg-white border border-gray-200 rounded-2xl shadow-2xl p-6 z-50 transition-all duration-200 ${
-            showProducts
-              ? "opacity-100 visible translate-y-0"
-              : "opacity-0 invisible -translate-y-2"
-          }`}
-        >
+  className={`absolute left-0 top-full mt-3 w-[95vw] max-w-[700px] bg-white border border-gray-200 rounded-2xl shadow-2xl p-6 z-50 transition-all duration-200 ${
+    showProducts
+      ? "opacity-100 visible translate-y-0"
+      : "opacity-0 invisible -translate-y-2"
+  }`}
+>
           <div className="grid grid-cols-3 gap-6">
 
             {/* Category 1 */}

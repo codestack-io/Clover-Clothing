@@ -5,42 +5,59 @@ import { useSession } from "next-auth/react";
 
 export default function HelpPage() {
   const [question, setQuestion] = useState("");
- const { data: session } = useSession();
-  
+  const { data: session } = useSession();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!session) {
-    alert("Please login first!");
-   return;
-  }
 
-    await fetch("/api/help", {
+    if (!session) {
+      alert("Please login first!");
+      return;
+    }
+
+    if (!question.trim()) {
+      alert("Question is required!");
+      return;
+    }
+
+    const res = await fetch("/api/help", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        
-        question,
-      }),
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ question }),
     });
 
-    alert("Question submitted!");
-    setQuestion("");
+    const data = await res.json();
+
+    if (data.success) {
+      alert("Question submitted!");
+      setQuestion("");
+    } else {
+      alert(data.message);
+    }
   };
 
   return (
     <div className="max-w-xl mx-auto py-10">
-      <h1 className="text-xl font-bold mb-4">Need Help?</h1>
+      <h1 className="text-2xl font-bold mb-4">
+        Need Help?
+      </h1>
 
       <form onSubmit={handleSubmit}>
         <textarea
-          className="w-full border p-2 rounded"
+          className="w-full border p-3 rounded"
+          rows={5}
           placeholder="Ask your question..."
           value={question}
           onChange={(e) => setQuestion(e.target.value)}
         />
-        <button className="mt-3 bg-black text-white px-4 py-2 rounded">
-          Submit
+
+        <button
+          type="submit"
+          className="mt-3 bg-black text-white px-4 py-2 rounded"
+        >
+          Submit Question
         </button>
       </form>
     </div>

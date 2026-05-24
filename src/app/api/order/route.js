@@ -16,10 +16,7 @@ export async function GET() {
 
     if (!session) {
       return NextResponse.json(
-        {
-          success: false,
-          error: "Unauthorized",
-        },
+        { success: false, error: "Unauthorized" },
         { status: 401 }
       );
     }
@@ -27,40 +24,30 @@ export async function GET() {
     const collection = await dbConnect(Collection.ORDER);
 
     const orders = await collection
-      .find({
-        "user.email": session.user.email,
-      })
-      .sort({
-        createdAt: -1,
-      })
+      .find({ "user.email": session.user.email })
+      .sort({ createdAt: -1 })
       .toArray();
 
-    return NextResponse.json({
-      success: true,
-      orders,
-    });
+    return NextResponse.json({ success: true, orders });
   } catch (error) {
     console.error("GET ORDER ERROR:", error);
 
     return NextResponse.json(
-      {
-        success: false,
-        error: error.message,
-      },
+      { success: false, error: error.message },
       { status: 500 }
     );
   }
 }
 
 // ======================
-// CREATE ORDER / UPDATE PAYMENT
+// CREATE ORDER / PAYMENT UPDATE
 // ======================
 
 export async function POST(req) {
   try {
     const body = await req.json();
 
-    const collection = await dbConnect(Collection.ORDER);
+    const orderCollection = await dbConnect(Collection.ORDER);
 
     const {
       orderId,
@@ -75,45 +62,32 @@ export async function POST(req) {
       user,
     } = body;
 
-    // =====================================================
-    // PAYMENT SUCCESS → UPDATE ORDER + SEND INVOICE EMAIL
-    // =====================================================
+    // ============================
+    // PAYMENT SUCCESS FLOW
+    // ============================
 
     if (orderId) {
-      // Validate order id
-
       if (!ObjectId.isValid(orderId)) {
         return NextResponse.json(
-          {
-            success: false,
-            error: "Invalid Order ID",
-          },
+          { success: false, error: "Invalid Order ID" },
           { status: 400 }
         );
       }
 
-      // Find existing order
-
-      const existingOrder = await collection.findOne({
+      const existingOrder = await orderCollection.findOne({
         _id: new ObjectId(orderId),
       });
 
       if (!existingOrder) {
         return NextResponse.json(
-          {
-            success: false,
-            error: "Order not found",
-          },
+          { success: false, error: "Order not found" },
           { status: 404 }
         );
       }
 
-      // Update payment info
-
-      await collection.updateOne(
-        {
-          _id: new ObjectId(orderId),
-        },
+      // 1. Update order payment status
+      await orderCollection.updateOne(
+        { _id: new ObjectId(orderId) },
         {
           $set: {
             status: "paid",
@@ -125,15 +99,42 @@ export async function POST(req) {
         }
       );
 
-      // Get updated order
-
-      const updatedOrder = await collection.findOne({
+      const updatedOrder = await orderCollection.findOne({
         _id: new ObjectId(orderId),
       });
 
-      // ==========================================
-      // SEND INVOICE EMAIL
-      // ==========================================
+      // ============================
+      // UPDATE SOLD COUNT
+      // ============================
+
+      const productCollection = await dbConnect(Collection.PRODUCTS);
+
+      const safeItems = updatedOrder.items || [];
+
+      for (const item of safeItems) {
+        await productCollection.updateOne(
+          { _id: new ObjectId(item.productId) },
+          {
+            $inc: { sold: Number(item.quantity) },
+          }
+        );
+      }
+
+      // ============================
+      // CLEAR CART (🔥 ADDED HERE)
+      // ============================
+
+      const cartCollection = await dbConnect(Collection.CART);
+
+      await cartCollection.deleteMany({
+        email: updatedOrder.user.email,
+      });
+
+      console.log("🧹 Cart cleared for:", updatedOrder.user.email);
+
+      // ============================
+      // SEND EMAIL
+      // ============================
 
       try {
         const invoiceHTML = generateInvoiceHTML({
@@ -154,21 +155,18 @@ export async function POST(req) {
 
       return NextResponse.json({
         success: true,
-        message: "Payment successful & invoice sent",
+        message: "Payment successful, cart cleared & invoice sent",
         orderId: updatedOrder._id,
       });
     }
 
-    // =====================================================
-    // CREATE NEW PENDING ORDER
-    // =====================================================
+    // ============================
+    // CREATE ORDER (PENDING)
+    // ============================
 
-    if (!items || items.length === 0) {
+    if (!Array.isArray(items) || items.length === 0) {
       return NextResponse.json(
-        {
-          success: false,
-          error: "Cart is empty",
-        },
+        { success: false, error: "Cart is empty" },
         { status: 400 }
       );
     }
@@ -181,29 +179,18 @@ export async function POST(req) {
       address,
       city,
       postalCode,
-
       paymentMethod: "pending",
       paymentId: "",
-
       status: "pending",
       deliveryStatus: "pending",
-
       createdAt: new Date(),
     };
 
-    console.log("🛒 Creating Order:", newOrder);
+    const result = await orderCollection.insertOne(newOrder);
 
-    // Insert order
-
-    const result = await collection.insertOne(newOrder);
-
-    // Get created order
-
-    const createdOrder = await collection.findOne({
+    const createdOrder = await orderCollection.findOne({
       _id: result.insertedId,
     });
-
-    console.log("✅ ORDER CREATED:", createdOrder);
 
     return NextResponse.json({
       success: true,
@@ -215,10 +202,7 @@ export async function POST(req) {
     console.error("🔥 ORDER API ERROR:", error);
 
     return NextResponse.json(
-      {
-        success: false,
-        error: error.message,
-      },
+      { success: false, error: error.message },
       { status: 500 }
     );
   }
