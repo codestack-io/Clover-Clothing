@@ -142,12 +142,17 @@ export async function POST(req) {
           _id: updatedOrder._id.toString(),
         });
 
-        await sendEmail({
-          to: updatedOrder.user.email,
-          subject: `Invoice for Order #${updatedOrder._id}`,
-          html: invoiceHTML,
-        });
+      if (updatedOrder?.user?.email) {
+  await sendEmail({
+    to: updatedOrder.user.email,
+    subject: `Invoice for Order #${updatedOrder._id}`,
+    html: invoiceHTML,
+  });
 
+  console.log("✅ Invoice email sent");
+} else {
+  console.log("❌ User email not found");
+}
         console.log("✅ Invoice email sent");
       } catch (emailError) {
         console.error("❌ Email sending failed:", emailError);
@@ -172,19 +177,26 @@ export async function POST(req) {
     }
 
     const newOrder = {
-      user,
-      items,
-      totalPrice,
-      phone,
-      address,
-      city,
-      postalCode,
-      paymentMethod: "pending",
-      paymentId: "",
-      status: "pending",
-      deliveryStatus: "pending",
-      createdAt: new Date(),
-    };
+  user: {
+    name: user?.name || "",
+    email: user?.email || "",
+    
+  },
+
+  items,
+  totalPrice,
+  phone,
+  address,
+  city,
+  postalCode,
+
+  paymentMethod: "pending",
+  paymentId: "",
+  status: "pending",
+  deliveryStatus: "pending",
+
+  createdAt: new Date(),
+};
 
     const result = await orderCollection.insertOne(newOrder);
 
