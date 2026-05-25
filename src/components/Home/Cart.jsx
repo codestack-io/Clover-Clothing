@@ -9,25 +9,20 @@ export default function Cart({ cartItems = [] }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const router = useRouter();
 
-  // total quantity
   const totalItems = useMemo(
     () => items.reduce((sum, item) => sum + item.quantity, 0),
     [items]
   );
 
-  // total price
   const totalPrice = useMemo(
-    () =>
-      items.reduce((sum, item) => sum + item.price * item.quantity, 0),
+    () => items.reduce((sum, item) => sum + item.price * item.quantity, 0),
     [items]
   );
 
-  // remove cart item (USE CART _id ONLY)
   const removeItem = (id) => {
     setItems((prev) => prev.filter((item) => item._id !== id));
   };
 
-  // update quantity (USE CART _id ONLY)
   const updateQuantity = (id, quantity) => {
     setItems((prev) =>
       prev.map((item) =>
@@ -36,44 +31,17 @@ export default function Cart({ cartItems = [] }) {
     );
   };
 
-  // payment redirect handler
-  const handlePaymentClick = async (method) => {
-    setIsModalOpen(false);
-
-    if (method === "Stripe") {
-      const res = await fetch("/api/checkout-session", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ cartItems: items }),
-      });
-
-      const data = await res.json();
-
-      if (data.url) window.location.href = data.url;
-    }
-
-    if (method === "Bkash") {
-      window.location.href = "/payment/bkash";
-    }
-
-    if (method === "Nagad") {
-      window.location.href = "/payment/nagad";
-    }
-
-    if (method === "Cash") {
-      window.location.href = "/payment/cash";
-    }
-  };
-
   return (
-    <div className="max-w-7xl min-h-[80vh] mx-auto px-6 py-10 grid lg:grid-cols-4 gap-8">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6 sm:py-10 grid grid-cols-1 lg:grid-cols-4 gap-6 lg:gap-8">
 
       {/* LEFT: CART ITEMS */}
-      <div className="lg:col-span-3 space-y-6">
+      <div className="lg:col-span-3 space-y-4 sm:space-y-6">
         {items.length === 0 ? (
-          <div className="bg-white border rounded-xl p-10 text-center">
-            <h3 className="text-xl font-semibold">Your cart is empty</h3>
-            <p className="text-gray-500 mt-2">
+          <div className="bg-white border rounded-xl p-6 sm:p-10 text-center">
+            <h3 className="text-lg sm:text-xl font-semibold">
+              Your cart is empty
+            </h3>
+            <p className="text-gray-500 mt-2 text-sm sm:text-base">
               Start adding products to continue shopping.
             </p>
           </div>
@@ -81,7 +49,7 @@ export default function Cart({ cartItems = [] }) {
           items.map((item) => (
             <div
               key={item._id}
-              className="bg-white border rounded-xl shadow-sm p-4"
+              className="bg-white border rounded-xl shadow-sm p-3 sm:p-4"
             >
               <CartItem
                 item={item}
@@ -94,51 +62,56 @@ export default function Cart({ cartItems = [] }) {
       </div>
 
       {/* RIGHT: SUMMARY */}
-      <div className="lg:col-span-1 bg-white border rounded-xl shadow-sm p-6 sticky top-24 h-fit">
+      <div className="lg:col-span-1 bg-white border rounded-xl shadow-sm p-4 sm:p-6 lg:sticky lg:top-24 h-fit">
 
-        <h3 className="text-xl font-semibold mb-4">
+        <h3 className="text-lg sm:text-xl font-semibold mb-4">
           Order Summary
         </h3>
 
-        <table className="w-full text-sm border">
-          <thead className="bg-gray-100">
-            <tr>
-              <th className="p-2 border">Product</th>
-              <th className="p-2 border">Qty</th>
-              <th className="p-2 border">Price</th>
-              <th className="p-2 border">Total</th>
-            </tr>
-          </thead>
-
-          <tbody>
-            {items.map((item) => (
-              <tr key={item._id}>
-                <td className="p-2 border">{item.title}</td>
-                <td className="p-2 border">{item.quantity}</td>
-                <td className="p-2 border">৳{item.price}</td>
-                <td className="p-2 border">
-                  ৳{item.price * item.quantity}
-                </td>
+        {/* TABLE WRAPPER (IMPORTANT FOR MOBILE SCROLL) */}
+        <div className="overflow-x-auto">
+          <table className="w-full text-xs sm:text-sm border min-w-[500px]">
+            <thead className="bg-gray-100">
+              <tr>
+                <th className="p-2 border whitespace-nowrap">Product</th>
+                <th className="p-2 border whitespace-nowrap">Qty</th>
+                <th className="p-2 border whitespace-nowrap">Price</th>
+                <th className="p-2 border whitespace-nowrap">Total</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+
+            <tbody>
+              {items.map((item) => (
+                <tr key={item._id}>
+                  <td className="p-2 border">{item.title}</td>
+                  <td className="p-2 border">{item.quantity}</td>
+                  <td className="p-2 border">৳{item.price}</td>
+                  <td className="p-2 border">
+                    ৳{item.price * item.quantity}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
 
         {/* TOTALS */}
-        <div className="mt-6 flex justify-between">
-          <span>Total Items</span>
-          <span>{totalItems}</span>
+        <div className="mt-6 space-y-2 text-sm sm:text-base">
+          <div className="flex justify-between">
+            <span>Total Items</span>
+            <span>{totalItems}</span>
+          </div>
+
+          <div className="flex justify-between font-bold">
+            <span>Total Price</span>
+            <span className="text-green-600">৳{totalPrice}</span>
+          </div>
         </div>
 
-        <div className="flex justify-between font-bold mt-2">
-          <span>Total Price</span>
-          <span className="text-green-600">৳{totalPrice}</span>
-        </div>
-
-        {/* CHECKOUT */}
+        {/* BUTTON */}
         <button
           onClick={() => router.push("/checkout")}
-          className="w-full mt-6 bg-green-600 text-white py-3 rounded-lg hover:bg-green-700"
+          className="w-full mt-6 bg-green-600 text-white py-2.5 sm:py-3 rounded-lg hover:bg-green-700 text-sm sm:text-base"
         >
           Confirm Order
         </button>
