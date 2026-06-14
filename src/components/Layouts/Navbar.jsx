@@ -8,6 +8,7 @@ import AuthButtons from "../Buttons/AuthButtons";
 import { MdOutlineProductionQuantityLimits } from "react-icons/md";
 import { FaHome } from "react-icons/fa";
 import { RiPageSeparator } from "react-icons/ri";
+import { useAuth } from "@/context/AuthContext";
 
 const Navbar = () => {
   const [showPages, setShowPages] = useState(false);
@@ -15,6 +16,8 @@ const Navbar = () => {
   const pagesRef = useRef(null);
   const [showProducts, setShowProducts] = useState(false);
   const productsRef = useRef(null);
+
+   const { user, logout } = useAuth();
 
   // Close dropdowns on outside click
   useEffect(() => {
@@ -153,7 +156,7 @@ const Navbar = () => {
   );
 
   return (
-    <div className="navbar justify-between bg-gray-200 shadow-sm px-4">
+    <div className="navbar sticky top-0 z-50 justify-between bg-gray-200 shadow-sm px-4">
       {/* Mobile Menu */}
       <div className="navbar-start flex items-center justify-between w-full lg:w-auto">
         <Logo />
@@ -181,12 +184,39 @@ const Navbar = () => {
       </div>
 
       {/* Right Side Icons */}
-      <div className="navbar-end space-x-4 hidden lg:flex">
-        <Link href={"/cart"} className="btn btn-ghost">
-          <IoMdCart />
-        </Link>
-        <AuthButtons />
-      </div>
+      {/* Right Side Icons */}
+<div className="navbar-end space-x-4 hidden lg:flex">
+  <Link href={"/cart"} className="btn btn-ghost">
+    <IoMdCart />
+  </Link>
+
+  {!user ? (
+    <AuthButtons />
+  ) : (
+    <div className="dropdown dropdown-end">
+      <label tabIndex={0} className="btn btn-ghost">
+        {user.email}
+      </label>
+
+      <ul tabIndex={0} className="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-52">
+        <li className="px-2 py-1 text-sm opacity-70">
+          {user.email}
+        </li>
+
+        <li>
+          <Link href="/add-product">Add Product</Link>
+        </li>
+        <li>
+          <Link href="/manage-products">Manage Products</Link>
+        </li>
+
+        <li>
+          <button onClick={logout}>Logout</button>
+        </li>
+      </ul>
+    </div>
+  )}
+</div>
 
       {/* Mobile Dropdown */}
       {mobileMenuOpen && (

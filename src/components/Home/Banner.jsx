@@ -46,7 +46,7 @@ export default function HeroCarousel() {
         <h1 className="text-4xl md:text-6xl font-bold mb-6">
           Discover Your <span className="text-green-400">Style</span>
         </h1>
-        <Link href="/products" className="bg-green-500 hover:bg-green-600 transition-all duration-300 px-8 py-3 rounded-full text-lg font-semibold shadow-lg hover:scale-105">
+        <Link href="/products" className="btn btn-primary">
           Shop Now
         </Link>
       </div>

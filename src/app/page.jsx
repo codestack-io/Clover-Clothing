@@ -15,11 +15,17 @@ export default async function Home() {
      
       
       <section>
-        <Banner></Banner>
-        <Brands></Brands>
-        <div className="w-full">
-      <TopCategoriesSection />
-      </div>
+        <section className="py-10">
+  <Banner />
+</section>
+       <section className="py-10">
+  <Brands />
+</section>
+
+     <section className="py-10 w-full">
+  <TopCategoriesSection />
+</section>
+      <section className="py-10">
         <Products limit={9} />
         <SocialLinks
          facebook="https://www.facebook.com/profile.php?id=61587012395509"
@@ -27,6 +33,7 @@ export default async function Home() {
          tiktok="https://www.tiktok.com/Clover-clothing" >
          
          </SocialLinks>
+        </section>
       </section>
        
         

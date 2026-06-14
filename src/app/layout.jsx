@@ -3,7 +3,7 @@ import "./globals.css";
 import Navbar from "@/components/Layouts/Navbar";
 import Footer from "@/components/Layouts/Footer";
 import TopBar from "@/components/TopBar/TopBar";
-import NextAuthProvider from "@/provider/NextAuthProvider";
+import { AuthProvider } from "@/context/AuthContext";
 import { CartProvider } from "../context/CartContext";
 import { cn } from "@/lib/utils";
 
@@ -19,7 +19,7 @@ export default function RootLayout({ children }) {
     <html lang="en" data-theme="light" className={cn("font-sans", inter.variable)}>
       <body className={`${rubik.className} antialiased bg-gray-200`}>
 
-        <NextAuthProvider>
+        <AuthProvider>
 
           {/* Cart context available to entire app */}
           <CartProvider>
@@ -37,7 +37,7 @@ export default function RootLayout({ children }) {
 
           </CartProvider>
 
-        </NextAuthProvider>
+        </AuthProvider>
 
       </body>
     </html>

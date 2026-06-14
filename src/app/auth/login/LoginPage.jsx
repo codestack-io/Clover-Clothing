@@ -2,10 +2,12 @@
 
 import { useSearchParams, useRouter } from "next/navigation";
 import { useState } from "react";
-import { signIn } from "next-auth/react";
+
 import Swal from "sweetalert2";
 import SocialButton from "@/components/Buttons/SocialButton";
 import Link from "next/link";
+import { signInWithEmailAndPassword } from "firebase/auth";
+import { auth } from "@/lib/firebase";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -13,44 +15,33 @@ export default function LoginPage() {
   const params = useSearchParams();
   const callbackUrl = params.get("callbackUrl") || "/";
 
-  const handleLogin = async (e) => {
-    e.preventDefault();
-    setLoading(true);
+ const handleLogin = async (e) => {
+  e.preventDefault();
+  setLoading(true);
 
-    const formData = new FormData(e.target);
-    const email = formData.get("email");
-    const password = formData.get("password");
+  const formData = new FormData(e.target);
+  const email = formData.get("email");
+  const password = formData.get("password");
 
-    const result = await signIn("credentials", {
-      redirect: false,
-      email,
-      password,
-      callbackUrl,
+  try {
+    await signInWithEmailAndPassword(auth, email, password);
+
+    Swal.fire({
+      title: "Success! Logged in successfully",
+      icon: "success",
     });
-    console.log("Login result:", result);
 
-    if (!result?.ok) {
-      Swal.fire({
-        title: "Error! Email and password do not match",
-        width: 500,
-        padding: "3em",
-        color: "#716add",
-        background: "#fff",
-        backdrop: `rgba(0,0,123,0.4) url("/cat-space.gif") left top no-repeat`,
-      });
-      setLoading(false);
-    } else {
-      Swal.fire({
-        title: "Success! You are successfully logged in",
-        width: 500,
-        padding: "3em",
-        color: "#716add",
-        background: "#fff",
-        backdrop: `rgba(0,0,123,0.4) url("/cat-space.gif") left top no-repeat`,
-      });
-      router.push(callbackUrl);
-    }
-  };
+    router.push(callbackUrl);
+  } catch (error) {
+    Swal.fire({
+      title: "Login failed",
+      text: error.message,
+      icon: "error",
+    });
+  } finally {
+    setLoading(false);
+  }
+};
 
   return (
     <>

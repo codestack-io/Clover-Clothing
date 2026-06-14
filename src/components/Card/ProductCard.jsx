@@ -6,7 +6,7 @@ import ViewDetails from "../Buttons/ViewDetails";
 
 const ProductCard = ({ product }) => {
   return (
-    <div className="card bg-base-100 shadow-md hover:shadow-xl transition duration-300 group relative">
+    <div className="card bg-white shadow-md hover:shadow-xl transition duration-300 group relative rounded-xl">
 
       {/* Product Image */}
       <figure className="relative overflow-hidden">
