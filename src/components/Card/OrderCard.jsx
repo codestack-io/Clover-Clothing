@@ -50,7 +50,7 @@ export default function OrderCard({ order }) {
 
               {/* RIGHT: Price */}
               <div className="text-sm font-medium">
-                ${(p.price || 0) * (p.quantity || 1)}
+                ৳{(p.price || 0) * (p.quantity || 1)}
               </div>
             </div>
           ))
@@ -61,7 +61,7 @@ export default function OrderCard({ order }) {
 
       {/* Total */}
       <p className="text-right font-semibold mt-3 border-t pt-2">
-        Total: ${total}
+       Total: ৳{total}
       </p>
     </div>
   );

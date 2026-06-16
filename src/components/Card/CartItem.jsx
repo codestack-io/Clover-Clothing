@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import Image from "next/image";
 import { AiOutlineMinus, AiOutlinePlus, AiOutlineDelete } from "react-icons/ai";
-import { decreaseItemDb, deleteItemsFromCart, increaseItemDb } from "@/Action/Server/cart";
+import { decreaseItemDb, deleteItemsFromCart, increaseItemDb } from "@/action/server/cart";
 import Swal from "sweetalert2";
 
 const CartItem = ({ item, removeItem,updateQuantity}) => {
@@ -62,7 +62,7 @@ const CartItem = ({ item, removeItem,updateQuantity}) => {
   return (
     <div className="flex items-center justify-between p-4 border rounded-lg shadow-sm mb-4">
       {/* Product Image */}
-      <div className="w-20 h-20 relative flex-shrink-0">
+      <div className="w-20 h-20 relative flex -shrink-0">
         <Image
           src={image}
           alt={title}

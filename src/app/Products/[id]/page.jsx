@@ -1,17 +1,19 @@
-import { getSingleProduct } from "@/Action/Server/Product";
+import { getSingleProduct } from "@/action/server/product";
 import CartButton from "@/components/Buttons/CartButton";
 import ViewDetails from "@/components/Buttons/ViewDetails";
 import Image from "next/image";
 import React from "react";
+import ProductActions from "@/components/productAction";
 
 import Link from "next/link";
 
 export async function generateMetadata({ params }) {
-  const { id } = await params;
+ const {id} = await params;
+   
   
-  const product = await getSingleProduct(id);
+  const products = await getSingleProduct(id);
 
-  if (!product) {
+  if (!products) {
     return {
       title: "Product Not Found",
       robots: {
@@ -20,7 +22,8 @@ export async function generateMetadata({ params }) {
       },
     };
   }
-
+  
+  
   const {
     name,
     price,
@@ -28,7 +31,7 @@ export async function generateMetadata({ params }) {
     sold,
     image,
     discount = 0,
-  } = product;
+  } = products;
 
   const discountPrice = price - (price * discount) / 100;
 
@@ -39,12 +42,8 @@ export async function generateMetadata({ params }) {
       ? `Now available for ৳${discountPrice.toFixed(0)} (${discount}% OFF).`
       : `Available now for ৳${price}.`
   } Sold: ${sold} pieces. Order now!`;
-  
-   
 
-  if (!product) {
-    return <p>Product not found</p>;
-  }
+  console.log("PRODUCT:", products);
 
   return {
     title: `${name} | Your Store Name`,
@@ -89,7 +88,7 @@ export async function generateMetadata({ params }) {
 }
 
 const ProductDetails = async ({ params }) => {
-  const { id } = await params;
+ const {id} = await params;
   const products = await getSingleProduct(id);
 
   if (!products) {
@@ -101,20 +100,22 @@ const ProductDetails = async ({ params }) => {
       </div>
     );
   }
+
+
   const {
-    
+    name,
     price,
-    sold = 0
+    cottonType,
+    sold,
+    image,
+    discount = 0,
   } = products;
-
-  
-  
-
- return (
-  <div className="max-w-6xl mx-auto px-6 py-12 space-y-12">
-    <div className="grid md:grid-cols-2 gap-10 items-center">
+return (
+  <div className="max-w-6xl mx-auto px-4 sm:px-6 py-6 sm:py-12">
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-10 items-start">
+      
       {/* Product Image */}
-      <div className="relative w-full h-[500px]">
+      <div className="relative w-full h-[320px] sm:h-[450px] md:h-[500px]">
         <Image
           src={products.image}
           alt={products.name}
@@ -124,41 +125,72 @@ const ProductDetails = async ({ params }) => {
       </div>
 
       {/* Product Info */}
-      <div className="space-y-6">
-        <h1 className="text-3xl font-bold">{products.name}</h1>
+      <div className="space-y-5">
+        
+        <h1 className="text-2xl sm:text-3xl font-bold leading-tight">
+          {products.name}
+        </h1>
 
-        <div className="flex items-center gap-4">
-          <span className="text-2xl font-bold text-green-600">৳{products.price}</span>
+        {/* Price */}
+        <div className="flex items-center gap-3 flex-wrap">
+          <span className="text-2xl sm:text-3xl font-bold text-green-600">
+            ৳{products.price}
+          </span>
+
+          {products.discount > 0 && (
+            <span className="bg-red-100 text-red-600 text-sm px-2 py-1 rounded">
+              {products.discount}% OFF
+            </span>
+          )}
         </div>
 
-        <div className="space-y-2 text-gray-600">
+        {/* Product Details */}
+        <div className="space-y-2 text-sm sm:text-base text-gray-600">
           <p>
-            <span className="font-semibold text-gray-800">Cotton Type:</span> {products.cottonType}
+            <span className="font-semibold text-gray-800">
+              Cotton Type:
+            </span>{" "}
+            {products.cottonType}
           </p>
+
           <p>
-            <span className="font-semibold text-gray-800">Sold:</span> {products.sold} pieces
+            <span className="font-semibold text-gray-800">
+              Sold:
+            </span>{" "}
+            {products.sold} pieces
           </p>
+
           <p>
-            <span className="font-semibold text-gray-800">Color:</span> {products.color}
+            <span className="font-semibold text-gray-800">
+              Color:
+            </span>{" "}
+            {products.color}
           </p>
         </div>
 
-        <CartButton product={{ ...products, id: products?._id.toString() }} />
-        {/* Dedicated Compare button */}
-  <div className="mt-4">
-    <Link href={`/compare/${products._id}`}>
-      <button className="bg-black text-white px-4 py-2 rounded-lg">
-        Compare
-      </button>
-    </Link>
-  </div>
+        {/* Actions */}
+        <div className="pt-2">
+          <ProductActions
+            product={{
+              ...products,
+              id:
+                products?._id?.toString?.() ||
+                products?._id,
+            }}
+          />
+        </div>
+
+        {/* Compare Button */}
+        <div className="pt-2">
+          <Link href={`/compare/${products._id}`}>
+            <button className="w-full sm:w-auto bg-black text-white px-5 py-3 rounded-lg hover:opacity-90 transition">
+              Compare
+            </button>
+          </Link>
+        </div>
       </div>
-      <div>
-   </div>
     </div>
-
-   
-</div>
+  </div>
 );
 }
 

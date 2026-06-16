@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Swal from "sweetalert2";
 
 const Compare = ({ selectedProduct }) => {
   const [similarProducts, setSimilarProducts] = useState([]);
@@ -41,11 +42,16 @@ const Compare = ({ selectedProduct }) => {
   ];
 
   // Placeholder add-to-cart function
-  const handleAddToCart = (product) => {
-    // Replace this with your actual cart logic
-    console.log("Added to cart:", product);
-    alert(`Added "${product.name}" to cart!`);
-  };
+const handleAddToCart = (product) => {
+  console.log("Added to cart:", product);
+
+  Swal.fire({
+    title: "Added to Cart!",
+    text: `"${product.name}" has been added successfully.`,
+    icon: "success",
+    confirmButtonText: "OK",
+  });
+};
 
   return (
     <div className="mt-10 overflow-x-auto">

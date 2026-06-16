@@ -5,7 +5,7 @@ import Brands from "@/components/Brands/Brands";
 import TopCategoriesSection from "@/components/TopCategories/TopCategories";
 import { getServerSession } from "next-auth";
 
-import { authOptions } from "../app/lib/authoptions";
+import { authOptions } from "@/app/lib/authOptions";
 
 export default async function Home() {
   const session= await getServerSession(authOptions);
@@ -14,17 +14,30 @@ export default async function Home() {
      
       
       <section>
-        <Banner></Banner>
+        <section className="py-10">
+  <Banner />
+</section>
+       <section className="py-10">
+  <Brands />
+</section>
+
+     <section className="py-10 w-full">
+  <TopCategoriesSection />
+</section>
+      <section className="py-10">
+        <Products limit={9} />
+        <SocialLinks
+         facebook="https://www.facebook.com/profile.php?id=61587012395509"
+         instagram="https://www.instagram.com/Clover-"
+         tiktok="https://www.tiktok.com/Clover-clothing" >
+         
+         </SocialLinks>
+        </section>
       </section>
-       <section>
-        <Brands></Brands>
-      </section>
-      <section>
-      <div className="w-full py-5">
-      <TopCategoriesSection />
-      </div>
-        <Products limit={8} />
-      </section>
+       
+        
+      
+     
      
     </div>
   );

@@ -21,11 +21,11 @@ if (!uri) {
 
 if (!global._mongoClientPromise) {
   client = new MongoClient(uri, {
-    serverApi: {
-      version: ServerApiVersion.v1,
-      strict: true,
-      deprecationErrors: true,
-    },
+   serverApi: {
+  version: ServerApiVersion.v1,
+  strict: true,
+  deprecationErrors: true,
+}
   });
 
   global._mongoClientPromise = client.connect();
@@ -37,3 +37,4 @@ export const dbConnect = async (collectionName) => {
   const connectedClient = await clientPromise;
   return connectedClient.db(dbname).collection(collectionName);
 };
+export default clientPromise; 

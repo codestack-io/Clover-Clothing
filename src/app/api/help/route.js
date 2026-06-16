@@ -1,30 +1,45 @@
-import { NextResponse } from "next/server";
-import { dbConnect, Collection } from "../../lib/dbConnect";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/app/lib/authOptions";
+import { dbConnect, Collection } from "@/app/lib/dbConnect";
 
-export async function POST(req) {
-  const { email, question } = await req.json();
+export async function GET() {
+  const session = await getServerSession(authOptions);
+
+  if (!session) {
+    return Response.json({ error: "Unauthorized" }, { status: 401 });
+  }
 
   const collection = await dbConnect(Collection.HELP);
 
-  const newQuestion = {
-    email,
+  const isAdmin = session.user.role === "admin";
+
+  const query = isAdmin
+    ? {}
+    : { userId: session.user.id };
+
+  const data = await collection.find(query).toArray();
+
+  return Response.json(data);
+}
+export async function POST(req) {
+  const session = await getServerSession(authOptions);
+
+  if (!session) {
+    return Response.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  const { question } = await req.json();
+
+  const collection = await dbConnect(Collection.HELP);
+
+  await collection.insertOne({
+    userId: session.user.id,
+    email: session.user.email,
     question,
     answer: "",
     status: "pending",
     createdAt: new Date(),
-  };
+  });
 
-  await collection.insertOne(newQuestion);
-
-  return NextResponse.json({ message: "Question submitted" });
-}
-
-// Admin: get all questions
-export async function GET(req) {
-  const user = await getUser();
-  if (!user || user.role !== "admin") {
-    return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
-  }
-
-  // continue fetching admin data...
+  return Response.json({ success: true });
 }

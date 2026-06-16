@@ -25,6 +25,7 @@ const TopBar = () => {
         </button>
 
         <Link href="/help">
+<<<<<<< HEAD
        <button className="hover:text-green-600 transition text-black">
         Need help?
       </button>
@@ -42,6 +43,22 @@ const TopBar = () => {
       </button>
      </Link>
 
+=======
+  <button className="hover:text-green-600 transition text-black">
+    Need help?
+  </button>
+</Link>
+   <Link href="/admin/help">
+  <button className="hover:text-green-600 transition text-black">
+    Answer?
+  </button>
+</Link>
+<Link href="/help/qn/a">
+  <button className="hover:text-green-600 transition text-black">
+    QN/A
+  </button>
+</Link>
+>>>>>>> temp-branch
        
 <Link href="/my-account">
   <button className="px-4 py-2 bg-black text-white rounded">

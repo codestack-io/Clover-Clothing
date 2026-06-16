@@ -3,7 +3,7 @@
 import { usePathname, useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import React, { useState } from "react";
-import { handleCart } from "@/Action/Server/cart";
+import { handleCart } from "@/action/server/cart";
 import Swal from "sweetalert2";
 
 const CartButton = ({ product }) => {
@@ -16,35 +16,46 @@ const CartButton = ({ product }) => {
   const { data: session,status } = useSession();
 
   const handleAddToCart = async () => {
+  if (!product || !product._id) {
+    console.error("Product is missing:", product);
+    return;
+  }
 
-    setLoading(true);
+  // ✅ NEW: check size
+  if (!product.size) {
+    Swal.fire("Please select a size first!");
+    return;
+  }
 
-    if (status === "unauthenticated") {
-      router.push(`/auth/login?callbackUrl=${pathname}`);
-      return;
-    }
+  setLoading(true);
 
-    const result = await handleCart({ productId: product._id });
+  if (status === "unauthenticated") {
+    router.push(`/auth/login?callbackUrl=${pathname}`);
+    return;
+  }
 
-    if (result?.success) {
+  // ✅ SEND SIZE ALSO
+  const result = await handleCart({ 
+    productId: product._id,
+    size: product.size,
+  });
 
-      Swal.fire("Added to cart successfully", product?.name, "success");
+  if (result?.success) {
+    Swal.fire("Added to cart successfully", product?.name, "success");
 
-      // 🔹 fetch similar products
-      const res = await fetch(
-        `/api/products/compare?cottonType=${product.cottonType}&id=${product._id}`
-      );
+    const res = await fetch(
+      `/api/products/compare?cottonType=${product.cottonType}&id=${product._id}`
+    );
 
-      const data = await res.json();
+    const data = await res.json();
+    setCompareProducts(data);
 
-      setCompareProducts(data);
+  } else {
+    Swal.fire("Oops!! Something went wrong", product?.name, "error");
+  }
 
-    } else {
-      Swal.fire("Oops!! Something went wrong", product?.name, "error");
-    }
-
-    setLoading(false);
-  };
+  setLoading(false);
+};
 
   return (
     <div>

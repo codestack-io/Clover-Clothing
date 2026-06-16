@@ -6,7 +6,7 @@ A modern, production-ready template for building full-stack React applications u
 
 ## Features
 
-- 🚀 Server-side rendering
+- 🚀 server-side rendering
 - ⚡️ Hot Module Replacement (HMR)
 - 📦 Asset bundling and optimization
 - 🔄 Data loading and mutations
@@ -75,7 +75,7 @@ Make sure to deploy the output of `npm run build`
 ├── package-lock.json (or pnpm-lock.yaml, or bun.lockb)
 ├── build/
 │   ├── client/    # Static assets
-│   └── server/    # Server-side code
+│   └── server/    # server-side code
 ```
 
 ## Styling

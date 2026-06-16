@@ -1,5 +1,9 @@
-// src/app/faq/page.jsx
-import FAQPage from '../../components/FAQ/FAQ'; // wherever your FAQ component is
+import FAQPage from "@/components/FAQ/FAQ";
+
+export const metadata = {
+  title: "FAQ | Clover Clothing",
+  description: "Frequently asked questions about Clover Clothing — shipping, returns, products, and more.",
+};
 
 export default function Page() {
   return <FAQPage />;

@@ -1,26 +1,34 @@
-import React from 'react';
-import CheckOutFrom from '../../components/Home/CheckOutFrom';
-import { getCart } from '@/Action/Server/cart';
+export const dynamic = "force-dynamic";
+import CheckoutForm from '../../components/Home/CheckoutForm';
+import { getCart } from '@/action/server/cart';
 
-const CheckOutPage = async () => {
-      const cartItems = await getCart();
-      const formattedItems =  cartItems.map((item)=>({
-        ...item,
-        _id: item._id.toString()
-      }));
+const checkoutPage = async () => {
+  let cartItems = [];
+  try {
+    cartItems = await getCart();
+  } catch (err) {
+    console.error("Failed to fetch cart:", err);
+  }
+
+  const formattedItems = cartItems.map((item) => ({
+    ...item,
+    _id: item._id.toString(),
+  }));
+
+  if (!formattedItems.length) {
     return (
-        <div>
-          {/* Header */}
-      <div className="mb-8 border-b pb-6">
-        <h2 className="text-4xl font-bold text-gray-800 border-l-4 border-primary pl-4">
-       Checkout Page
-</h2>
-
-       
-  </div>
-           <CheckOutFrom cartItems={formattedItems}></CheckOutFrom>
-        </div>
+      <div className="text-center mt-10">
+        <h2 className="text-2xl font-semibold">Your cart is empty</h2>
+      </div>
     );
+  }
+
+  return (
+    <div>
+      <h2 className="text-4xl font-bold mb-5">Checkout Page</h2>
+      <CheckoutForm cartItems={formattedItems} />
+    </div>
+  );
 };
 
-export default CheckOutPage;
+export default checkoutPage;

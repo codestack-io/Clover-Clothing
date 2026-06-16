@@ -41,4 +41,8 @@ yarn-error.log*
 next-env.d.ts
 
 .vercel
+<<<<<<< HEAD
 package.json
+=======
+.env*.local
+>>>>>>> temp-branch
