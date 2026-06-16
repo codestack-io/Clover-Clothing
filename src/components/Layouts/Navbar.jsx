@@ -55,15 +55,9 @@ const Navbar = () => {
         onMouseEnter={() => setShowProducts(true)}
         onMouseLeave={() => setShowProducts(false)}
       >
-<<<<<<< HEAD
-        <li>
-        
-        </li>
-=======
         <button className="flex items-center gap-1 font-medium hover:text-black transition">
           Products ▾
         </button>
->>>>>>> temp-branch
 
         <div
           className={`absolute left-0 top-full mt-3 w-[95vw] max-w-[700px] bg-white border border-gray-200 rounded-2xl shadow-2xl p-6 z-50 transition-all duration-200 ${
