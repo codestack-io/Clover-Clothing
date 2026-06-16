@@ -46,7 +46,7 @@ export default function HeroCarousel() {
         <h1 className="text-4xl md:text-6xl font-bold mb-6">
           Discover Your <span className="text-green-400">Style</span>
         </h1>
-        <Link href="/products" className="btn btn-primary">
+        <Link href="/items" className="btn btn-primary">
           Shop Now
         </Link>
       </div>

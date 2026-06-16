@@ -17,7 +17,7 @@ const Navbar = () => {
   const [showProducts, setShowProducts] = useState(false);
   const productsRef = useRef(null);
 
-   const { user, logout } = useAuth();
+  const { user, logout } = useAuth();
 
   // Close dropdowns on outside click
   useEffect(() => {
@@ -36,8 +36,15 @@ const Navbar = () => {
   const navLinks = (
     <>
       <li className="text-gray-700 font-sans text-lg">
-        <NavLink href={"/"}>
+        <NavLink href="/">
           <FaHome /> Home
+        </NavLink>
+      </li>
+
+      {/* Items direct link */}
+      <li className="text-gray-700 font-sans text-lg">
+        <NavLink href="/items">
+          <MdOutlineProductionQuantityLimits /> Items
         </NavLink>
       </li>
 
@@ -49,65 +56,47 @@ const Navbar = () => {
         onMouseLeave={() => setShowProducts(false)}
       >
         <button className="flex items-center gap-1 font-medium hover:text-black transition">
-          <MdOutlineProductionQuantityLimits /> Products
+          Products ▾
         </button>
 
         <div
-  className={`absolute left-0 top-full mt-3 w-[95vw] max-w-[700px] bg-white border border-gray-200 rounded-2xl shadow-2xl p-6 z-50 transition-all duration-200 ${
-    showProducts
-      ? "opacity-100 visible translate-y-0"
-      : "opacity-0 invisible -translate-y-2"
-  }`}
->
+          className={`absolute left-0 top-full mt-3 w-[95vw] max-w-[700px] bg-white border border-gray-200 rounded-2xl shadow-2xl p-6 z-50 transition-all duration-200 ${
+            showProducts
+              ? "opacity-100 visible translate-y-0"
+              : "opacity-0 invisible -translate-y-2"
+          }`}
+        >
           <div className="grid grid-cols-3 gap-6">
-
-            {/* Category 1 */}
             <div>
               <h3 className="font-semibold text-gray-900 mb-3">100% Cotton</h3>
               <ul className="space-y-2 text-sm">
-                <li>
-                  <Link href="/products/cotton">Basic Cotton Tee</Link>
-                </li>
-                <li>
-                  <Link href="/products/cotton">Cotton Hoodie</Link>
-                </li>
+                <li><Link href="/products/cotton" className="hover:underline">Basic Cotton Tee</Link></li>
+                <li><Link href="/products/cotton" className="hover:underline">Cotton Hoodie</Link></li>
               </ul>
             </div>
-
-            {/* Category 2 */}
             <div>
               <h3 className="font-semibold text-gray-900 mb-3">Organic Cotton</h3>
               <ul className="space-y-2 text-sm">
-                <li>
-                  <Link href="/products/organic">Eco T-Shirt</Link>
-                </li>
-                <li>
-                  <Link href="/products/organic">Organic Hoodie</Link>
-                </li>
+                <li><Link href="/products/organic" className="hover:underline">Eco T-Shirt</Link></li>
+                <li><Link href="/products/organic" className="hover:underline">Organic Hoodie</Link></li>
               </ul>
             </div>
-
-            {/* Category 3 */}
             <div>
               <h3 className="font-semibold text-gray-900 mb-3">Premium Cotton</h3>
               <ul className="space-y-2 text-sm">
-                <li>
-                  <Link href="/pc/premium?cottonType=Soft Cotton">Soft Cotton</Link>
-                </li>
-                <li>
-                  <Link href="/pc/premium?cottonType=Light Cotton">Light Cotton</Link>
-                </li>
-                <li>
-                  <Link href="/pc/premium?cottonType=Silk Cotton">Silk Cotton</Link>
-                </li>
-                <li>
-                  <Link href="/pc/premium?cottonType=Handloom Cotton">Handloom Cotton</Link>
-                </li>
+                <li><Link href="/pc/premium?cottonType=Soft Cotton" className="hover:underline">Soft Cotton</Link></li>
+                <li><Link href="/pc/premium?cottonType=Light Cotton" className="hover:underline">Light Cotton</Link></li>
+                <li><Link href="/pc/premium?cottonType=Silk Cotton" className="hover:underline">Silk Cotton</Link></li>
+                <li><Link href="/pc/premium?cottonType=Handloom Cotton" className="hover:underline">Handloom Cotton</Link></li>
               </ul>
             </div>
-
           </div>
         </div>
+      </li>
+
+      {/* About */}
+      <li className="text-gray-700 font-sans text-lg">
+        <NavLink href="/about">About</NavLink>
       </li>
 
       {/* Pages Dropdown */}
@@ -118,16 +107,7 @@ const Navbar = () => {
         onMouseLeave={() => setShowPages(false)}
       >
         <button className="flex items-center gap-1 font-medium hover:text-black transition">
-          <RiPageSeparator /> Pages
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="h-4 w-4 mt-0.5"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-          </svg>
+          <RiPageSeparator /> Pages ▾
         </button>
 
         <ul
@@ -157,7 +137,7 @@ const Navbar = () => {
 
   return (
     <div className="navbar sticky top-0 z-50 justify-between bg-gray-200 shadow-sm px-4">
-      {/* Mobile Menu */}
+      {/* Left: Logo + Hamburger */}
       <div className="navbar-start flex items-center justify-between w-full lg:w-auto">
         <Logo />
 
@@ -165,16 +145,17 @@ const Navbar = () => {
         <button
           className="lg:hidden btn btn-ghost"
           onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+          aria-label="Toggle menu"
         >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="h-6 w-6"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-          </svg>
+          {mobileMenuOpen ? (
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          ) : (
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+            </svg>
+          )}
         </button>
       </div>
 
@@ -183,48 +164,21 @@ const Navbar = () => {
         <ul className="menu menu-horizontal px-1">{navLinks}</ul>
       </div>
 
-      {/* Right Side Icons */}
-      {/* Right Side Icons */}
-<div className="navbar-end space-x-4 hidden lg:flex">
-  <Link href={"/cart"} className="btn btn-ghost">
-    <IoMdCart />
-  </Link>
-
-  {!user ? (
-    <AuthButtons />
-  ) : (
-    <div className="dropdown dropdown-end">
-      <label tabIndex={0} className="btn btn-ghost">
-        {user.email}
-      </label>
-
-      <ul tabIndex={0} className="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-52">
-        <li className="px-2 py-1 text-sm opacity-70">
-          {user.email}
-        </li>
-
-        <li>
-          <Link href="/add-product">Add Product</Link>
-        </li>
-        <li>
-          <Link href="/manage-products">Manage Products</Link>
-        </li>
-
-        <li>
-          <button onClick={logout}>Logout</button>
-        </li>
-      </ul>
-    </div>
-  )}
-</div>
+      {/* Right: Cart + Auth */}
+      <div className="navbar-end space-x-4 hidden lg:flex">
+        <Link href="/cart" className="btn btn-ghost">
+          <IoMdCart className="text-xl" />
+        </Link>
+        <AuthButtons />
+      </div>
 
       {/* Mobile Dropdown */}
       {mobileMenuOpen && (
         <div className="lg:hidden absolute top-full left-0 w-full bg-gray-200 shadow-md z-50">
           <ul className="flex flex-col p-4 gap-2">{navLinks}</ul>
-          <div className="flex items-center gap-4 px-4 mt-2">
-            <Link href={"/cart"} className="btn btn-ghost">
-              <IoMdCart />
+          <div className="flex items-center gap-4 px-4 pb-4 border-t border-gray-300 pt-3 mt-1">
+            <Link href="/cart" className="btn btn-ghost btn-sm">
+              <IoMdCart className="text-lg" /> Cart
             </Link>
             <AuthButtons />
           </div>
