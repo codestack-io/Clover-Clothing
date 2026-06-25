@@ -1,6 +1,6 @@
 import CredentialsProvider from "next-auth/providers/credentials";
 import GoogleProvider from "next-auth/providers/google";
-import { dbConnect, Collection } from "@/app/lib/dbConnect";
+import { dbConnect, Collection } from "../../app/lib/dbConnect";
 import bcrypt from "bcryptjs";
 
 console.log("CredentialsProvider:", CredentialsProvider);

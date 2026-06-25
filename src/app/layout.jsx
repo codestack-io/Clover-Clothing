@@ -1,11 +1,11 @@
 import { Rubik, Inter } from "next/font/google";
 import "./globals.css";
-import Navbar from "@/components/Layouts/Navbar";
-import Footer from "@/components/Layouts/Footer";
-import TopBar from "@/components/TopBar/TopBar";
-import { AuthProvider } from "@/context/AuthContext";
+import Navbar from "../components/Layouts/Navbar";
+import Footer from "../components/Layouts/Footer";
+import TopBar from "../components/TopBar/TopBar";
+import { AuthProvider } from "../context/AuthContext";
 import { CartProvider } from "../context/CartContext";
-import { cn } from "@/lib/utils";
+import { cn } from "../lib/utils";
 
 const inter = Inter({subsets:['latin'],variable:'--font-sans'});
 
@@ -26,7 +26,7 @@ export default function RootLayout({ children }) {
 
             <header className="md:w-full mx-auto">
               <TopBar />
-              <Navbar />z
+              <Navbar />
             </header>
 
             <main className="w-full px-5 py-2 min-h-[calc(100vh-330px)]">

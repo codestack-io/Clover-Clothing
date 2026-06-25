@@ -8,7 +8,7 @@ import AuthButtons from "../Buttons/AuthButtons";
 import { MdOutlineProductionQuantityLimits } from "react-icons/md";
 import { FaHome } from "react-icons/fa";
 import { RiPageSeparator } from "react-icons/ri";
-import { useAuth } from "@/context/AuthContext";
+import { useAuth } from "../../context/AuthContext";
 
 const Navbar = () => {
   const [showPages, setShowPages] = useState(false);

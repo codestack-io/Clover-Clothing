@@ -1,11 +1,11 @@
 
-import Banner from "@/components/Home/Banner";
-import Products from "@/components/Home/Products";
-import Brands from "@/components/Brands/Brands";
-import TopCategoriesSection from "@/components/TopCategories/TopCategories";
+import Banner from "../components/Home/Banner";
+import Products from "../components/Home/Products";
+import Brands from "../components/Brands/Brands";
+import TopCategoriesSection from "../components/TopCategories/TopCategories";
 import { getServerSession } from "next-auth";
-
-import { authOptions } from "@/app/lib/authOptions";
+import  SocialLinks from "../components/SocialLinks/SocialLinks"
+import { authOptions } from "../app/lib/authOptions";
 
 export default async function Home() {
   const session= await getServerSession(authOptions);

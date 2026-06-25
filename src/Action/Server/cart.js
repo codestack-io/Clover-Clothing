@@ -1,10 +1,10 @@
 "use server"
 import { ObjectId } from "mongodb";
-import { authOptions } from "@/app/lib/authOptions";
+import { authOptions } from "../../app/lib/authOptions";
 import { getServerSession } from "next-auth";
 
 
-const { dbConnect, Collection } = require("@/app/lib/dbConnect")
+const { dbConnect, Collection } = require("../../app/lib/authOptions")
 
 
 

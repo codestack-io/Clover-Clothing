@@ -6,7 +6,7 @@ import { useEffect, useState,use} from "react";
 
 
 export default function CategoryPage({ params }) {
-  const { category } = use(params); 
+  const category = params?.category;
   const searchParams = useSearchParams();
   const cottonType = searchParams.get("cottonType");
 

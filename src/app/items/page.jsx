@@ -1,4 +1,4 @@
-import Products from "@/components/Home/Products";
+import Products from "../../components/productAction";
 import React from "react";
 
 export const metadata = {

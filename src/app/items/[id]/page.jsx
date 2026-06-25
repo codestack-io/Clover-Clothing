@@ -1,7 +1,7 @@
-import { getSingleProduct } from "@/action/server/product";
+import { getSingleProduct } from "../../../action/server/Product";
 import Image from "next/image";
 import Link from "next/link";
-import ProductActions from "@/components/productAction";
+import ProductActions from "../../../components/TopCategories/TopCategories";
 
 export async function generateMetadata({ params }) {
   const { id } = await params;

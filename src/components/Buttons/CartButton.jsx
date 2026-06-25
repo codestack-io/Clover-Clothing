@@ -1,9 +1,9 @@
 "use client";
 
 import { usePathname, useRouter } from "next/navigation";
-import { useSession } from "next-auth/react";
+import { useAuth } from "../../context/AuthContext";
 import React, { useState } from "react";
-import { handleCart } from "@/action/server/cart";
+import { handleCart } from "../../action/server/cart";
 import Swal from "sweetalert2";
 
 const CartButton = ({ product }) => {
@@ -13,7 +13,8 @@ const CartButton = ({ product }) => {
   const [loading,setLoading] = useState(false);
   const [compareProducts,setCompareProducts] = useState([]);
 
-  const { data: session,status } = useSession();
+  const { user } = useAuth();
+  
 
   const handleAddToCart = async () => {
   if (!product || !product._id) {
