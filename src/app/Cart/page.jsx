@@ -3,6 +3,8 @@ import { getCart } from "../../action/server/cart";
 import Cart from "../../components/Home/Cart";
 import React from "react";
 
+export const dynamic = "force-dynamic";
+
 const CartPage = async () => {
   try {
     const cartItems = await getCart();
