@@ -1,4 +1,4 @@
-import ProductSkeleton from '@/components/Skeleton/ProductSkeleton';
+import ProductSkeleton from '../../../components/Skeleton/ProductSkeleton';
 import React from 'react';
 
 const loading = () => {

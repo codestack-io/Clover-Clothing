@@ -1,6 +1,6 @@
 "use client";
-import CartButton from "@/components/Buttons/CartButton";
-import ViewDetails from "@/components/Buttons/ViewDetails"; // ✅ import the component
+import CartButton from "../../../components/Buttons/CartButton";
+import ViewDetails from "../../../components/Buttons/ViewDetails"; // ✅ import the component
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState,use} from "react";
 

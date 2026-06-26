@@ -3,64 +3,104 @@ import { ObjectId } from "mongodb";
 import { authOptions } from "../../app/lib/authOptions";
 import { getServerSession } from "next-auth";
 
-
-const { dbConnect, Collection } = require("../../app/lib/authOptions")
-
+import { dbConnect, Collection } from "../../app/lib/dbConnect";
 
 
-export const handleCart = async ({ productId,size }) => {
 
-  if (!size) {
-  return { success: false, message: "Size is required" };
-}
 
-  const { user } = await getServerSession(authOptions) || {};
-  if (!user) return { success: false };
+export const handleCart = async ({ productId, size }) => {
+  try {
+    if (!productId) {
+      return {
+        success: false,
+        message: "Product ID missing",
+      };
+    }
 
-  const cartCollection = await dbConnect(Collection.CART);
-const query = { email: user?.email, productId, size };
+    if (!size) {
+      return {
+        success: false,
+        message: "Size is required",
+      };
+    }
 
-  const isAdded = await cartCollection.findOne(query);
+    const session = await getServerSession(authOptions);
+    const user = session?.user;
 
-  if (isAdded) {
+    if (!user) {
+      return {
+        success: false,
+        message: "Please login first",
+      };
+    }
 
-    const updatedData = {
-      $inc: { quantity: 1 }
+    const cartCollection = await dbConnect(Collection.CART);
+
+    const query = {
+      email: user.email,
+      productId,
+      size,
     };
 
-    const result = await cartCollection.updateOne(query, updatedData);
+    const isAdded = await cartCollection.findOne(query);
 
-    return { success: Boolean(result.modifiedCount) };
+    if (isAdded) {
+      const result = await cartCollection.updateOne(
+        query,
+        {
+          $inc: {
+            quantity: 1,
+          },
+        }
+      );
 
-  } else {
+      return {
+        success: Boolean(result.modifiedCount),
+      };
+    }
 
     const productCollection = await dbConnect(Collection.PRODUCTS);
 
     const product = await productCollection.findOne({
-      _id: new ObjectId(productId)
+      _id: new ObjectId(productId),
     });
 
     if (!product) {
-      return { success: false, message: "Product not found" };
+      return {
+        success: false,
+        message: "Product not found",
+      };
     }
 
-   const newData = {
-  productId: product._id.toString(),
-  email: user?.email,
-  title: product.name,
-  quantity: 1,
-  image: product.image,
-  price: product.price,
-  username: user?.name,
-  size, 
-};
+    const newData = {
+      productId: product._id.toString(),
+      email: user.email,
+      username: user.name,
+      title: product.name,
+      image: product.image,
+      price: product.price,
+      quantity: 1,
+      size,
+    };
 
     const result = await cartCollection.insertOne(newData);
 
-    return { success: result.acknowledged };
+    return {
+      success: result.acknowledged,
+      message: result.acknowledged
+        ? "Added to cart successfully"
+        : "Failed to add item",
+    };
+  } catch (error) {
+    console.error("HANDLE CART ERROR:", error);
+
+    return {
+      success: false,
+      message: error.message,
+    };
   }
 };
-export const getCart = (async () =>{
+export const getCart = async () =>{
     const {user} = (await getServerSession(authOptions))|| {} ;
     if(!user) return [];
      
@@ -78,7 +118,7 @@ export const getCart = (async () =>{
   }));
 
   return cart;
-})
+}
 export const placeOrderAndUpdateSold = async () => {
   const { user } = (await getServerSession(authOptions)) || {};
   if (!user) return { success: false };
@@ -101,8 +141,9 @@ export const placeOrderAndUpdateSold = async () => {
         },
       }
     );
+    console.log(item.productId);
   }
-  console.log(item.productId);
+ 
 
   // clear cart after order
   await cartCollection.deleteMany({ email: user.email });

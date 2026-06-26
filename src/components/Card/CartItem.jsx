@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import Image from "next/image";
 import { AiOutlineMinus, AiOutlinePlus, AiOutlineDelete } from "react-icons/ai";
-import { decreaseItemDb, deleteItemsFromCart, increaseItemDb } from "@/action/server/cart";
+import { decreaseItemDb, deleteItemsFromCart, increaseItemDb } from "../../action/server/cart";
 import Swal from "sweetalert2";
 
 const CartItem = ({ item, removeItem,updateQuantity}) => {

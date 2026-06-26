@@ -10,7 +10,7 @@ const ProductCard = ({ product }) => {
 
       {/* Product Image */}
       <figure className="relative overflow-hidden">
-        <Link href={`/items/${product._id}`}>
+        <Link href={`/products/${product._id}`}>
           <Image
             src={product.image}
             alt={product.name}
@@ -45,7 +45,7 @@ const ProductCard = ({ product }) => {
 
       {/* Card Body */}
       <div className="card-body">
-        <Link href={`/items/${product._id}`}>
+        <Link href={`/products/${product._id}`}>
           <h2 className="card-title text-lg cursor-pointer hover:underline">
             {product.name}
           </h2>

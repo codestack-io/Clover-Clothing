@@ -1,5 +1,5 @@
 import Compare from "../../../components/Compare/Compare";
-import { dbConnect, Collection } from "@/app/lib/dbConnect";
+import { dbConnect, Collection } from "../../../app/lib/dbConnect";
 import { ObjectId } from "mongodb";
 
 export default async function ComparePage({ params }) {

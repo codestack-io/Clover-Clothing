@@ -1,6 +1,6 @@
-import { getCart } from "@/action/server/cart";
+import { getCart } from "../../action/server/cart";
 
-import Cart from "@/components/Home/Cart";
+import Cart from "../../components/Home/Cart";
 import React from "react";
 
 const CartPage = async () => {

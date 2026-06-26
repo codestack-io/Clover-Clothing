@@ -5,10 +5,10 @@ import Logo from "../Logo/Logo";
 import Link from "next/link";
 import { IoMdCart } from "react-icons/io";
 import AuthButtons from "../Buttons/AuthButtons";
-import { MdOutlineProductionQuantityLimits } from "react-icons/md";
+
 import { FaHome } from "react-icons/fa";
 import { RiPageSeparator } from "react-icons/ri";
-import { useAuth } from "../../context/AuthContext";
+
 
 const Navbar = () => {
   const [showPages, setShowPages] = useState(false);
@@ -17,7 +17,7 @@ const Navbar = () => {
   const [showProducts, setShowProducts] = useState(false);
   const productsRef = useRef(null);
 
-  const { user, logout } = useAuth();
+  
 
   // Close dropdowns on outside click
   useEffect(() => {
@@ -41,12 +41,7 @@ const Navbar = () => {
         </NavLink>
       </li>
 
-      {/* Items direct link */}
-      <li className="text-gray-700 font-sans text-lg">
-        <NavLink href="/items">
-          <MdOutlineProductionQuantityLimits /> Items
-        </NavLink>
-      </li>
+      
 
       {/* Products Mega Menu */}
       <li

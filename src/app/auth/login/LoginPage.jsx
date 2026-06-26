@@ -1,47 +1,56 @@
+
 "use client";
 
 import { useSearchParams, useRouter } from "next/navigation";
 import { useState } from "react";
-
+import { signIn } from "next-auth/react";
 import Swal from "sweetalert2";
-import SocialButton from "@/components/Buttons/SocialButton";
+import SocialButton from "../../../components/Buttons/SocialButton";
 import Link from "next/link";
-import { signInWithEmailAndPassword } from "firebase/auth";
-import { auth } from "@/lib/firebase";
 
 export default function LoginPage() {
   const router = useRouter();
-  const [loading, setLoading] = useState(false);
   const params = useSearchParams();
+
   const callbackUrl = params.get("callbackUrl") || "/";
+  const [loading, setLoading] = useState(false);
 
- const handleLogin = async (e) => {
-  e.preventDefault();
-  setLoading(true);
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    setLoading(true);
 
-  const formData = new FormData(e.target);
-  const email = formData.get("email");
-  const password = formData.get("password");
+    const formData = new FormData(e.target);
 
-  try {
-    await signInWithEmailAndPassword(auth, email, password);
+    const email = formData.get("email");
+    const password = formData.get("password");
+
+    const result = await signIn("credentials", {
+      email,
+      password,
+      redirect: false,
+    });
+
+    setLoading(false);
+
+    if (result?.error) {
+      Swal.fire({
+        icon: "error",
+        title: "Login failed",
+        text: result.error,
+      });
+      return;
+    }
 
     Swal.fire({
-      title: "Success! Logged in successfully",
       icon: "success",
+      title: "Logged in successfully",
+      timer: 1500,
+      showConfirmButton: false,
     });
 
     router.push(callbackUrl);
-  } catch (error) {
-    Swal.fire({
-      title: "Login failed",
-      text: error.message,
-      icon: "error",
-    });
-  } finally {
-    setLoading(false);
-  }
-};
+    router.refresh();
+  };
 
   return (
     <>
@@ -57,6 +66,7 @@ export default function LoginPage() {
           className="w-full border p-3 rounded-lg"
           required
         />
+
         <input
           name="password"
           type="password"
@@ -66,20 +76,22 @@ export default function LoginPage() {
         />
 
         <button
+          type="submit"
           disabled={loading}
           className="w-full bg-black text-white py-3 rounded-lg"
         >
           {loading ? "Logging in..." : "Login"}
         </button>
 
-        {/* Social login */}
         <SocialButton callbackUrl={callbackUrl} />
       </form>
 
       <p className="text-center mt-4">
         Don't have an account?{" "}
         <Link
-          href={`/auth/register?callbackUrl=${encodeURIComponent(callbackUrl)}`}
+          href={`/auth/register?callbackUrl=${encodeURIComponent(
+            callbackUrl
+          )}`}
           className="text-black font-semibold"
         >
           Register
@@ -88,3 +100,4 @@ export default function LoginPage() {
     </>
   );
 }
+

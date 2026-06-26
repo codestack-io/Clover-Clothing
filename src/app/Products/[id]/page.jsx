@@ -1,9 +1,8 @@
-import { getSingleProduct } from "@/action/server/product";
-import CartButton from "@/components/Buttons/CartButton";
-import ViewDetails from "@/components/Buttons/ViewDetails";
+import { getSingleProduct } from "../../../action/server/Product";
+
 import Image from "next/image";
 import React from "react";
-import ProductActions from "@/components/productAction";
+import ProductActions from "../../../components/productAction";
 
 import Link from "next/link";
 

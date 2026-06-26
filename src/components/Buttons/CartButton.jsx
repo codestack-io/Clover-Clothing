@@ -1,7 +1,7 @@
 "use client";
 
 import { usePathname, useRouter } from "next/navigation";
-import { useAuth } from "../../context/AuthContext";
+import { useSession } from "next-auth/react";
 import React, { useState } from "react";
 import { handleCart } from "../../action/server/cart";
 import Swal from "sweetalert2";
@@ -13,49 +13,75 @@ const CartButton = ({ product }) => {
   const [loading,setLoading] = useState(false);
   const [compareProducts,setCompareProducts] = useState([]);
 
-  const { user } = useAuth();
+  
+const { data: session, status } = useSession();
+const user = session?.user;
   
 
-  const handleAddToCart = async () => {
-  if (!product || !product._id) {
-    console.error("Product is missing:", product);
-    return;
-  }
+ const handleAddToCart = async () => {
+  try {
+    if (!product || !product._id) {
+      Swal.fire("Error", "Product not found", "error");
+      return;
+    }
 
-  // ✅ NEW: check size
-  if (!product.size) {
-    Swal.fire("Please select a size first!");
-    return;
-  }
+    // Check login
+    if (!user) {
+      router.push(`/auth/login?callbackUrl=${pathname}`);
+      return;
+    }
 
-  setLoading(true);
+    // Check size
+    if (!product.size) {
+      Swal.fire("Please select a size first!");
+      return;
+    }
 
-  if (status === "unauthenticated") {
-    router.push(`/auth/login?callbackUrl=${pathname}`);
-    return;
-  }
+    setLoading(true);
 
-  // ✅ SEND SIZE ALSO
-  const result = await handleCart({ 
-    productId: product._id,
-    size: product.size,
-  });
+    const result = await handleCart({
+      productId: product._id.toString(),
+      size: product.size,
+    });
 
-  if (result?.success) {
-    Swal.fire("Added to cart successfully", product?.name, "success");
+    console.log("Cart Result:", result);
 
-    const res = await fetch(
-      `/api/products/compare?cottonType=${product.cottonType}&id=${product._id}`
+    if (result?.success) {
+      Swal.fire(
+        "Added to cart successfully",
+        product?.name,
+        "success"
+      );
+
+      const res = await fetch(
+        `/api/compare?cottonType=${encodeURIComponent(
+          product.cottonType
+        )}&id=${product._id}`
+      );
+
+      const data = await res.json();
+
+      if (Array.isArray(data)) {
+        setCompareProducts(data);
+      }
+    } else {
+      Swal.fire(
+        "Oops!",
+        result?.message || "Something went wrong",
+        "error"
+      );
+    }
+  } catch (error) {
+    console.error("Cart Error:", error);
+
+    Swal.fire(
+      "Server Error",
+      error.message || "Failed to add item",
+      "error"
     );
-
-    const data = await res.json();
-    setCompareProducts(data);
-
-  } else {
-    Swal.fire("Oops!! Something went wrong", product?.name, "error");
+  } finally {
+    setLoading(false);
   }
-
-  setLoading(false);
 };
 
   return (

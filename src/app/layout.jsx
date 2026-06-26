@@ -3,27 +3,30 @@ import "./globals.css";
 import Navbar from "../components/Layouts/Navbar";
 import Footer from "../components/Layouts/Footer";
 import TopBar from "../components/TopBar/TopBar";
-import { AuthProvider } from "../context/AuthContext";
+import Providers from "./provides";
 import { CartProvider } from "../context/CartContext";
 import { cn } from "../lib/utils";
 
-const inter = Inter({subsets:['latin'],variable:'--font-sans'});
+const inter = Inter({
+  subsets: ["latin"],
+  variable: "--font-sans",
+});
 
 const rubik = Rubik({
-  weight: ["300","400","500","600","700","800","900"],
+  weight: ["300", "400", "500", "600", "700", "800", "900"],
   subsets: ["latin"],
 });
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en" data-theme="light" className={cn("font-sans", inter.variable)}>
+    <html
+      lang="en"
+      data-theme="light"
+      className={cn("font-sans", inter.variable)}
+    >
       <body className={`${rubik.className} antialiased bg-gray-200`}>
-
-        <AuthProvider>
-
-          {/* Cart context available to entire app */}
+        <Providers>
           <CartProvider>
-
             <header className="md:w-full mx-auto">
               <TopBar />
               <Navbar />
@@ -34,11 +37,8 @@ export default function RootLayout({ children }) {
             </main>
 
             <Footer />
-
           </CartProvider>
-
-        </AuthProvider>
-
+        </Providers>
       </body>
     </html>
   );

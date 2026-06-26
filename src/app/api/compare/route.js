@@ -1,4 +1,4 @@
-import { dbConnect, Collection } from "@/app/lib/dbConnect";
+import { dbConnect, Collection } from "../../../app/lib/dbConnect";
 import { ObjectId } from "mongodb";
 
 export async function GET(req) {

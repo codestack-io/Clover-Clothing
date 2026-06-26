@@ -33,12 +33,16 @@ export const authOptions = {
           if (!isValid) return null;
 
           // ✅ success
-          return {
-            id: user._id.toString(),
-            email: user.email,
-            name: user.name || "User",
-            role: user.role || "user",
-          };
+         
+return {
+  id: user._id.toString(),
+  email: user.email,
+  name: user.name || "User",
+  image: user.image || null,
+  role: user.role || "user",
+};
+
+
         } catch (error) {
           console.error("AUTH ERROR:", error);
           return null;
