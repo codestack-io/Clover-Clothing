@@ -1,8 +1,8 @@
 import { NextResponse } from "next/server";
-import { stripe } from "@/lib/stripe";
+import { stripe } from "../../../lib/stripe";
 import { getServerSession } from "next-auth/next";
-import { authOptions } from "@/app/lib/authOptions";
-import { dbConnect, Collection } from "@/app/lib/dbConnect";
+import { authOptions } from "../../../app/lib/authOptions";
+import { dbConnect, Collection } from "../../../app/lib/dbConnect";
 import { ObjectId } from "mongodb";
 
 export async function POST(req) {

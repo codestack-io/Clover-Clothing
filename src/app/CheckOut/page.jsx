@@ -1,6 +1,6 @@
 export const dynamic = "force-dynamic";
 import CheckoutForm from '../../components/Home/CheckoutForm';
-import { getCart } from '@/action/server/cart';
+import { getCart } from '../../action/server/cart';
 
 const checkoutPage = async () => {
   let cartItems = [];

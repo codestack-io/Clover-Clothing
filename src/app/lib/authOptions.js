@@ -33,12 +33,16 @@ export const authOptions = {
           if (!isValid) return null;
 
           // ✅ success
-          return {
-            id: user._id.toString(),
-            email: user.email,
-            name: user.name || "User",
-            role: user.role || "user",
-          };
+         
+return {
+  id: user._id.toString(),
+  email: user.email,
+  name: user.name || "User",
+  image: user.image || null,
+  role: user.role || "user",
+};
+
+
         } catch (error) {
           console.error("AUTH ERROR:", error);
           return null;
@@ -83,14 +87,14 @@ export const authOptions = {
     },
 
     // ✅ Add role + email to token
-     async jwt({ token, user }) {
-    if (user) {
-      token.id = user._id?.toString();
-      token.role = user.role;
-    }
+  async jwt({ token, user }) {
+  if (user) {
+    token.id = user.id;
+    token.role = user.role;
+  }
 
-    return token;
-  },
+  return token;
+},
 
   async session({ session, token }) {
     session.user.id = token.id;

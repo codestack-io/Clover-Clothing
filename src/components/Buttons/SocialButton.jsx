@@ -1,21 +1,17 @@
 "use client";
+
 import { signIn } from "next-auth/react";
 import { FaGoogle } from "react-icons/fa";
 
-const SocialButton = ({ callbackUrl }) => {
-  const handleSignIn = async () => {
-    // OAuth will automatically redirect; no need to await
-    signIn("google", { callbackUrl: callbackUrl || "/" });
-  };
-
+export default function SocialButton({ callbackUrl = "/" }) {
   return (
-    <div className="flex gap-3 mt-4">
-      <button onClick={handleSignIn} className="btn btn-ghost">
-        <FaGoogle className="text-lg mr-2" />
-        Sign in with Google
-      </button>
-    </div>
+    <button
+      type="button"
+      onClick={() => signIn("google", { callbackUrl })}
+      className="btn btn-outline w-full"
+    >
+      <FaGoogle className="mr-2 text-lg" />
+      Continue with Google
+    </button>
   );
-};
-
-export default SocialButton;
+}

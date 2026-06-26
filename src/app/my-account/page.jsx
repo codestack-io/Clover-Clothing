@@ -1,13 +1,16 @@
 "use client";
 
-import { useAuth } from "@/context/AuthContext";
+import { useSession, signOut } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 
 export default function MyAccount() {
-  const { user, loading, logout } = useAuth();
+ const { data: session, status } = useSession();
+
+const user = session?.user;
+const loading = status === "loading";
   const router = useRouter();
 
   useEffect(() => {
@@ -33,7 +36,7 @@ export default function MyAccount() {
       <div className="bg-white rounded-2xl shadow p-8 flex flex-col sm:flex-row items-center gap-6 mb-6">
         <div className="relative w-20 h-20 rounded-full overflow-hidden border-4 border-green-200 flex-shrink-0">
           <Image
-            src={user.photoURL || "https://i.ibb.co/4pDNDk1/avatar.png"}
+            src={user?.image || "https://i.ibb.co/4pDNDk1/avatar.png"}
             alt="Profile"
             fill
             unoptimized
@@ -41,7 +44,7 @@ export default function MyAccount() {
           />
         </div>
         <div>
-          <h2 className="text-xl font-semibold">{user.displayName || "User"}</h2>
+          <h2 className="text-xl font-semibold">{user?.name || "User"}</h2>
           <p className="text-gray-500">{user.email}</p>
           <span className="badge badge-success text-white mt-1">Active</span>
         </div>
@@ -73,13 +76,12 @@ export default function MyAccount() {
           <p className="text-gray-400 text-sm">View, delete items</p>
         </Link>
       </div>
-
-      <button
-        onClick={logout}
-        className="btn btn-error btn-outline w-full"
-      >
-        Logout
-      </button>
+<button
+  onClick={() => signOut({ callbackUrl: "/" })}
+  className="btn btn-error btn-outline w-full"
+>
+  Logout
+</button>
     </div>
   );
 }

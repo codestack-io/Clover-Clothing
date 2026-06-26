@@ -1,14 +1,17 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useAuth } from "@/context/AuthContext";
+import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import Swal from "sweetalert2";
 
 export default function ManageProductsPage() {
-  const { user, loading } = useAuth();
+ const { data: session, status } = useSession();
+
+const user = session?.user;
+const loading = status === "loading";
   const router = useRouter();
   const [products, setProducts] = useState([]);
   const [fetching, setFetching] = useState(true);

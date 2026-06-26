@@ -2,22 +2,20 @@
 
 import { useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
-import { auth } from "@/lib/firebase";
-import SocialButton from "@/components/Buttons/SocialButton";
 import Swal from "sweetalert2";
 import Link from "next/link";
+import { signIn } from "next-auth/react";
 
 export default function RegisterPage() {
   const router = useRouter();
   const params = useSearchParams();
+
+  const callbackUrl = params.get("callbackUrl") || "/";
+
   const [loading, setLoading] = useState(false);
   const [imageFile, setImageFile] = useState(null);
   const [preview, setPreview] = useState(null);
 
-  const callBackUrl = params.get("callbackUrl") || "/";
-
-  // Upload image to ImgBB
   const uploadImage = async (file) => {
     const formData = new FormData();
     formData.append("image", file);
@@ -36,6 +34,7 @@ export default function RegisterPage() {
 
   const handleRegister = async (e) => {
     e.preventDefault();
+
     setLoading(true);
 
     const formData = new FormData(e.currentTarget);
@@ -44,45 +43,60 @@ export default function RegisterPage() {
     const email = formData.get("email").toLowerCase();
     const password = formData.get("password");
 
-
     try {
-      let imageUrl =
+      let image =
         "https://i.ibb.co/4pDNDk1/avatar.png";
 
-      // 🔥 upload image if selected
       if (imageFile) {
-        imageUrl = await uploadImage(imageFile);
+        image = await uploadImage(imageFile);
       }
 
-      // create user
-      const userCredential = await createUserWithEmailAndPassword(
-        auth,
+      const register = await fetch("/api/register", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          name,
+          email,
+          password,
+          image,
+        }),
+      });
+
+      const data = await register.json();
+
+      if (!register.ok) {
+        throw new Error(data.error);
+      }
+
+      const login = await signIn("credentials", {
         email,
-        password
-      );
-
-      // update profile
-      await updateProfile(userCredential.user, {
-        displayName: name,
-        photoURL: imageUrl,
+        password,
+        redirect: false,
       });
 
-      Swal.fire({
-        title: "Success!",
-        text: "Account created successfully",
+      if (login?.error) {
+        throw new Error(login.error);
+      }
+
+      await Swal.fire({
         icon: "success",
+        title: "Account Created",
+        text: "Registration successful!",
       });
 
-      router.push(callBackUrl);
+      router.push(callbackUrl);
+
     } catch (error) {
       Swal.fire({
-        title: "Error",
-        text: error.message,
         icon: "error",
+        title: "Registration Failed",
+        text: error.message,
       });
-    } finally {
-      setLoading(false);
     }
+
+    setLoading(false);
   };
 
   return (
@@ -95,40 +109,49 @@ export default function RegisterPage() {
 
         <input
           name="name"
-          type="text"
+          required
           placeholder="Full Name"
           className="w-full border p-3 rounded-lg"
-          required
         />
 
         <input
           name="email"
           type="email"
+          required
           placeholder="Email"
           className="w-full border p-3 rounded-lg"
-          required
         />
 
         <input
           name="password"
           type="password"
+          required
           placeholder="Password"
           className="w-full border p-3 rounded-lg"
-          required
         />
 
-        {/* 🔥 GALLERY IMAGE INPUT */}
         <input
           type="file"
           accept="image/*"
           className="w-full border p-3 rounded-lg"
           onChange={(e) => {
-  const file = e.target.files[0];
-  setImageFile(file);
-  setPreview(URL.createObjectURL(file)); // ONLY for UI preview
-}}
+            const file = e.target.files[0];
 
+            setImageFile(file);
+
+            if (file) {
+              setPreview(URL.createObjectURL(file));
+            }
+          }}
         />
+
+        {preview && (
+          <img
+            src={preview}
+            alt="preview"
+            className="w-24 h-24 rounded-full object-cover mx-auto"
+          />
+        )}
 
         <button
           disabled={loading}
@@ -136,17 +159,14 @@ export default function RegisterPage() {
         >
           {loading ? "Creating..." : "Register"}
         </button>
+
       </form>
 
-      <div className="text-center mt-4">
-        <SocialButton callbackUrl={callBackUrl} />
-      </div>
-
-      <p className="text-center mt-4">
+      <p className="text-center mt-6">
         Already have an account?{" "}
         <Link
-          href={`/auth/login?callbackUrl=${encodeURIComponent(callBackUrl)}`}
-          className="text-black font-semibold"
+          href={`/auth/login?callbackUrl=${encodeURIComponent(callbackUrl)}`}
+          className="font-semibold"
         >
           Login
         </Link>

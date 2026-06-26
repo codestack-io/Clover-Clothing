@@ -1,5 +1,5 @@
 import { ObjectId } from "mongodb";
-import { dbConnect, Collection } from "@/app/lib/dbConnect";
+import { dbConnect, Collection } from "../../../../app/lib/dbConnect";
 import { NextResponse } from "next/server";
 
 export async function GET(req, context) {

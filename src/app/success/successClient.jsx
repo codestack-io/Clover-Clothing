@@ -1,6 +1,6 @@
 "use client";
 
-import { clearCart } from "@/action/server/cart";
+import { clearCart } from "../../action/server/cart";
 import { useState, useEffect } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import Swal from "sweetalert2";

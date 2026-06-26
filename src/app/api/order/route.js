@@ -1,9 +1,9 @@
-import { dbConnect, Collection } from "@/app/lib/dbConnect";
+import { dbConnect, Collection } from "../../../app/lib/dbConnect";
 import { NextResponse } from "next/server";
 import { ObjectId } from "mongodb";
-import { sendEmail } from "@/app/lib/sendEmail";
-import { generateInvoiceHTML } from "@/app/lib/orderInvoice";
-import { authOptions } from "@/app/lib/authOptions";
+import { sendEmail } from "../../../app/lib/sendEmail";
+import { generateInvoiceHTML } from "../../../app/lib/orderInvoice";
+import { authOptions } from "../../../app/lib/authOptions";
 import { getServerSession } from "next-auth";
 
 // ======================

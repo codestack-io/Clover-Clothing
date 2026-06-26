@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useAuth } from "@/context/AuthContext";
+import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import Swal from "sweetalert2";
@@ -17,7 +17,10 @@ const COTTON_TYPES = [
 ];
 
 export default function AddProductPage() {
-  const { user, loading } = useAuth();
+  const { data: session, status } = useSession();
+
+const user = session?.user;
+const loading = status === "loading";
   const router = useRouter();
   const [submitting, setSubmitting] = useState(false);
   const [form, setForm] = useState({

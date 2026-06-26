@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useAuth } from "../../context/AuthContext";
+import { useSession } from "next-auth/react";
 import Swal from "sweetalert2";
 import Link from "next/link";
 
@@ -35,7 +35,8 @@ const mockReviews = [
 ];
 
 export default function ReviewPage() {
-  const { user } = useAuth();
+  const { data: session } = useSession();
+const user = session?.user;
   const [reviews, setReviews] = useState(mockReviews);
   const [form, setForm] = useState({ rating: 5, text: "" });
   const [submitting, setSubmitting] = useState(false);
@@ -63,14 +64,17 @@ export default function ReviewPage() {
     setSubmitting(true);
     await new Promise((r) => setTimeout(r, 600));
 
-    const newReview = {
-      id: Date.now(),
-      name: user.displayName || user.email,
-      avatar: user.photoURL || "https://i.ibb.co/4pDNDk1/avatar.png",
-      rating: form.rating,
-      date: new Date().toLocaleDateString("en-US", { month: "long", year: "numeric" }),
-      text: form.text,
-    };
+const newReview = {
+  id: Date.now(),
+  name: user?.name || user?.email,
+  avatar: user?.image || "https://i.ibb.co/4pDNDk1/avatar.png",
+  rating: form.rating,
+  date: new Date().toLocaleDateString("en-US", {
+    month: "long",
+    year: "numeric",
+  }),
+  text: form.text,
+};
 
     setReviews((prev) => [newReview, ...prev]);
     setForm({ rating: 5, text: "" });
