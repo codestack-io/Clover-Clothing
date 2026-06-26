@@ -1,5 +1,5 @@
 // /app/api/auth/login/route.js
-import { dbConnect, Collection } from "@/app/lib/dbConnect";
+import { dbConnect, Collection } from "../../../../app/lib/dbConnect";
 import bcrypt from "bcryptjs";
 
 export async function POST(req) {

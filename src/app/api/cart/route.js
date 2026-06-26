@@ -1,4 +1,4 @@
-import { getCart } from "@/action/server/cart";
+import { getCart } from "../../../action/server/cart";
 import { NextResponse } from "next/server";
 
 export async function GET() {

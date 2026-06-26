@@ -1,4 +1,4 @@
-import FAQPage from "@/components/FAQ/FAQ";
+import FAQPage from "../../components/FAQ/FAQ";
 
 export const metadata = {
   title: "FAQ | Clover Clothing",

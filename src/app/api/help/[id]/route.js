@@ -1,8 +1,8 @@
 import { NextResponse } from "next/server";
 import { ObjectId } from "mongodb";
 import { getServerSession } from "next-auth";
-import { authOptions } from "@/app/lib/authOptions";
-import { dbConnect, Collection } from "@/app/lib/dbConnect";
+import { authOptions } from "../../../../app/lib/authOptions";
+import { dbConnect, Collection } from "../../../../app/lib/dbConnect";
 
 // PATCH /api/help/:id  (Admin only)
 export async function PATCH(req, { params }) {
