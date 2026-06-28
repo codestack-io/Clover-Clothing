@@ -4,7 +4,7 @@ import Navbar from "../components/Layouts/Navbar";
 import Footer from "../components/Layouts/Footer";
 import TopBar from "../components/TopBar/TopBar";
 import Providers from "./provides";
-import { CartProvider } from "../context/CartContext";
+
 import { cn } from "../lib/utils";
 
 const inter = Inter({
@@ -26,7 +26,7 @@ export default function RootLayout({ children }) {
     >
       <body className={`${rubik.className} antialiased bg-gray-200`}>
         <Providers>
-          <CartProvider>
+         
             <header className="md:w-full mx-auto">
               <TopBar />
               <Navbar />
@@ -37,7 +37,7 @@ export default function RootLayout({ children }) {
             </main>
 
             <Footer />
-          </CartProvider>
+         
         </Providers>
       </body>
     </html>
