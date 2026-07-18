@@ -17,6 +17,7 @@ const CartPage = async () => {
    return (
   <div className="max-w-7xl mx-auto">
     <Cart cartItems={formattedItems} />
+    
   </div>
 );
   } catch (error) {
