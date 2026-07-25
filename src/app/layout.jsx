@@ -1,4 +1,4 @@
-import { Rubik, Inter } from "next/font/google";
+import { Rubik, Inter, Geist } from "next/font/google";
 import "./globals.css";
 import Navbar from "../components/Layouts/Navbar";
 import Footer from "../components/Layouts/Footer";
@@ -7,10 +7,7 @@ import Providers from "./provides";
 
 import { cn } from "../lib/utils";
 
-const inter = Inter({
-  subsets: ["latin"],
-  variable: "--font-sans",
-});
+const geist = Geist({subsets:['latin'],variable:'--font-sans'});
 
 const rubik = Rubik({
   weight: ["300", "400", "500", "600", "700", "800", "900"],
@@ -22,7 +19,7 @@ export default function RootLayout({ children }) {
     <html
       lang="en"
       data-theme="light"
-      className={cn("font-sans", inter.variable)}
+      className={cn("font-sans", geist.variable)}
     >
       <body className={`${rubik.className} antialiased bg-gray-200`}>
         <Providers>
