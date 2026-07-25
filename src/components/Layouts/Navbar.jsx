@@ -5,10 +5,10 @@ import Logo from "../Logo/Logo";
 import Link from "next/link";
 import { IoMdCart } from "react-icons/io";
 import AuthButtons from "../Buttons/AuthButtons";
-
+import { MdDashboard } from "react-icons/md";
 import { FaHome } from "react-icons/fa";
 import { RiPageSeparator } from "react-icons/ri";
-
+import { useSession } from "next-auth/react";
 
 const Navbar = () => {
   const [showPages, setShowPages] = useState(false);
@@ -16,8 +16,9 @@ const Navbar = () => {
   const pagesRef = useRef(null);
   const [showProducts, setShowProducts] = useState(false);
   const productsRef = useRef(null);
-
+  const { data: session } = useSession();
   
+console.log("Session:", session);
 
   // Close dropdowns on outside click
   useEffect(() => {
@@ -40,6 +41,13 @@ const Navbar = () => {
           <FaHome /> Home
         </NavLink>
       </li>
+     {session?.user?.role === "admin" && (
+  <li className="text-gray-700 font-sans text-lg">
+    <NavLink href="/dashboard">
+      <MdDashboard /> Dashboard
+    </NavLink>
+  </li>
+)}
 
       
 

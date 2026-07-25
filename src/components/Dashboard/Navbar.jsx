@@ -10,6 +10,7 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuLabel,
+  DropdownMenuGroup,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
@@ -84,14 +85,17 @@ export default function Navbar({ onOpenMobile }) {
               <ChevronDown className="hidden h-3.5 w-3.5 text-slate-400 sm:block" />
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-48">
+                 <DropdownMenuGroup>
               <DropdownMenuLabel>My Account</DropdownMenuLabel>
               <DropdownMenuSeparator />
               <DropdownMenuItem>Profile</DropdownMenuItem>
               <DropdownMenuItem>Settings</DropdownMenuItem>
+              </DropdownMenuGroup>
               <DropdownMenuSeparator />
               <DropdownMenuItem className="text-red-600 focus:text-red-600">
                 Logout
               </DropdownMenuItem>
+              
             </DropdownMenuContent>
           </DropdownMenu>
         </div>

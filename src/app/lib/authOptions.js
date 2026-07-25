@@ -87,21 +87,31 @@ return {
     },
 
     // ✅ Add role + email to token
-  async jwt({ token, user }) {
-  if (user) {
-    token.id = user.id;
-    token.role = user.role;
+async jwt({ token, user }) {
+  // On first login
+  if (user?.email) {
+    const collection = await dbConnect(Collection.USERS);
+
+    const dbUser = await collection.findOne({
+      email: user.email,
+    });
+
+    if (dbUser) {
+      token.id = dbUser._id.toString();
+      token.role = dbUser.role;
+    }
   }
 
   return token;
 },
-
-  async session({ session, token }) {
+ async session({ session, token }) {
+  if (session.user) {
     session.user.id = token.id;
     session.user.role = token.role;
+  }
 
-    return session;
-  },
+  return session;
+},
   },
 
   session: {

@@ -1,8 +1,9 @@
+"use client";
 import { Package, ShoppingCart, DollarSign, Users } from "lucide-react";
 import StatCard from "@/components/dashboard/StatCard";
-import RecentOrdersTable from "@/components/dashboard/RecentOrdersTable";
-import LatestProducts from "@/components/dashboard/LatestProducts";
-import ChartPlaceholder from "@/components/dashboard/ChartPlaceholder";
+import RecentOrdersTable from "@/components/Dashboard/RecentOrders";
+import LatestProducts from "@/components/Dashboard/LatestProduct";
+import ChartPlaceholder from "@/components/Dashboard/ChatPlaceholder";
 
 const STATS = [
   { icon: Package, title: "Total Products", value: "1,284", growth: 8.2 },
