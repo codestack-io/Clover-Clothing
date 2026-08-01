@@ -11,7 +11,8 @@ import {
 import StatCard from "@/components/dashboard/StatCard";
 import RecentOrdersTable from "@/components/Dashboard/RecentOrders";
 import LatestProducts from "@/components/Dashboard/LatestProduct";
-import ChartPlaceholder from "@/components/Dashboard/ChatPlaceholder";
+import BestSellingChart from "@/components/Dashboard/BestSellingChart";
+import SalesChart from "@/components/Dashboard/SalesChart";
 
 export default function DashboardHomePage() {
   const [dashboard, setDashboard] = useState(null);
@@ -31,6 +32,7 @@ export default function DashboardHomePage() {
         }
 
         const data = await response.json();
+        console.log(data);
 
         if (!data.success) {
           throw new Error(data.message || "Failed to load dashboard");
@@ -109,6 +111,8 @@ export default function DashboardHomePage() {
   const recentOrders = dashboard.recentOrders || [];
 
   const latestProducts = dashboard.latestProducts || [];
+  const salesData = dashboard.salesData || [];
+  const bestSelling = dashboard.bestSelling || [];
 
   // --------------------------------
   // STAT CARDS
@@ -221,7 +225,7 @@ export default function DashboardHomePage() {
             Sales Overview
           </h2>
 
-          <ChartPlaceholder label="Sales chart" />
+          <SalesChart data={salesData} />
 
         </div>
 
@@ -231,7 +235,7 @@ export default function DashboardHomePage() {
             Best Selling Products
           </h2>
 
-          <ChartPlaceholder label="Best sellers chart" />
+          <BestSellingChart data={bestSelling} />
 
         </div>
 

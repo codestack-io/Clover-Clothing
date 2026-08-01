@@ -10,7 +10,6 @@ export default function DashboardLayout({ children }) {
   const [mobileOpen, setMobileOpen] = useState(false);
   const pathname = usePathname();
 
-  // Close the mobile drawer whenever the route changes
   useEffect(() => {
     setMobileOpen(false);
   }, [pathname]);
@@ -26,7 +25,9 @@ export default function DashboardLayout({ children }) {
 
       <div className="flex min-w-0 flex-1 flex-col">
         <Navbar onOpenMobile={() => setMobileOpen(true)} />
-        <main className="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8">{children}</main>
+        <main className="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8">
+          {children}
+        </main>
       </div>
     </div>
   );
