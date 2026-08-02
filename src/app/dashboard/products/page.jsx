@@ -8,15 +8,19 @@ import {
   MoreHorizontal,
   X,
 } from "lucide-react";
+import Swal from "sweetalert2";
 
 export default function ProductsPage() {
   const [products, setProducts] = useState([]);
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [isEditing, setIsEditing] = useState(false);
+const [editingId, setEditingId] = useState(null);
 
   // Add Product Modal
   const [showAddModal, setShowAddModal] = useState(false);
+  const [openMenu, setOpenMenu] = useState(null);
 
   // Form
   const [formData, setFormData] = useState({
@@ -135,17 +139,95 @@ export default function ProductsPage() {
 
       // Refresh product list
       await fetchProducts();
+      Swal.fire({
+    icon: "success",
+    title: "Success!",
+    text: isEditing
+    ? "Product updated successfully."
+    : "Product added successfully.",
+    timer: 1800,
+    showConfirmButton: false,
+  });
     } catch (error) {
       console.error("Add product error:", error);
 
-      setFormError(
-        error.message || "Failed to add product"
-      );
+      Swal.fire({
+  icon: "error",
+  title: "Error",
+  text: error.message,
+});
     } finally {
       setSaving(false);
     }
   }
 
+  // --------------------------------
+  // Edit Product
+  // --------------------------------
+  function handleEdit(product) {
+  setIsEditing(true);
+  setEditingId(product.id);
+
+  setFormData({
+    name: product.name || "",
+    image: product.image || "",
+    cottonType: product.cottonType || "",
+    brand: product.brand || "",
+    size: product.size || "",
+    color: product.color || "",
+    price: product.price || "",
+    sold: product.sold || 0,
+  });
+
+  setShowAddModal(true);
+  setOpenMenu(null);
+}
+
+  // --------------------------------
+  // Delete Product
+  // --------------------------------
+async function handleDelete(id) {
+  const result = await Swal.fire({
+    title: "Delete Product?",
+    text: "This product will be permanently deleted.",
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonColor: "#059669",
+    cancelButtonColor: "#ef4444",
+    confirmButtonText: "Yes, Delete",
+    cancelButtonText: "Cancel",
+  });
+
+  if (!result.isConfirmed) return;
+
+  try {
+    const res = await fetch(`/api/dashboard/products/${id}`, {
+      method: "DELETE",
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      throw new Error(data.message);
+    }
+
+    await fetchProducts();
+
+    Swal.fire({
+      icon: "success",
+      title: "Deleted!",
+      text: "Product deleted successfully.",
+      timer: 1800,
+      showConfirmButton: false,
+    });
+  } catch (err) {
+    Swal.fire({
+      icon: "error",
+      title: "Oops...",
+      text: err.message,
+    });
+  }
+}
   // --------------------------------
   // CLOSE MODAL
   // --------------------------------
@@ -387,12 +469,38 @@ export default function ProductsPage() {
 
                       <td className="px-5 py-4 text-right">
 
-                        <button
-                          type="button"
-                          className="rounded-lg p-2 text-slate-400 transition hover:bg-slate-100 hover:text-slate-700"
-                        >
-                          <MoreHorizontal className="h-4 w-4" />
-                        </button>
+                       <div className="relative inline-block">
+
+  <button
+    onClick={() =>
+      setOpenMenu(openMenu === product.id ? null : product.id)
+    }
+    className="rounded-lg p-2 hover:bg-slate-100"
+  >
+    <MoreHorizontal className="h-4 w-4" />
+  </button>
+
+  {openMenu === product.id && (
+    <div className="absolute right-0 z-20 mt-2 w-40 rounded-lg border bg-white shadow-lg">
+
+      <button
+      onClick={() => handleEdit(product)}
+      className="block w-full px-4 py-2 text-left text-sm hover:bg-slate-100"
+      >
+      Edit
+      </button>
+
+      <button
+        onClick={() => handleDelete(product.id)}
+        className="block w-full px-4 py-2 text-left text-sm text-red-600 hover:bg-red-50"
+      >
+        Delete
+      </button>
+
+    </div>
+  )}
+
+</div>
 
                       </td>
 
