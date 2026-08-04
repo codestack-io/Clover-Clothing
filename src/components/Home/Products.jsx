@@ -1,11 +1,13 @@
 "use client";
 
 import { useEffect, useState, useMemo } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import ProductCard from "../Card/ProductCard";
 import ProductSkeleton from "../Skeleton/ProductSkeleton";
 import LayoutSwitcher from "../LayoutSwicher/LayoutSwitcher";
 import { FaSeedling } from "react-icons/fa";
 import { RiSeedlingFill } from "react-icons/ri";
+import { Search, PackageX, SearchX } from "lucide-react";
 
 const CATEGORIES = [
   "All",
@@ -25,7 +27,7 @@ const Products = ({ limit }) => {
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState("All");
 
-  // Fetch products
+  // Fetch products — unchanged from the original implementation.
   useEffect(() => {
     const fetchProducts = async () => {
       try {
@@ -46,7 +48,7 @@ const Products = ({ limit }) => {
     fetchProducts();
   }, []);
 
-  // Filter by search, category, price
+  // Filter by search, category, price — unchanged from the original implementation.
   const filteredProducts = useMemo(() => {
     return products.filter((product) => {
       const matchSearch =
@@ -61,13 +63,13 @@ const Products = ({ limit }) => {
     });
   }, [products, search, category, priceRange]);
 
-  // Limit products if needed
+  // Limit products if needed — unchanged from the original implementation.
   let displayedProducts = filteredProducts;
   if (limit && !showAll) {
     displayedProducts = filteredProducts.slice(0, limit);
   }
 
-  // Grid columns based on layout
+  // Grid columns based on layout — unchanged from the original implementation.
   const getGridCols = () => {
     switch (layout) {
       case "2":
@@ -83,28 +85,76 @@ const Products = ({ limit }) => {
     }
   };
 
+  // True "nothing exists" vs. "your filters excluded everything" are
+  // different situations and get different messaging/CTAs.
+  const noProductsAtAll = !isLoading && products.length === 0;
+  const noFilteredResults =
+    !isLoading && products.length > 0 && filteredProducts.length === 0;
+
   return (
     <div>
-      {/* Layout Switcher */}
-      <LayoutSwitcher layout={layout} setLayout={setLayout} />
+      {/* Section header ---------------------------------------------- */}
+      <div className="mx-auto max-w-2xl text-center">
+        <motion.span
+          initial={{ opacity: 0, y: 8 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.4 }}
+          className="text-xs font-semibold uppercase tracking-[0.2em] text-green-700"
+        >
+          Featured Collection
+        </motion.span>
+        <motion.h2
+          initial={{ opacity: 0, y: 12 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5, delay: 0.05 }}
+          className="mt-3 text-3xl font-semibold tracking-tight text-neutral-900 sm:text-4xl"
+        >
+          Best Sellers
+        </motion.h2>
+        <motion.p
+          initial={{ opacity: 0, y: 12 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5, delay: 0.1 }}
+          className="mx-auto mt-3 max-w-lg text-[15px] leading-relaxed text-neutral-500"
+        >
+          High-quality essentials curated for everyday comfort and timeless
+          style.
+        </motion.p>
+        <div className="mx-auto mt-6 h-px w-16 bg-gradient-to-r from-transparent via-neutral-300 to-transparent" />
+      </div>
 
-      {/* FILTER BAR */}
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6 border-b pb-6">
+      {/* Layout Switcher — unchanged component */}
+      <div className="mt-10">
+        <LayoutSwitcher layout={layout} setLayout={setLayout} />
+      </div>
 
+      {/* FILTER BAR ---------------------------------------------------- */}
+      <div className="mb-8 flex flex-col gap-4 rounded-2xl border border-neutral-200 bg-white p-4 shadow-sm md:flex-row md:items-center md:justify-between">
         {/* Search */}
-        <input
-          type="text"
-          placeholder="Search products..."
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          className="border border-gray-300 rounded-lg px-4 py-2 w-full md:w-64 focus:outline-none focus:ring-2 focus:ring-black"
-        />
+        <div className="relative w-full md:w-64">
+          <Search
+            className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-neutral-400"
+            aria-hidden="true"
+          />
+          <input
+            type="text"
+            placeholder="Search products..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            aria-label="Search products"
+            className="w-full rounded-xl border border-neutral-200 bg-neutral-50 py-2.5 pl-10 pr-4 text-sm text-neutral-900 transition-colors focus:border-green-600 focus:bg-white focus:outline-none focus:ring-4 focus:ring-green-600/10"
+          />
+        </div>
 
         {/* Category Filter */}
         <select
           value={category}
           onChange={(e) => setCategory(e.target.value)}
-          className="border border-gray-300 rounded-lg px-4 py-2 w-full md:w-52 focus:outline-none focus:ring-2 focus:ring-black bg-white"
+          aria-label="Filter by category"
+          className="w-full rounded-xl border border-neutral-200 bg-neutral-50 px-4 py-2.5 text-sm text-neutral-900 transition-colors focus:border-green-600 focus:bg-white focus:outline-none focus:ring-4 focus:ring-green-600/10 md:w-52"
         >
           {CATEGORIES.map((cat) => (
             <option key={cat} value={cat}>
@@ -115,9 +165,11 @@ const Products = ({ limit }) => {
 
         {/* Price Slider */}
         <div className="w-full md:w-72">
-          <div className="flex justify-between text-sm text-gray-500 mb-1">
+          <div className="mb-1.5 flex justify-between text-xs font-medium text-neutral-500">
             <span>Price</span>
-            <span>৳{priceRange[0]} – ৳{priceRange[1]}</span>
+            <span className="text-neutral-800">
+              ৳{priceRange[0]} – ৳{priceRange[1]}
+            </span>
           </div>
           <input
             type="range"
@@ -128,52 +180,95 @@ const Products = ({ limit }) => {
             onChange={(e) =>
               setPriceRange([priceRange[0], Number(e.target.value)])
             }
-            className="w-full accent-black cursor-pointer"
+            aria-label="Maximum price"
+            className="w-full cursor-pointer accent-green-700"
           />
         </div>
 
         {/* Product Count */}
-        <p className="text-gray-600 font-medium whitespace-nowrap">
+        <p className="whitespace-nowrap text-sm font-medium text-neutral-500">
           {filteredProducts.length} Products
         </p>
       </div>
 
-      {/* PRODUCTS GRID */}
-      <div className={`grid gap-6 ${getGridCols()}`}>
-        {isLoading
-          ? Array(limit || 9)
-              .fill(0)
-              .map((_, index) => <ProductSkeleton key={index} />)
-          : displayedProducts.length === 0
-          ? (
-            <div className="col-span-full flex flex-col items-center justify-center py-20 text-gray-400">
-              <p className="text-xl font-semibold mb-2">No products found</p>
-              <p className="text-sm">Try adjusting your search or filters.</p>
-            </div>
-          )
-          : displayedProducts.map((product) => (
-              <ProductCard
-                key={product._id}
-                product={{
-                  ...product,
-                  id: product._id,
-                  image: product.image || "/placeholder.png",
-                  name: product.name || "Unnamed Product",
-                  layout,
-                }}
-              />
-            ))}
-      </div>
-
-      {/* SEE MORE BUTTON */}
-      {!isLoading && limit && filteredProducts.length > limit && (
-        <div className="flex justify-center mt-7">
-          <button
-            onClick={() => setShowAll(!showAll)}
-            className="px-6 py-3 bg-black text-white rounded-lg hover:bg-gray-800 transition flex items-center gap-2"
+      {/* PRODUCTS GRID / EMPTY STATES ----------------------------------- */}
+      {noProductsAtAll ? (
+        <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-neutral-200 py-24 text-center">
+          <div className="flex h-16 w-16 items-center justify-center rounded-full bg-neutral-100">
+            <PackageX className="h-7 w-7 text-neutral-400" aria-hidden="true" />
+          </div>
+          <p className="mt-4 text-base font-semibold text-neutral-800">
+            No products available right now.
+          </p>
+          <a
+            href="#top-categories-heading"
+            className="mt-5 inline-flex items-center gap-2 rounded-full bg-neutral-900 px-5 py-2.5 text-sm font-medium text-white transition-colors hover:bg-green-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-green-600 focus-visible:ring-offset-2"
           >
-            {showAll ? <><FaSeedling /> Show Less</> : <><RiSeedlingFill /> Show More</>}
-          </button>
+            Browse Categories
+          </a>
+        </div>
+      ) : noFilteredResults ? (
+        <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-neutral-200 py-24 text-center">
+          <div className="flex h-16 w-16 items-center justify-center rounded-full bg-neutral-100">
+            <SearchX className="h-7 w-7 text-neutral-400" aria-hidden="true" />
+          </div>
+          <p className="mt-4 text-base font-semibold text-neutral-800">
+            No products found
+          </p>
+          <p className="mt-1 text-sm text-neutral-500">
+            Try adjusting your search or filters.
+          </p>
+        </div>
+      ) : (
+        <div className={`grid gap-6 ${getGridCols()}`}>
+          {isLoading
+            ? Array(limit || 9)
+                .fill(0)
+                .map((_, index) => <ProductSkeleton key={index} />)
+            : displayedProducts.map((product) => (
+                <ProductCard
+                  key={product._id}
+                  product={{
+                    ...product,
+                    id: product._id,
+                    image: product.image || "/placeholder.png",
+                    name: product.name || "Unnamed Product",
+                    layout,
+                  }}
+                />
+              ))}
+        </div>
+      )}
+
+      {/* SEE MORE BUTTON ------------------------------------------------- */}
+      {!isLoading && limit && filteredProducts.length > limit && (
+        <div className="mt-10 flex justify-center">
+          <motion.button
+            whileTap={{ scale: 0.96 }}
+            onClick={() => setShowAll(!showAll)}
+            className="flex items-center gap-2 rounded-full bg-neutral-900 px-6 py-3 text-sm font-medium text-white shadow-sm transition-colors hover:bg-green-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-green-600 focus-visible:ring-offset-2"
+          >
+            <AnimatePresence mode="wait" initial={false}>
+              <motion.span
+                key={showAll ? "less" : "more"}
+                initial={{ opacity: 0, y: -4 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: 4 }}
+                transition={{ duration: 0.15 }}
+                className="flex items-center gap-2"
+              >
+                {showAll ? (
+                  <>
+                    <FaSeedling /> Show Less
+                  </>
+                ) : (
+                  <>
+                    <RiSeedlingFill /> Show More
+                  </>
+                )}
+              </motion.span>
+            </AnimatePresence>
+          </motion.button>
         </div>
       )}
     </div>
