@@ -1,10 +1,15 @@
-import FAQPage from "../../components/FAQ/FAQ";
+import FAQSection from "@/components/FAQ/FAQSection";
 
 export const metadata = {
-  title: "FAQ | Clover Clothing",
-  description: "Frequently asked questions about Clover Clothing — shipping, returns, products, and more.",
+  title: "FAQs | Clover Clothing",
+  description:
+    "Answers to common questions about orders, shipping, returns, sizing, and payments at Clover Clothing.",
 };
 
-export default function Page() {
-  return <FAQPage />;
+export default function FAQPage() {
+  return (
+    <main className="min-h-screen bg-neutral-50 dark:bg-neutral-950">
+      <FAQSection />
+    </main>
+  );
 }
