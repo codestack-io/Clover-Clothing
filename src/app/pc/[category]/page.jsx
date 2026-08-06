@@ -34,7 +34,7 @@ export default function CategoryPage({ params }) {
 
   return (
     <div className="p-8 bg-gray-50 min-h-screen">
-      <h1 className="text-3xl md:text-4xl font-extrabold text-gray-900 mb-8">
+      <h1 className="text-3xl md:text-4xl font-extrabold text-gray-900 dark:text-white mb-8">
         {cottonType || category}
       </h1>
 

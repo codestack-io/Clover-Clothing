@@ -11,7 +11,7 @@ const Logo = () => {
 
       {/* Text */}
       <div className="flex flex-col leading-tight">
-        <h1 className="text-2xl font-bold tracking-wide text-gray-900">
+        <h1 className="text-2xl font-bold tracking-wide text-gray-900 dark:text-white">
           Clover
         </h1>
         <span className="text-xs uppercase tracking-[0.3em] text-gray-500">

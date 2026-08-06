@@ -10,6 +10,7 @@ import { FaHome } from "react-icons/fa";
 import { RiPageSeparator } from "react-icons/ri";
 import { useSession } from "next-auth/react";
 
+
 const Navbar = () => {
   const [showPages, setShowPages] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
