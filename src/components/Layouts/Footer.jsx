@@ -23,7 +23,7 @@ const Footer = () => {
           <Link href="/about" className="link link-hover">About us</Link>
           <Link href="/help" className="link link-hover">Contact</Link>
           <a className="link link-hover">Jobs</a>
-          <Link href="/FAQ" className="link link-hover">FAQ</Link>
+          <Link href="/faq" className="link link-hover">FAQ</Link>
         </nav>
 
         <nav>
@@ -40,7 +40,7 @@ const Footer = () => {
         <div className="flex gap-4">
           <Link href="/about" className="hover:underline">About</Link>
           <Link href="/help" className="hover:underline">Contact</Link>
-          <Link href="/FAQ" className="hover:underline">FAQ</Link>
+          <Link href="/faq" className="hover:underline">FAQ</Link>
         </div>
       </div>
     </footer>

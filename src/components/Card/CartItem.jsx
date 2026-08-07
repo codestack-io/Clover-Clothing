@@ -77,24 +77,28 @@ const CartItem = ({ item, removeItem,updateQuantity}) => {
         <p className="text-gray-500 mt-1">Price: ৳{price}</p>
       </div>
 
-      {/* Quantity Controls */}
-      <div className="flex items-center space-x-2">
-        <button
-          className="btn btn-sm btn-square btn-outline"
-          onClick={() => onDecrease(item)}
-          disabled={quantity === 1 || loading}
-        >
-          <AiOutlineMinus />
-        </button>
-        <span className="px-2">{quantity}</span>
-        <button
-          className="btn btn-sm btn-square btn-outline"
-          disabled={quantity === 10 || loading}
-          onClick={() => onIncrease(item)}
-        >
-          <AiOutlinePlus />
-        </button>
-      </div>
+     {/* Quantity Controls */}
+<div className="flex items-center gap-3">
+  <button
+    onClick={() => onDecrease(item)}
+    disabled={quantity === 1 || loading}
+    className="flex h-10 w-10 items-center justify-center rounded-lg border border-gray-300 bg-white text-black transition hover:bg-gray-100 disabled:cursor-not-allowed disabled:opacity-50"
+  >
+    <AiOutlineMinus size={18} />
+  </button>
+
+  <span className="w-8 text-center text-lg font-semibold">
+    {quantity}
+  </span>
+
+  <button
+    onClick={() => onIncrease(item)}
+    disabled={quantity === 10 || loading}
+    className="flex h-10 w-10 items-center justify-center rounded-lg border border-gray-300 bg-white text-black transition hover:bg-gray-100 disabled:cursor-not-allowed disabled:opacity-50"
+  >
+    <AiOutlinePlus size={18} />
+  </button>
+</div>
 
       {/* Remove Button */}
       <button

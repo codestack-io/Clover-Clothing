@@ -1,39 +1,52 @@
 "use client";
 
-import { usePathname, useRouter } from "next/navigation";
-import { useSession } from "next-auth/react";
 import React, { useState } from "react";
-import { handleCart } from "../../action/server/cart";
-import Swal from "sweetalert2";
+import { useRouter, usePathname } from "next/navigation";
+import { useSession } from "next-auth/react";
 import Image from "next/image";
 import Link from "next/link";
+import Swal from "sweetalert2";
+import { ShoppingBag, X } from "lucide-react";
+import { handleCart } from "../../action/server/cart";
+
 
 const CartButton = ({ product }) => {
   const router = useRouter();
   const pathname = usePathname();
 
-  const [loading, setLoading] = useState(false);
-  const [compareProducts, setCompareProducts] = useState([]);
-
   const { data: session } = useSession();
   const user = session?.user;
+
+  const [loading, setLoading] = useState(false);
+
+  
+
+  const [compareProducts, setCompareProducts] = useState([]);
 
   const handleAddToCart = async () => {
     try {
       if (!product || !product._id) {
-        Swal.fire("Error", "Product not found", "error");
+        Swal.fire({
+          icon: "error",
+          title: "Product not found",
+        });
         return;
       }
 
-      // Check login
+      /* Login */
+
       if (!user) {
         router.push(`/auth/login?callbackUrl=${pathname}`);
         return;
       }
 
-      // Check size
+      /* Size */
+
       if (!product.size) {
-        Swal.fire("Please select a size first!");
+        Swal.fire({
+          icon: "warning",
+          title: "Select a size first",
+        });
         return;
       }
 
@@ -42,123 +55,150 @@ const CartButton = ({ product }) => {
       const result = await handleCart({
         productId: product._id.toString(),
         size: product.size,
+        quantity: product.quantity,
       });
 
-      if (result?.success) {
-        Swal.fire(
-          "Added to cart successfully",
-          product.name,
-          "success"
-        );
+      if (!result?.success) {
+        Swal.fire({
+          icon: "error",
+          title: result?.message || "Failed to add product",
+        });
+        return;
+      }
 
-        // Fetch similar products
-        const res = await fetch(
-          `/api/compare?cottonType=${encodeURIComponent(
-            product.cottonType
-          )}&id=${product._id}`
-        );
+        /* Similar Products */
 
-        const data = await res.json();
+      const res = await fetch(
+        `/api/compare?cottonType=${encodeURIComponent(
+          product.cottonType
+        )}&id=${product._id}`
+      );
 
-        if (Array.isArray(data)) {
-          setCompareProducts(data);
-        }
-      } else {
-        Swal.fire(
-          "Oops!",
-          result?.message || "Something went wrong",
-          "error"
-        );
+      const data = await res.json();
+
+      if (Array.isArray(data)) {
+        setCompareProducts(data);
       }
     } catch (error) {
       console.error(error);
 
-      Swal.fire(
-        "Server Error",
-        error.message || "Failed to add item",
-        "error"
-      );
+      Swal.fire({
+        icon: "error",
+        title: "Server Error",
+        text: error.message,
+      });
     } finally {
       setLoading(false);
     }
   };
 
-  return (
-    <div>
-      {/* Add To Cart Button */}
+ return (
+  <>
+    {/* Add To Cart */}
 
-      <button
-        onClick={handleAddToCart}
-        disabled={loading}
-        className="mt-6 bg-black text-white px-6 py-3 rounded-xl hover:bg-gray-800 transition duration-300 shadow-md"
-      >
-        {loading ? "Adding..." : "Add to Cart"}
-      </button>
+    <button
+      onClick={handleAddToCart}
+      disabled={loading}
+      className="mt-6 flex w-full items-center justify-center gap-3 rounded-xl bg-black py-4 text-lg font-semibold text-white shadow-lg transition-all duration-300 hover:scale-[1.02] hover:bg-neutral-800 disabled:cursor-not-allowed disabled:opacity-70"
+    >
+      <ShoppingBag size={20} />
 
-      {/* Similar Products */}
+      {loading ? "Adding..." : "Add to Cart"}
+    </button>
 
-    {compareProducts.length > 0 && (
-  <div className="mt-10">
-    <h2 className="text-2xl font-bold mb-6 text-center">
-      Similar Fabric Products
-    </h2>
+    
 
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+ {/* Recommended Products */}
+      {compareProducts.length > 0 && (
+        <div className="mt-10">
 
-      {compareProducts.map((item) => (
-        <div
-          key={item._id}
-          className="bg-white rounded-xl shadow-md hover:shadow-xl transition overflow-hidden"
-        >
+          <div className="mb-6 flex items-center justify-between">
 
-          {/* Product Image */}
-          <Link href={`/products/${item._id}`}>
-            <div className="relative h-72 cursor-pointer">
+            <h2 className="text-2xl font-bold">
+              You May Also Like
+            </h2>
 
-              <Image
-                src={item.image}
-                alt={item.name}
-                fill
-                className="object-cover hover:scale-105 transition duration-300"
-              />
-
-            </div>
-          </Link>
-
-          {/* Product Details */}
-          <div className="p-5">
-
-            <h3 className="text-xl font-bold">
-              {item.name}
-            </h3>
-
-            <p className="text-gray-500 mt-2">
-              {item.brand}
-            </p>
-
-            <p className="text-red-600 font-bold text-xl mt-2">
-              ৳ {item.price}
-            </p>
-
-            <p className="text-gray-500 mt-2">
-              {item.cottonType}
-            </p>
-
-            <Link href={`/products/${item._id}`}>
-              <button className="w-full mt-5 bg-black text-white py-3 rounded-lg hover:bg-gray-800 transition">
-                View Details
-              </button>
+            <Link
+              href="/products"
+              className="text-sm font-medium text-neutral-600 hover:text-black"
+            >
+              View All →
             </Link>
 
           </div>
 
-        </div>
-      ))}
+          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
 
-    </div>
-  </div>
-)}
-    </div>
+            {compareProducts.map((item) => (
+
+              <div
+                key={item._id}
+                className="group overflow-hidden rounded-2xl border border-neutral-200 bg-white shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-xl"
+              >
+
+                {/* Image */}
+
+                <Link href={`/products/${item._id}`}>
+
+                  <div className="relative h-72 overflow-hidden">
+
+                    <Image
+                      src={item.image}
+                      alt={item.name}
+                      fill
+                      className="object-cover transition duration-500 group-hover:scale-105"
+                    />
+
+                  </div>
+
+                </Link>
+
+                {/* Content */}
+
+                <div className="space-y-3 p-5">
+
+                  <h3 className="line-clamp-2 text-lg font-semibold">
+                    {item.name}
+                  </h3>
+
+                  <p className="text-sm text-neutral-500">
+                    {item.brand}
+                  </p>
+
+                  <div className="flex items-center justify-between">
+
+                    <span className="text-2xl font-bold text-black">
+                      ৳{item.price}
+                    </span>
+
+                    <span className="rounded-full bg-neutral-100 px-3 py-1 text-xs font-medium text-neutral-600">
+                      {item.cottonType}
+                    </span>
+
+                  </div>
+
+                  <Link href={`/products/${item._id}`}>
+
+                    <button className="mt-2 w-full rounded-xl bg-black py-3 font-semibold text-white transition hover:bg-neutral-800">
+
+                      View Details
+
+                    </button>
+
+                  </Link>
+
+                </div>
+
+              </div>
+
+            ))}
+
+          </div>
+
+        </div>
+      )}
+
+    </>
   );
 };
 

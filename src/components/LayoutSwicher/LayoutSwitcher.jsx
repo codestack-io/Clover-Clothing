@@ -1,34 +1,59 @@
 "use client";
 
-import React from "react";
+import {
+  LayoutGrid,
+  Grid2x2,
+  Rows3,
+  List,
+} from "lucide-react";
 
-const LayoutSwitcher = ({ layout, setLayout }) => {
-  const options = [
-    { value: "2", label: "●●" },       // 2 products per row
-    { value: "3", label: "●●●" },      // 3 products per row
-    { value: "4", label: "●●●●" },     // 4 products per row
-    { value: "list", label: "▬" },     // list view (horizontal line)
-  ];
+const options = [
+  {
+    value: "2",
+    icon: <Grid2x2 size={18} />,
+    label: "2 Columns",
+  },
+  {
+    value: "3",
+    icon: <LayoutGrid size={18} />,
+    label: "3 Columns",
+  },
+  {
+    value: "4",
+    icon: <Rows3 size={18} />,
+    label: "4 Columns",
+  },
+  {
+    value: "list",
+    icon: <List size={18} />,
+    label: "List View",
+  },
+];
 
+export default function LayoutSwitcher({ layout, setLayout }) {
   return (
-    <div className="flex items-center gap-4 mb-6">
-      <span className="font-semibold">Layout:</span>
-      {options.map((option) => (
-        <button
-          key={option.value}
-          onClick={() => setLayout(option.value)}
-          className={`w-10 h-10 flex items-center justify-center rounded-full transition-colors text-xl ${
-            layout === option.value
-              ? " text-white"
-              : "bg-gray-200 text-gray-600"
-          }`}
-          title={`Layout: ${option.value}`} // hover tooltip
-        >
-          {option.label}
-        </button>
-      ))}
-    </div>
-  );
-};
+    <div className="flex items-center gap-3">
+  <span className="text-sm font-medium text-neutral-700">
+    View
+  </span>
 
-export default LayoutSwitcher;
+  <div className="inline-flex rounded-full bg-neutral-100 p-1">
+    {options.map((option) => (
+      <button
+        key={option.value}
+        onClick={() => setLayout(option.value)}
+        title={option.label}
+        className={`flex h-10 w-10 items-center justify-center rounded-full transition-all duration-200
+        ${
+          layout === option.value
+            ? "bg-white shadow-md text-black"
+            : "text-neutral-500 hover:text-black"
+        }`}
+      >
+        {option.icon}
+      </button>
+    ))}
+  </div>
+</div>
+  );
+}

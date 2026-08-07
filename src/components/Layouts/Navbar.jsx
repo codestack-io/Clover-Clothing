@@ -1,194 +1,187 @@
 "use client";
-import React, { useState, useRef, useEffect } from "react";
-import NavLink from "../Buttons/NavLink";
-import Logo from "../Logo/Logo";
-import Link from "next/link";
-import { IoMdCart } from "react-icons/io";
-import AuthButtons from "../Buttons/AuthButtons";
-import { MdDashboard } from "react-icons/md";
-import { FaHome } from "react-icons/fa";
-import { RiPageSeparator } from "react-icons/ri";
-import { useSession } from "next-auth/react";
 
+import React, { useState, useRef, useCallback } from "react";
+import Link from "next/link";
+import { useSession } from "next-auth/react";
+import { Heart, ShoppingBag, Menu, ChevronDown } from "lucide-react";
+
+import Logo from "../Logo/Logo";
+import MegaMenu from "../MegaMenu";
+import PagesDropdown from "../PagesDropdown";
+import MobileMenu from "../MobileMenu";
+
+import ProfileMenu from "../ProfileMenu";
+
+// Replace with real cart state (context / redux / query) when wiring this up.
+const CART_COUNT = 2;
+
+/**
+ * NavItem
+ * Shared link styling for top-level nav entries: underline-on-hover,
+ * no default blue focus rings, letter-spaced small caps feel.
+ */
+const NavItem = ({ href, children, className = "" }) => (
+  <Link
+    href={href}
+    className={`group relative text-[13.5px] font-medium tracking-[0.01em] text-[#111] transition-colors duration-300 hover:text-black ${className}`}
+  >
+    {children}
+    <span className="absolute -bottom-1 left-0 h-px w-0 bg-[#111] transition-all duration-300 ease-out group-hover:w-full" />
+  </Link>
+);
 
 const Navbar = () => {
-  const [showPages, setShowPages] = useState(false);
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const pagesRef = useRef(null);
-  const [showProducts, setShowProducts] = useState(false);
-  const productsRef = useRef(null);
   const { data: session } = useSession();
-  
-console.log("Session:", session);
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const [productsOpen, setProductsOpen] = useState(false);
+  const [pagesOpen, setPagesOpen] = useState(false);
 
-  // Close dropdowns on outside click
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (pagesRef.current && !pagesRef.current.contains(event.target)) {
-        setShowPages(false);
-      }
-      if (productsRef.current && !productsRef.current.contains(event.target)) {
-        setShowProducts(false);
-      }
-    };
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
+  const productsTimer = useRef(null);
+  const pagesTimer = useRef(null);
+
+  // Small delay on leave prevents flicker when moving the cursor
+  // from the trigger toward the panel.
+  const openProducts = useCallback(() => {
+    clearTimeout(productsTimer.current);
+    setProductsOpen(true);
+  }, []);
+  const closeProducts = useCallback(() => {
+    productsTimer.current = setTimeout(() => setProductsOpen(false), 120);
   }, []);
 
-  const navLinks = (
-    <>
-      <li className="text-gray-700 font-sans text-lg">
-        <NavLink href="/">
-          <FaHome /> Home
-        </NavLink>
-      </li>
-     {session?.user?.role === "admin" && (
-  <li className="text-gray-700 font-sans text-lg">
-    <NavLink href="/dashboard">
-      <MdDashboard /> Dashboard
-    </NavLink>
-  </li>
-)}
+  const openPages = useCallback(() => {
+    clearTimeout(pagesTimer.current);
+    setPagesOpen(true);
+  }, []);
+  const closePages = useCallback(() => {
+    pagesTimer.current = setTimeout(() => setPagesOpen(false), 120);
+  }, []);
 
-      
-
-      {/* Products Mega Menu */}
-      <li
-        className="relative text-gray-700 font-sans text-lg"
-        ref={productsRef}
-        onMouseEnter={() => setShowProducts(true)}
-        onMouseLeave={() => setShowProducts(false)}
-      >
-        <button className="flex items-center gap-1 font-medium hover:text-black transition">
-          Products ▾
-        </button>
-
-        <div
-          className={`absolute left-0 top-full mt-3 w-[95vw] max-w-[700px] bg-white border border-gray-200 rounded-2xl shadow-2xl p-6 z-50 transition-all duration-200 ${
-            showProducts
-              ? "opacity-100 visible translate-y-0"
-              : "opacity-0 invisible -translate-y-2"
-          }`}
-        >
-          <div className="grid grid-cols-3 gap-6">
-            <div>
-              <h3 className="font-semibold text-gray-900 mb-3">100% Cotton</h3>
-              <ul className="space-y-2 text-sm">
-                <li><Link href="/products/cotton" className="hover:underline">Basic Cotton Tee</Link></li>
-                <li><Link href="/products/cotton" className="hover:underline">Cotton Hoodie</Link></li>
-              </ul>
-            </div>
-            <div>
-              <h3 className="font-semibold text-gray-900 mb-3">Organic Cotton</h3>
-              <ul className="space-y-2 text-sm">
-                <li><Link href="/products/organic" className="hover:underline">Eco T-Shirt</Link></li>
-                <li><Link href="/products/organic" className="hover:underline">Organic Hoodie</Link></li>
-              </ul>
-            </div>
-            <div>
-              <h3 className="font-semibold text-gray-900 mb-3">Premium Cotton</h3>
-              <ul className="space-y-2 text-sm">
-                <li><Link href="/pc/premium?cottonType=Soft Cotton" className="hover:underline">Soft Cotton</Link></li>
-                <li><Link href="/pc/premium?cottonType=Light Cotton" className="hover:underline">Light Cotton</Link></li>
-                <li><Link href="/pc/premium?cottonType=Silk Cotton" className="hover:underline">Silk Cotton</Link></li>
-                <li><Link href="/pc/premium?cottonType=Handloom Cotton" className="hover:underline">Handloom Cotton</Link></li>
-              </ul>
-            </div>
-          </div>
-        </div>
-      </li>
-
-      {/* About */}
-      <li className="text-gray-700 font-sans text-lg">
-        <NavLink href="/about">About</NavLink>
-      </li>
-
-      {/* Pages Dropdown */}
-      <li
-        className="relative text-gray-700 font-sans text-lg"
-        ref={pagesRef}
-        onMouseEnter={() => setShowPages(true)}
-        onMouseLeave={() => setShowPages(false)}
-      >
-        <button className="flex items-center gap-1 font-medium hover:text-black transition">
-          <RiPageSeparator /> Pages ▾
-        </button>
-
-        <ul
-          className={`absolute top-full left-0 mt-2 w-52 bg-white border border-gray-200 rounded-xl shadow-xl z-50 transition-all duration-200 ${
-            showPages ? "opacity-100 visible translate-y-0" : "opacity-0 invisible -translate-y-2"
-          }`}
-        >
-          <li>
-            <Link href="/compare" className="flex items-center gap-2 px-4 py-3 hover:bg-gray-100 transition rounded-lg">
-              Compare
-            </Link>
-          </li>
-          <li>
-            <Link href="/my-account/orders" className="flex items-center gap-2 px-4 py-3 hover:bg-gray-100 transition rounded-lg">
-              My Orders
-            </Link>
-          </li>
-          <li>
-            <Link href="/review" className="flex items-center gap-2 px-4 py-3 hover:bg-gray-100 transition rounded-lg">
-              Review
-            </Link>
-          </li>
-        </ul>
-      </li>
-    </>
-  );
+  const isAdmin = session?.user?.role === "admin";
 
   return (
-    <div className="navbar sticky top-0 z-50 justify-between bg-gray-200 shadow-sm px-4">
-      {/* Left: Logo + Hamburger */}
-      <div className="navbar-start flex items-center justify-between w-full lg:w-auto">
-        <Logo />
+    <>
+      <header className="sticky top-0 z-50 h-[72px] w-full border-b border-white/25 bg-white/65 shadow-[0_1px_24px_rgba(0,0,0,0.04)] backdrop-blur-xl">
+        <div className="mx-auto flex h-full max-w-[1440px] items-center justify-between px-6 lg:px-10">
+          {/* Left: Logo */}
+          <div className="flex items-center gap-4">
+            <button
+              type="button"
+              onClick={() => setMobileOpen(true)}
+              aria-label="Open menu"
+              className="flex h-9 w-9 items-center justify-center rounded-full text-[#111] transition-colors hover:bg-black/[0.04] lg:hidden"
+            >
+              <Menu size={20} strokeWidth={1.75} />
+            </button>
+            <Logo />
+          </div>
 
-        {/* Hamburger Button */}
-        <button
-          className="lg:hidden btn btn-ghost"
-          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-          aria-label="Toggle menu"
-        >
-          {mobileMenuOpen ? (
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-            </svg>
-          ) : (
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-            </svg>
-          )}
-        </button>
-      </div>
+          {/* Center: Nav links (desktop) */}
+          <nav className="hidden items-center gap-10 lg:flex">
+            <NavItem href="/">Home</NavItem>
 
-      {/* Desktop Menu */}
-      <div className="navbar-center hidden lg:flex">
-        <ul className="menu menu-horizontal px-1">{navLinks}</ul>
-      </div>
+            {isAdmin && <NavItem href="/dashboard">Dashboard</NavItem>}
 
-      {/* Right: Cart + Auth */}
-      <div className="navbar-end space-x-4 hidden lg:flex">
-        <Link href="/cart" className="btn btn-ghost">
-          <IoMdCart className="text-xl" />
-        </Link>
-        <AuthButtons />
-      </div>
+            {/* Products — mega menu */}
+            <div
+              className="relative"
+              onMouseEnter={openProducts}
+              onMouseLeave={closeProducts}
+            >
+              <button
+                type="button"
+                className="group flex items-center gap-1 text-[13.5px] font-medium tracking-[0.01em] text-[#111] transition-colors duration-300 hover:text-black"
+              >
+                <span className="relative">
+                  Products
+                  <span
+                    className={`absolute -bottom-1 left-0 h-px bg-[#111] transition-all duration-300 ease-out ${
+                      productsOpen ? "w-full" : "w-0 group-hover:w-full"
+                    }`}
+                  />
+                </span>
+                <ChevronDown
+                  size={13}
+                  strokeWidth={2}
+                  className={`transition-transform duration-300 ${
+                    productsOpen ? "-rotate-180" : ""
+                  }`}
+                />
+              </button>
+              <MegaMenu open={productsOpen} />
+            </div>
 
-      {/* Mobile Dropdown */}
-      {mobileMenuOpen && (
-        <div className="lg:hidden absolute top-full left-0 w-full bg-gray-200 shadow-md z-50">
-          <ul className="flex flex-col p-4 gap-2">{navLinks}</ul>
-          <div className="flex items-center gap-4 px-4 pb-4 border-t border-gray-300 pt-3 mt-1">
-            <Link href="/cart" className="btn btn-ghost btn-sm">
-              <IoMdCart className="text-lg" /> Cart
+           
+            <NavItem href="/about">About</NavItem>
+
+            {/* Pages — floating dropdown */}
+            <div
+              className="relative"
+              onMouseEnter={openPages}
+              onMouseLeave={closePages}
+            >
+              <button
+                type="button"
+                className="group flex items-center gap-1 text-[13.5px] font-medium tracking-[0.01em] text-[#111] transition-colors duration-300 hover:text-black"
+              >
+                <span className="relative">
+                  Pages
+                  <span
+                    className={`absolute -bottom-1 left-0 h-px bg-[#111] transition-all duration-300 ease-out ${
+                      pagesOpen ? "w-full" : "w-0 group-hover:w-full"
+                    }`}
+                  />
+                </span>
+                <ChevronDown
+                  size={13}
+                  strokeWidth={2}
+                  className={`transition-transform duration-300 ${
+                    pagesOpen ? "-rotate-180" : ""
+                  }`}
+                />
+              </button>
+              <PagesDropdown open={pagesOpen} />
+            </div>
+          </nav>
+
+          {/* Right: Icons + Auth */}
+          <div className="flex items-center gap-1.5">
+            
+
+            <Link
+              href="/wishlist"
+              aria-label="Wishlist"
+              className="hidden h-9 w-9 items-center justify-center rounded-full text-[#111] transition-colors duration-300 hover:bg-black/[0.04] sm:flex"
+            >
+              <Heart size={18} strokeWidth={1.75} />
             </Link>
-            <AuthButtons />
+
+            <Link
+              href="/cart"
+              aria-label="Cart"
+              className="relative flex h-9 w-9 items-center justify-center rounded-full text-[#111] transition-colors duration-300 hover:bg-black/[0.04]"
+            >
+              <ShoppingBag size={18} strokeWidth={1.75} />
+              {CART_COUNT > 0 && (
+                <span className="absolute -right-0.5 -top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-[#16a34a] px-1 text-[10px] font-semibold leading-none text-white">
+                  {CART_COUNT}
+                </span>
+              )}
+            </Link>
+
+            <div className="ml-1">
+              <ProfileMenu />
+            </div>
           </div>
         </div>
-      )}
-    </div>
+      </header>
+
+      <MobileMenu
+        open={mobileOpen}
+        onClose={() => setMobileOpen(false)}
+        isAdmin={isAdmin}
+      />
+    </>
   );
 };
 
