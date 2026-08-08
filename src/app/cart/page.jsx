@@ -1,28 +1,12 @@
-import { getCart } from "../../action/server/cart";
-
-import Cart from "../../components/Home/Cart";
 import React from "react";
+import Cart from "../../components/Home/Cart";
 
-export const dynamic = "force-dynamic";
-
-const CartPage = async () => {
-  try {
-    const cartItems = await getCart();
-
-    const formattedItems = cartItems.map(item => ({
-      ...item,
-      _id: item._id.toString()
-    }));
-
-   return (
-  <div className="max-w-7xl mx-auto">
-    <Cart cartItems={formattedItems} />
-    
-  </div>
-);
-  } catch (error) {
-    console.error("Cart error:", error);
-    return <div>Error loading cart</div>;
-  }
+const CartPage = () => {
+  return (
+    <div className="max-w-7xl mx-auto">
+      <Cart />
+    </div>
+  );
 };
+
 export default CartPage;

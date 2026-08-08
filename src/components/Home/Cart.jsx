@@ -1,121 +1,134 @@
 "use client";
 
-import React, { useState, useMemo } from "react";
-import CartItem from "../Card/CartItem";
+import React, { useMemo } from "react";
 import { useRouter } from "next/navigation";
+import CartItem from "../Card/CartItem";
+import useCartStore from "../../store/cartStore";
 
-export default function Cart({ cartItems = [] }) {
-  const [items, setItems] = useState(cartItems);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+export default function Cart() {
   const router = useRouter();
 
-  const totalItems = useMemo(
-    () => items.reduce((sum, item) => sum + item.quantity, 0),
-    [items]
+  const cart = useCartStore((state) => state.cart);
+  const removeFromCart = useCartStore((state) => state.removeFromCart);
+  const increaseQuantity = useCartStore(
+    (state) => state.increaseQuantity
+  );
+  const decreaseQuantity = useCartStore(
+    (state) => state.decreaseQuantity
   );
 
-  const totalPrice = useMemo(
-    () => items.reduce((sum, item) => sum + item.price * item.quantity, 0),
-    [items]
-  );
+  const totalItems = useMemo(() => {
+    return cart.reduce((sum, item) => sum + item.quantity, 0);
+  }, [cart]);
 
-  const removeItem = (id) => {
-    setItems((prev) => prev.filter((item) => item._id !== id));
-  };
-
-  const updateQuantity = (id, quantity) => {
-    setItems((prev) =>
-      prev.map((item) =>
-        item._id === id ? { ...item, quantity } : item
-      )
+  const totalPrice = useMemo(() => {
+    return cart.reduce(
+      (sum, item) => sum + item.price * item.quantity,
+      0
     );
-  };
+  }, [cart]);
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6 sm:py-10 grid grid-cols-1 lg:grid-cols-4 gap-6 lg:gap-8">
+    <div className="grid grid-cols-1 gap-6 lg:grid-cols-4">
 
-      {/* LEFT: CART ITEMS */}
-      <div className="lg:col-span-3 space-y-4 sm:space-y-6">
-        {items.length === 0 ? (
-          <div className="bg-white border rounded-xl p-6 sm:p-10 text-center">
-            <h3 className="text-lg sm:text-xl font-semibold">
+      {/* LEFT — CART ITEMS */}
+      <div className="space-y-4 lg:col-span-3">
+
+        {cart.length === 0 ? (
+          <div className="rounded-2xl border bg-white p-10 text-center">
+            <h3 className="text-xl font-semibold">
               Your cart is empty
             </h3>
-            <p className="text-gray-500 mt-2 text-sm sm:text-base">
+
+            <p className="mt-2 text-gray-500">
               Start adding products to continue shopping.
             </p>
+
+            <button
+              onClick={() => router.push("/products")}
+              className="mt-6 rounded-xl bg-black px-6 py-3 font-semibold text-white hover:bg-neutral-800"
+            >
+              Continue Shopping
+            </button>
           </div>
         ) : (
-          items.map((item) => (
+          cart.map((item) => (
             <div
-              key={item._id}
-              className="bg-white border rounded-xl shadow-sm p-3 sm:p-4"
+              key={`${item.productId}-${item.size}`}
+              className="rounded-2xl border bg-white p-4 shadow-sm"
             >
               <CartItem
                 item={item}
-                removeItem={removeItem}
-                updateQuantity={updateQuantity}
+                removeItem={removeFromCart}
+                increaseQuantity={increaseQuantity}
+                decreaseQuantity={decreaseQuantity}
               />
             </div>
           ))
         )}
+
       </div>
 
-      {/* RIGHT: SUMMARY */}
-      <div className="lg:col-span-1 bg-white border rounded-xl shadow-sm p-4 sm:p-6 lg:sticky lg:top-24 h-fit">
+      {/* RIGHT — ORDER SUMMARY */}
+      <div className="h-fit rounded-2xl border bg-white p-5 shadow-sm lg:sticky lg:top-24">
 
-        <h3 className="text-lg sm:text-xl font-semibold mb-4">
+        <h3 className="text-xl font-semibold">
           Order Summary
         </h3>
 
-        {/* TABLE WRAPPER (IMPORTANT FOR MOBILE SCROLL) */}
-        <div className="overflow-x-auto">
-          <table className="w-full text-xs sm:text-sm border min-w-[500px]">
-            <thead className="bg-gray-100">
-              <tr>
-                <th className="p-2 border whitespace-nowrap">Product</th>
-                <th className="p-2 border whitespace-nowrap">Qty</th>
-                <th className="p-2 border whitespace-nowrap">Price</th>
-                <th className="p-2 border whitespace-nowrap">Total</th>
-              </tr>
-            </thead>
+        <div className="mt-6 space-y-4">
 
-            <tbody>
-              {items.map((item) => (
-                <tr key={item._id}>
-                  <td className="p-2 border">{item.title}</td>
-                  <td className="p-2 border">{item.quantity}</td>
-                  <td className="p-2 border">৳{item.price}</td>
-                  <td className="p-2 border">
-                    ৳{item.price * item.quantity}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+          <div className="space-y-3">
+  <h4 className="text-sm font-semibold text-gray-900">
+    Items
+  </h4>
 
-        {/* TOTALS */}
-        <div className="mt-6 space-y-2 text-sm sm:text-base">
-          <div className="flex justify-between">
-            <span>Total Items</span>
-            <span>{totalItems}</span>
-          </div>
+  {cart.map((item) => (
+    <div
+      key={`${item.productId}-${item.size}`}
+      className="flex items-start justify-between gap-4 text-sm"
+    >
+      <div className="min-w-0">
+        <p className="font-medium text-gray-900 truncate">
+          {item.name}
+        </p>
 
-          <div className="flex justify-between font-bold">
-            <span>Total Price</span>
-            <span className="text-green-600">৳{totalPrice}</span>
-          </div>
-        </div>
-
-        {/* BUTTON */}
-        <button
-          onClick={() => router.push("/checkout")}
-          className="w-full mt-6 bg-green-600 text-white py-2.5 sm:py-3 rounded-lg hover:bg-green-700 text-sm sm:text-base"
-        >
-          Confirm Order
-        </button>
+        <p className="mt-1 text-xs text-gray-500">
+          Size: {item.size} × {item.quantity}
+        </p>
       </div>
+
+      <span className="shrink-0 font-medium text-gray-900">
+        ৳{item.price * item.quantity}
+      </span>
+    </div>
+  ))}
+</div>
+
+          <div className="border-t" />
+
+          <div className="flex justify-between">
+            <span className="font-medium">
+              Total Price
+            </span>
+
+            <span className="text-xl font-bold">
+              ৳{totalPrice}
+            </span>
+          </div>
+
+        </div>
+
+        <button
+          disabled={cart.length === 0}
+          onClick={() => router.push("/checkout")}
+          className="mt-6 w-full rounded-xl bg-black py-3 font-semibold text-white transition hover:bg-neutral-800 disabled:cursor-not-allowed disabled:opacity-50"
+        >
+          Proceed to Checkout
+        </button>
+
+      </div>
+
     </div>
   );
 }
