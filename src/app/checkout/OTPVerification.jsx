@@ -12,65 +12,67 @@ const OTPVerification = ({
   const [otp, setOtp] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const handleVerify = async () => {
-    if (otp.length !== 6) {
+ const handleVerify = async () => {
+  if (otp.length !== 6) {
+    Swal.fire({
+      icon: "warning",
+      title: "Invalid OTP",
+      text: "Please enter the 6-digit OTP.",
+    });
+
+    return;
+  }
+
+  try {
+    setLoading(true);
+
+    const response = await fetch("/api/auth/verifyOTP", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        phone,
+        otp,
+      }),
+    });
+
+    const data = await response.json();
+
+    console.log("OTP verification response:", data);
+
+    if (!response.ok || !data.success) {
       Swal.fire({
-        icon: "warning",
-        title: "Invalid OTP",
-        text: "Please enter the 6-digit OTP.",
+        icon: "error",
+        title: "Verification failed",
+        text: data.message || "Invalid OTP.",
       });
 
       return;
     }
 
-    try {
-      setLoading(true);
+    Swal.fire({
+      icon: "success",
+      title: "Phone verified",
+      text: "Your phone number has been verified successfully.",
+      timer: 1500,
+      showConfirmButton: false,
+    });
 
-      const response = await fetch("/api/auth/verify-otp", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          phone,
-          otp,
-        }),
-      });
+    onVerified(data.phone);
 
-      const data = await response.json();
+  } catch (error) {
+    console.error("OTP VERIFY ERROR:", error);
 
-      if (!data.success) {
-        Swal.fire({
-          icon: "error",
-          title: "Verification failed",
-          text: data.message || "Invalid OTP.",
-        });
-
-        return;
-      }
-
-      Swal.fire({
-        icon: "success",
-        title: "Phone verified",
-        text: "Your phone number has been verified successfully.",
-        timer: 1500,
-        showConfirmButton: false,
-      });
-
-      onVerified(data.phone);
-
-    } catch (error) {
-      console.error("OTP VERIFY ERROR:", error);
-
-      Swal.fire({
-        icon: "error",
-        title: "Something went wrong",
-        text: "Please try again.",
-      });
-    } finally {
-      setLoading(false);
-    }
-  };
+    Swal.fire({
+      icon: "error",
+      title: "Something went wrong",
+      text: error.message || "Please try again.",
+    });
+  } finally {
+    setLoading(false);
+  }
+};
 
   return (
     <div className="min-h-screen bg-[#f7f7f5] px-4 py-10">

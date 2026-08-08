@@ -140,9 +140,25 @@ const handlePhoneVerified = (phone) => {
   /* =========================
      PLACE ORDER
   ========================= */
+/* =========================
+   SEND OTP
+========================= */
 
-  const handlePlaceOrder = async () => {
-  if (!validateForm()) return;
+const handlePlaceOrder = async () => {
+  // If already verified, don't send OTP again
+  if (verifiedPhone) {
+    handleFinalOrder();
+    return;
+  }
+
+  if (!formData.phone.trim()) {
+    Swal.fire({
+      icon: "warning",
+      title: "Phone number required",
+      text: "Please enter your phone number.",
+    });
+    return;
+  }
 
   try {
     setLoading(true);
@@ -159,11 +175,11 @@ const handlePhoneVerified = (phone) => {
 
     const data = await response.json();
 
-    if (!data.success) {
+    if (!response.ok || !data.success) {
       Swal.fire({
         icon: "error",
         title: "Unable to send OTP",
-        text: data.message,
+        text: data.message || "Could not send OTP.",
       });
 
       return;
@@ -179,9 +195,8 @@ const handlePhoneVerified = (phone) => {
       showConfirmButton: false,
       timer: 1500,
     });
-
   } catch (error) {
-    console.error(error);
+    console.error("SEND OTP ERROR:", error);
 
     Swal.fire({
       icon: "error",
@@ -193,22 +208,172 @@ const handlePhoneVerified = (phone) => {
   }
 };
 
-  if (verificationStep === "otp") { 
-    
-  return (
-    <OTPVerification
-      phone={formData.phone}
-      onBack={() => setVerificationStep("checkout")}
-      onVerified={(phone) => {
-        setVerifiedPhone(phone);
 
-        // TEMPORARY
-        console.log("VERIFIED PHONE:", phone);
+/* =========================
+   FINAL ORDER
+========================= */
 
-        setVerificationStep("checkout");
-      }}
-    />
-  );
+const handleFinalOrder = async () => {
+  if (!verifiedPhone) {
+    Swal.fire({
+      icon: "warning",
+      title: "Phone verification required",
+      text: "Please verify your phone number first.",
+    });
+
+    return;
+  }
+
+  if (!formData.address.trim()) {
+    Swal.fire({
+      icon: "warning",
+      title: "Address required",
+      text: "Please enter your delivery address.",
+    });
+
+    return;
+  }
+
+  if (!formData.city.trim()) {
+    Swal.fire({
+      icon: "warning",
+      title: "City required",
+      text: "Please enter your city.",
+    });
+
+    return;
+  }
+
+  try {
+    setLoading(true);
+
+    // =================================
+    // 1. CREATE PENDING ORDER
+    // =================================
+
+    const response = await fetch("/api/order", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        items: cartItems,
+        totalPrice,
+        phone: verifiedPhone,
+        address: formData.address,
+        city: formData.city,
+        postalCode: formData.postalCode,
+        paymentMethod: formData.paymentMethod,
+      }),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok || !data.success) {
+      Swal.fire({
+        icon: "error",
+        title: "Order creation failed",
+        text: data.error || "Could not create your order.",
+      });
+
+      return;
+    }
+
+    const orderId = data.orderId;
+
+    console.log("Order created:", orderId);
+
+    // =================================
+    // 2. STRIPE
+    // =================================
+
+    if (formData.paymentMethod === "stripe") {
+      const stripeResponse = await fetch("/api/checkout-session", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          cartItems,
+          orderId,
+        }),
+      });
+
+      const stripeData = await stripeResponse.json();
+
+      if (!stripeResponse.ok || !stripeData.url) {
+        Swal.fire({
+          icon: "error",
+          title: "Payment failed",
+          text:
+            stripeData.error ||
+            "Could not start Stripe checkout.",
+        });
+
+        return;
+      }
+
+      window.location.href = stripeData.url;
+      return;
+    }
+
+    // =================================
+    // 3. CASH ON DELIVERY
+    // =================================
+
+    if (formData.paymentMethod === "cash") {
+      router.push(
+        `/success?orderId=${orderId}&method=cash`
+      );
+
+      return;
+    }
+
+    // =================================
+    // 4. BKASH
+    // =================================
+
+    if (formData.paymentMethod === "bkash") {
+      router.push(
+        `/payment/bkash?orderId=${orderId}`
+      );
+
+      return;
+    }
+
+    // =================================
+    // 5. NAGAD
+    // =================================
+
+    if (formData.paymentMethod === "nagad") {
+      router.push(
+        `/payment/nagad?orderId=${orderId}`
+      );
+
+      return;
+    }
+  } catch (error) {
+    console.error("FINAL ORDER ERROR:", error);
+
+    Swal.fire({
+      icon: "error",
+      title: "Something went wrong",
+      text: "Unable to place your order.",
+    });
+  } finally {
+    setLoading(false);
+  }
+};
+
+
+  if (verificationStep === "otp") {
+    return (
+      <OTPVerification
+        phone={formData.phone}
+        onBack={() => setVerificationStep("checkout")}
+        onVerified={handlePhoneVerified}
+      />
+    );
   }
 
   return (
@@ -707,23 +872,30 @@ const handlePhoneVerified = (phone) => {
 
               {/* PLACE ORDER */}
 
-              <button
-                type="button"
-                disabled={loading}
-                onClick={handlePlaceOrder}
-                className="mt-7 flex w-full items-center justify-center gap-2 rounded-2xl bg-black py-4 text-sm font-semibold text-white shadow-lg transition duration-300 hover:-translate-y-0.5 hover:bg-neutral-800 hover:shadow-xl disabled:cursor-not-allowed disabled:opacity-60"
-              >
-
-                {loading ? (
-                  "Processing..."
-                ) : (
-                  <>
-                    <ShieldCheck size={18} />
-                    Continue to Verification
-                  </>
-                )}
-
-              </button>
+     <button
+  type="button"
+  disabled={loading}
+  onClick={
+    verifiedPhone
+      ? handleFinalOrder
+      : handlePlaceOrder
+  }
+  className="mt-7 flex w-full items-center justify-center gap-2 rounded-2xl bg-black py-4 text-sm font-semibold text-white shadow-lg transition duration-300 hover:-translate-y-0.5 hover:bg-neutral-800 hover:shadow-xl disabled:cursor-not-allowed disabled:opacity-60"
+>
+  {loading ? (
+    "Processing..."
+  ) : verifiedPhone ? (
+    <>
+      <ShieldCheck size={18} />
+      Place Order · ৳{totalPrice}
+    </>
+  ) : (
+    <>
+      <ShieldCheck size={18} />
+      Continue to Verification
+    </>
+  )}
+</button>
 
 
               {/* TRUST */}
