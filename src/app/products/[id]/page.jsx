@@ -43,6 +43,7 @@ export async function generateMetadata({ params }) {
   return {
     title: `${name} | Your Store Name`,
     description,
+
     alternates: {
       canonical: productUrl,
     },
@@ -67,7 +68,9 @@ export async function generateMetadata({ params }) {
       card: "summary_large_image",
       title: name,
       description,
-      images: [image || "https://i.ibb.co/60vvkRZ3/your-fallback.jpg"],
+      images: [
+        image || "https://i.ibb.co/60vvkRZ3/your-fallback.jpg",
+      ],
     },
 
     robots: {
@@ -86,8 +89,10 @@ const ProductDetails = async ({ params }) => {
 
   if (!products) {
     return (
-      <div className="flex items-center justify-center min-h-[60vh]">
-        <h1 className="text-3xl font-bold">Product Not Found</h1>
+      <div className="flex min-h-[60vh] items-center justify-center px-5">
+        <h1 className="text-2xl font-bold sm:text-3xl">
+          Product Not Found
+        </h1>
       </div>
     );
   }
@@ -98,91 +103,120 @@ const ProductDetails = async ({ params }) => {
       : products.price;
 
   return (
-    <main className="bg-neutral-50 min-h-screen">
+    <main className="min-h-screen bg-neutral-50">
+
       {/* Breadcrumb */}
       <section className="border-b bg-white">
-        <div className="max-w-7xl mx-auto px-5 lg:px-10 py-4">
-          <nav className="flex items-center gap-2 text-sm text-neutral-500">
-            <Link href="/" className="hover:text-black transition">
+        <div className="mx-auto max-w-7xl px-4 py-3 sm:px-5 sm:py-4 lg:px-10">
+          <nav className="flex min-w-0 items-center gap-2 overflow-x-auto whitespace-nowrap text-xs text-neutral-500 sm:text-sm">
+            <Link
+              href="/"
+              className="shrink-0 transition hover:text-black"
+            >
               Home
             </Link>
 
             <span>/</span>
 
-            <Link href="/products" className="hover:text-black transition">
+            <Link
+              href="/products"
+              className="shrink-0 transition hover:text-black"
+            >
               Products
             </Link>
 
             <span>/</span>
 
-            <span className="text-black font-medium">{products.name}</span>
+            <span className="max-w-[180px] truncate font-medium text-black sm:max-w-none">
+              {products.name}
+            </span>
           </nav>
         </div>
       </section>
 
       {/* Main Container */}
-      <section className="max-w-7xl mx-auto px-5 lg:px-10 py-12">
-        <div className="grid lg:grid-cols-2 gap-16 items-start">
+      <section className="mx-auto max-w-7xl px-4 py-6 sm:px-5 sm:py-10 lg:px-10 lg:py-12">
+
+        <div className="grid grid-cols-1 items-start gap-8 md:gap-10 lg:grid-cols-2 lg:gap-16">
+
           {/* LEFT SIDE */}
-          <div className="sticky top-24">
-            <div className="overflow-hidden rounded-3xl bg-white border border-neutral-200 shadow-lg">
-            <ImageGallery product={products} />
+          <div className="lg:sticky lg:top-24">
+
+            {/* Image */}
+            <div className="overflow-hidden rounded-2xl border border-neutral-200 bg-white shadow-md sm:rounded-3xl sm:shadow-lg">
+              <ImageGallery product={products} />
             </div>
 
-            {/* Small Feature Cards */}
-            <div className="grid grid-cols-2 gap-4 mt-6">
-              <div className="rounded-2xl bg-white border p-4">
-                <p className="text-sm text-neutral-500">Fabric</p>
-                <h3 className="font-semibold mt-1">{products.cottonType}</h3>
+            {/* Feature Cards */}
+            <div className="mt-4 grid grid-cols-2 gap-3 sm:mt-6 sm:gap-4">
+
+              <div className="rounded-xl border border-neutral-200 bg-white p-3 sm:rounded-2xl sm:p-4">
+                <p className="text-xs text-neutral-500 sm:text-sm">
+                  Fabric
+                </p>
+
+                <h3 className="mt-1 truncate text-sm font-semibold sm:text-base">
+                  {products.cottonType}
+                </h3>
               </div>
 
-              <div className="rounded-2xl bg-white border p-4">
-                <p className="text-sm text-neutral-500">Color</p>
-                <h3 className="font-semibold mt-1">{products.color}</h3>
+              <div className="rounded-xl border border-neutral-200 bg-white p-3 sm:rounded-2xl sm:p-4">
+                <p className="text-xs text-neutral-500 sm:text-sm">
+                  Color
+                </p>
+
+                <h3 className="mt-1 truncate text-sm font-semibold sm:text-base">
+                  {products.color}
+                </h3>
               </div>
+
             </div>
           </div>
 
           {/* RIGHT SIDE */}
-          <div className="bg-white rounded-3xl border border-neutral-200 shadow-lg p-8">
+          <div className="rounded-2xl border border-neutral-200 bg-white p-5 shadow-md sm:rounded-3xl sm:p-7 md:p-8 lg:shadow-lg">
+
             {/* Product Badge */}
-            <span className="inline-flex rounded-full bg-green-100 text-green-700 px-4 py-1 text-sm font-medium">
+            <span className="inline-flex rounded-full bg-green-100 px-3 py-1 text-xs font-medium text-green-700 sm:px-4 sm:text-sm">
               Premium Collection
             </span>
 
             {/* Product Name */}
-            <h1 className="mt-5 text-4xl font-bold tracking-tight text-neutral-900">
+            <h1 className="mt-4 text-2xl font-bold leading-tight tracking-tight text-neutral-900 sm:mt-5 sm:text-3xl md:text-4xl">
               {products.name}
             </h1>
 
             {/* Subtitle */}
-            <p className="mt-3 text-neutral-500 leading-relaxed">
+            <p className="mt-3 text-sm leading-relaxed text-neutral-500 sm:text-base">
               Crafted from premium {products.cottonType}. Designed for
               comfort, durability and timeless everyday style.
             </p>
 
             {/* Rating */}
-            <div className="mt-6 flex items-center gap-3">
-              <div className="flex text-yellow-500 text-lg">★★★★★</div>
+            <div className="mt-5 flex flex-wrap items-center gap-2 sm:mt-6 sm:gap-3">
+              <div className="text-base text-yellow-500 sm:text-lg">
+                ★★★★★
+              </div>
 
-              <span className="text-sm text-neutral-500">
+              <span className="text-xs text-neutral-500 sm:text-sm">
                 ({products.sold}+ Happy Customers)
               </span>
             </div>
 
             {/* Price */}
-            <div className="mt-8 flex flex-wrap items-center gap-4">
-              <h2 className="text-5xl font-bold text-neutral-900">
+            <div className="mt-6 flex flex-wrap items-center gap-2 sm:mt-8 sm:gap-4">
+
+              <h2 className="text-3xl font-bold text-neutral-900 sm:text-4xl md:text-5xl">
                 ৳{discountPrice}
               </h2>
 
               {products.discount > 0 && (
                 <>
-                  <span className="text-xl line-through text-neutral-400">
+                  <span className="text-base text-neutral-400 line-through sm:text-xl">
                     ৳{products.price}
                   </span>
 
-                  <span className="rounded-full bg-red-100 text-red-600 px-3 py-1 text-sm font-semibold">
+                  <span className="rounded-full bg-red-100 px-2.5 py-1 text-xs font-semibold text-red-600 sm:px-3 sm:text-sm">
                     {products.discount}% OFF
                   </span>
                 </>
@@ -190,31 +224,45 @@ const ProductDetails = async ({ params }) => {
             </div>
 
             {/* Divider */}
-            <div className="my-8 border-t border-neutral-200"></div>
+            <div className="my-6 border-t border-neutral-200 sm:my-8" />
 
             {/* Product Information */}
-            <div className="space-y-5">
-              <div className="flex justify-between items-center">
-                <span className="text-neutral-500">Fabric</span>
-                <span className="font-semibold">{products.cottonType}</span>
+            <div className="space-y-4 sm:space-y-5">
+
+              <div className="flex items-center justify-between gap-4">
+                <span className="text-sm text-neutral-500 sm:text-base">
+                  Fabric
+                </span>
+
+                <span className="max-w-[55%] truncate text-right text-sm font-semibold sm:text-base">
+                  {products.cottonType}
+                </span>
               </div>
 
-              <div className="flex justify-between items-center">
-                <span className="text-neutral-500">Color</span>
-                <span className="font-semibold">{products.color}</span>
+              <div className="flex items-center justify-between gap-4">
+                <span className="text-sm text-neutral-500 sm:text-base">
+                  Color
+                </span>
+
+                <span className="max-w-[55%] truncate text-right text-sm font-semibold sm:text-base">
+                  {products.color}
+                </span>
               </div>
 
-              <div className="flex justify-between items-center">
-                <span className="text-neutral-500">Sold</span>
-                <span className="font-semibold">{products.sold} Pieces</span>
+              <div className="flex items-center justify-between gap-4">
+                <span className="text-sm text-neutral-500 sm:text-base">
+                  Sold
+                </span>
+
+                <span className="text-sm font-semibold sm:text-base">
+                  {products.sold} Pieces
+                </span>
               </div>
+
             </div>
 
-           
-            
-
             {/* Actions */}
-            <div className="mt-10">
+            <div className="mt-8 sm:mt-10">
               <ProductActions
                 product={{
                   ...products,
@@ -224,15 +272,18 @@ const ProductDetails = async ({ params }) => {
             </div>
 
             {/* Compare */}
-            <div className="mt-5">
-              <Link href={`/compare/${products._id}`}>
-                <button className="w-full rounded-xl border border-neutral-300 py-4 font-semibold hover:bg-neutral-100 transition">
+            <div className="mt-4 sm:mt-5">
+              <Link
+                href={`/compare/${products._id}`}
+                className="block"
+              >
+                <button className="w-full rounded-xl border border-neutral-300 py-3.5 text-sm font-semibold transition hover:bg-neutral-100 sm:py-4 sm:text-base">
                   Compare Product
                 </button>
               </Link>
             </div>
 
-        </div>
+          </div>
         </div>
       </section>
     </main>

@@ -3,9 +3,9 @@
 import { useRef, useState } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay, Navigation, Pagination, EffectFade } from "swiper/modules";
-import Link from "next/link";
+
 import { motion, AnimatePresence } from "framer-motion";
-import { ArrowRight, ChevronLeft, ChevronRight } from "lucide-react";
+import {  ChevronLeft, ChevronRight } from "lucide-react";
 
 import "swiper/css";
 import "swiper/css/navigation";
@@ -124,17 +124,7 @@ export default function HeroCarousel() {
               {slides[activeIndex].sub}
             </p>
 
-            <Link
-              href={slides[activeIndex].ctaHref}
-              className="group/cta mt-10 inline-flex items-center gap-2.5 border border-white/40 px-8 py-3.5 text-[12px] font-medium uppercase tracking-[0.18em] text-white transition-all duration-300 hover:border-white hover:bg-white hover:text-[#111]"
-            >
-              {slides[activeIndex].ctaLabel}
-              <ArrowRight
-                size={15}
-                strokeWidth={1.75}
-                className="transition-transform duration-300 group-hover/cta:translate-x-1"
-              />
-            </Link>
+         
           </motion.div>
         </AnimatePresence>
       </div>

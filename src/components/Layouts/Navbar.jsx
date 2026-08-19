@@ -11,9 +11,9 @@ import PagesDropdown from "../PagesDropdown";
 import MobileMenu from "../MobileMenu";
 
 import ProfileMenu from "../ProfileMenu";
-
+import useCartStore from "@/store/cartStore";
 // Replace with real cart state (context / redux / query) when wiring this up.
-const CART_COUNT = 2;
+
 
 /**
  * NavItem
@@ -38,6 +38,12 @@ const Navbar = () => {
 
   const productsTimer = useRef(null);
   const pagesTimer = useRef(null);
+  const cart = useCartStore((state) => state.cart);
+
+  const cartCount = cart.reduce(
+  (total, item) => total + item.quantity,
+  0
+);
 
   // Small delay on leave prevents flicker when moving the cursor
   // from the trigger toward the panel.
@@ -162,11 +168,11 @@ const Navbar = () => {
               className="relative flex h-9 w-9 items-center justify-center rounded-full text-[#111] transition-colors duration-300 hover:bg-black/[0.04]"
             >
               <ShoppingBag size={18} strokeWidth={1.75} />
-              {CART_COUNT > 0 && (
-                <span className="absolute -right-0.5 -top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-[#16a34a] px-1 text-[10px] font-semibold leading-none text-white">
-                  {CART_COUNT}
-                </span>
-              )}
+             {cartCount > 0 && (
+  <span className="absolute -right-0.5 -top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-[#16a34a] px-1 text-[10px] font-semibold leading-none text-white">
+    {cartCount}
+  </span>
+)}
             </Link>
 
             <div className="ml-1">
