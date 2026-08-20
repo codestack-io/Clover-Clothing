@@ -1,4 +1,4 @@
-import DashboardLayout from "@/components/dashboard/DashboardLayout";
+import DashboardLayout from "../../components/Dashboard/DashboardLayout";
 
 export const metadata = {
   title: "Admin Dashboard | Clover Clothing",

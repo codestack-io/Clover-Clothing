@@ -8,11 +8,11 @@ import {
   Users,
 } from "lucide-react";
 
-import StatCard from "@/components/dashboard/StatCard";
-import RecentOrdersTable from "@/components/Dashboard/RecentOrders";
-import LatestProducts from "@/components/Dashboard/LatestProduct";
-import BestSellingChart from "@/components/Dashboard/BestSellingChart";
-import SalesChart from "@/components/Dashboard/SalesChart";
+import StatCard from "../../components/Dashboard/StatCard";
+import RecentOrdersTable from "../../components/Dashboard/RecentOrders";
+import LatestProducts from "../../components/Dashboard/LatestProduct";
+import BestSellingChart from "../../components/Dashboard/BestSellingChart";
+import SalesChart from "../../components/Dashboard/SalesChart";
 
 export default function DashboardHomePage() {
   const [dashboard, setDashboard] = useState(null);

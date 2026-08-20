@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import { Heart, Minus, Plus } from "lucide-react";
-import SizeSelector from "./SizeSelector/SizeSelector";
+import SizeSelector from "../components/SizeSelector/sizeSelector";
 import CartButton from "./Buttons/CartButton";
 
 const ProductActions = ({ product }) => {
