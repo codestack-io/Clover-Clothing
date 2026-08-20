@@ -97,7 +97,7 @@ const CartItem = ({
           Size: {size}
         </p>
 
-        <p className="mt-1 font-semibold">
+        <p className="mt-1 font-semibold text-emerald-900">
           ৳{price}
         </p>
       </div>

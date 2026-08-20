@@ -277,7 +277,7 @@ const ProductDetails = async ({ params }) => {
                 href={`/compare/${products._id}`}
                 className="block"
               >
-                <button className="w-full rounded-xl border border-neutral-300 py-3.5 text-sm font-semibold transition hover:bg-neutral-100 sm:py-4 sm:text-base">
+                <button className="w-full rounded-xl border border-neutral-300 py-3.5 text-sm text-shadow-black font-semibold transition hover:bg-neutral-100 sm:py-4 sm:text-base">
                   Compare Product
                 </button>
               </Link>

@@ -60,7 +60,7 @@ const SizeSelector = ({ onSelect }) => {
       </div>
 
       {/* Selected Size */}
-      <div className="rounded-xl bg-neutral-100 px-4 py-3 text-sm">
+      <div className="rounded-xl bg-neutral-100 px-4 py-3 text-shadow-black text-sm">
         {selected ? (
           <>
             Selected Size:{" "}

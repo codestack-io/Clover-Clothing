@@ -45,7 +45,7 @@ const ProductActions = ({ product }) => {
             <Minus size={17} />
           </button>
 
-          <span className="flex h-11 w-14 items-center justify-center border-x border-neutral-300 text-sm font-semibold sm:h-12 sm:w-14 sm:text-base">
+          <span className="flex h-11 w-14 items-center text-black justify-center border-x border-neutral-300 text-sm font-semibold sm:h-12 sm:w-14 sm:text-base">
             {quantity}
           </span>
 

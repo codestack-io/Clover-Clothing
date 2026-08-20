@@ -53,7 +53,7 @@ export default function Cart() {
       ) : (
 
         /* ================= CART ================= */
-        <div className="grid grid-cols-1 gap-5 lg:grid-cols-4 lg:gap-6">
+        <div className="grid bg-white grid-cols-1 gap-5 lg:grid-cols-4 lg:gap-6">
 
           {/* ================= LEFT — CART ITEMS ================= */}
           <div className="min-w-0 space-y-3 sm:space-y-4 lg:col-span-3">

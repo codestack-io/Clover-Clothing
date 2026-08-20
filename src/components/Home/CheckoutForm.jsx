@@ -606,7 +606,7 @@ const handleFinalOrder = async () => {
                     <Banknote size={22} />
 
                     <div>
-                      <p className="font-medium">
+                      <p className="font-medium text-black">
                         Cash on Delivery
                       </p>
 
@@ -636,7 +636,7 @@ const handleFinalOrder = async () => {
                     value="bkash"
                     checked={formData.paymentMethod === "bkash"}
                     onChange={handleChange}
-                    className="sr-only"
+                    className="sr-only "
                   />
 
                   <div className="flex items-center gap-3">
@@ -644,7 +644,7 @@ const handleFinalOrder = async () => {
                     <Smartphone size={22} />
 
                     <div>
-                      <p className="font-medium">
+                      <p className="font-medium text-black">
                         bKash
                       </p>
 
@@ -682,7 +682,7 @@ const handleFinalOrder = async () => {
                     <Smartphone size={22} />
 
                     <div>
-                      <p className="font-medium">
+                      <p className="font-medium text-black">
                         Nagad
                       </p>
 
@@ -720,7 +720,7 @@ const handleFinalOrder = async () => {
                     <CreditCard size={22} />
 
                     <div>
-                      <p className="font-medium">
+                      <p className="font-medium text-black">
                         Card
                       </p>
 
