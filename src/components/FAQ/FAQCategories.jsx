@@ -50,7 +50,7 @@ function FAQCategories({ categories, activeCategory, onChange }) {
             onClick={() => onChange(category.id)}
             className={`relative flex shrink-0 items-center gap-1.5 rounded-full border px-4 py-2 text-sm font-medium transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clover-500 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-offset-neutral-950 ${
               isActive
-                ? "border-clover-600 text-white"
+                ? "border-clover-600 text-black"
                 : "border-neutral-200 text-neutral-600 hover:border-clover-300 hover:text-clover-700 dark:border-neutral-800 dark:text-neutral-300 dark:hover:border-clover-700 dark:hover:text-clover-400"
             }`}
           >

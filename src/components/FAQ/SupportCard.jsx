@@ -40,7 +40,7 @@ function SupportCard() {
           href={MESSENGER_URL}
           target="_blank"
           rel="noopener noreferrer"
-          className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-clover-600 px-6 py-3 text-sm font-medium text-white shadow-sm transition-all duration-200 hover:bg-clover-700 hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clover-500 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-offset-neutral-900 sm:w-auto"
+          className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-clover-600 px-6 py-3 text-sm font-medium text-black shadow-sm transition-all duration-200 hover:bg-clover-700 hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clover-500 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-offset-neutral-900 sm:w-auto"
         >
           <MessageCircle className="h-4 w-4" aria-hidden="true" />
           Chat with us
