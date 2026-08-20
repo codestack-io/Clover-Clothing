@@ -10,6 +10,7 @@ export const Collection = {
   CART:"cart",
   ORDER:"order",
   HELP: "help",
+  WISHLIST: "wishlist"
 };
 
 let client;

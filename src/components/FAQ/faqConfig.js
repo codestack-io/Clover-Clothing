@@ -8,5 +8,5 @@
 
 // TODO: replace YOUR_PAGE_USERNAME with your real Facebook Page username.
 export const MESSENGER_URL = "https://m.me/YOUR_PAGE_USERNAME";
-
-export const SUPPORT_EMAIL = "support@cloverclothing.com";
+export const SUPPORT_EMAIL_URL =
+  "https://mail.google.com/mail/?view=cm&fs=1&to=rahim42p@gmail.com";

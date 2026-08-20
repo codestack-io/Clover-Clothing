@@ -3,7 +3,7 @@
 import { memo } from "react";
 import { motion } from "framer-motion";
 import { MessageCircle, Mail } from "lucide-react";
-import { MESSENGER_URL, SUPPORT_EMAIL } from "./faqConfig";
+import { MESSENGER_URL, SUPPORT_EMAIL_URL } from "./faqConfig";
 
 /**
  * SupportCard
@@ -46,13 +46,15 @@ function SupportCard() {
           Chat with us
         </a>
 
-        <a
-          href={`mailto:${SUPPORT_EMAIL}`}
-          className="inline-flex w-full items-center justify-center gap-2 rounded-full border border-neutral-200 bg-white px-6 py-3 text-sm font-medium text-neutral-700 transition-colors duration-200 hover:border-clover-300 hover:text-clover-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clover-500 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-200 dark:hover:border-clover-700 dark:hover:text-clover-400 dark:focus-visible:ring-offset-neutral-900 sm:w-auto"
+       <a
+        href={SUPPORT_EMAIL_URL}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="inline-flex w-full items-center justify-center gap-2 rounded-full border border-clover-200 bg-white px-6 py-3 text-sm font-medium text-neutral-800 shadow-sm transition-all duration-200 hover:border-clover-300 hover:bg-clover-50 hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clover-500 focus-visible:ring-offset-2 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-100 dark:hover:bg-neutral-800 sm:w-auto"
         >
-          <Mail className="h-4 w-4" aria-hidden="true" />
-          Email us
-        </a>
+  <Mail className="h-4 w-4" aria-hidden="true" />
+  Email Us
+</a>
       </div>
     </motion.div>
   );

@@ -20,7 +20,11 @@ import ViewDetails from "../Buttons/ViewDetails";
  *
  *   <ProductCard product={product} onToggleWishlist={handleWishlist} />
  */
-const ProductCard = ({ product, onToggleWishlist = () => {} }) => {
+const ProductCard = ({
+  product,
+  onToggleWishlist = () => {},
+  isWishlisted = false,
+}) => {
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -56,7 +60,12 @@ const ProductCard = ({ product, onToggleWishlist = () => {} }) => {
           onClick={() => onToggleWishlist(product)}
           className="absolute right-3 top-3 z-20 flex h-9 w-9 items-center justify-center rounded-full bg-white/90 text-neutral-700 opacity-0 shadow-md backdrop-blur-sm transition-all duration-300 hover:bg-neutral-900 hover:text-white group-hover:opacity-100 focus-visible:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-green-600"
         >
-          <Heart className="h-4 w-4" aria-hidden="true" />
+          <Heart
+  className={`h-4 w-4 ${
+    isWishlisted ? "fill-current" : ""
+  }`}
+  aria-hidden="true"
+/>
         </button>
 
         {/* View Details — same component/props as before, restyled */}

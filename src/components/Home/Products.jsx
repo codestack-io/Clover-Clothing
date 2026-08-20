@@ -26,6 +26,7 @@ const Products = ({ limit }) => {
   const [layout, setLayout] = useState("3");
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState("All");
+  const [wishlist, setWishlist] = useState([]);
 
   // Fetch products — unchanged from the original implementation.
   useEffect(() => {
@@ -47,6 +48,28 @@ const Products = ({ limit }) => {
     };
     fetchProducts();
   }, []);
+
+  useEffect(() => {
+  const fetchWishlist = async () => {
+    try {
+      const res = await fetch("/api/wishlist");
+
+      if (!res.ok) {
+        return;
+      }
+
+      const data = await res.json();
+
+      if (data.success) {
+        setWishlist(data.wishlist || []);
+      }
+    } catch (error) {
+      console.error("Failed to fetch wishlist:", error);
+    }
+  };
+
+  fetchWishlist();
+}, []);
 
   // Filter by search, category, price — unchanged from the original implementation.
   const filteredProducts = useMemo(() => {
@@ -90,6 +113,74 @@ const Products = ({ limit }) => {
   const noProductsAtAll = !isLoading && products.length === 0;
   const noFilteredResults =
     !isLoading && products.length > 0 && filteredProducts.length === 0;
+
+    const handleWishlist = async (product) => {
+  const productId = product._id?.toString();
+
+  if (!productId) return;
+
+  const isWishlisted = wishlist.some(
+    (item) => item.productId === productId
+  );
+
+  try {
+    if (isWishlisted) {
+      // ==========================
+      // REMOVE FROM WISHLIST
+      // ==========================
+
+      const res = await fetch(
+        `/api/wishlist?productId=${productId}`,
+        {
+          method: "DELETE",
+        }
+      );
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        console.error(data.error);
+        return;
+      }
+
+      setWishlist((prev) =>
+        prev.filter((item) => item.productId !== productId)
+      );
+    } else {
+      // ==========================
+      // ADD TO WISHLIST
+      // ==========================
+
+      const res = await fetch("/api/wishlist", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          productId,
+          name: product.name,
+          price: product.price,
+          image: product.image,
+          quantity: 1,
+        }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        console.error(data.error);
+        return;
+      }
+
+      setWishlist((prev) => [
+        ...prev,
+        data.wishlistItem,
+      ]);
+    }
+  } catch (error) {
+    console.error("Wishlist error:", error);
+  }
+};
 
   return (
     <div>
@@ -226,16 +317,20 @@ const Products = ({ limit }) => {
                 .fill(0)
                 .map((_, index) => <ProductSkeleton key={index} />)
             : displayedProducts.map((product) => (
-                <ProductCard
-                  key={product._id}
-                  product={{
-                    ...product,
-                    id: product._id,
-                    image: product.image || "/placeholder.png",
-                    name: product.name || "Unnamed Product",
-                    layout,
-                  }}
-                />
+        <ProductCard
+  key={product._id}
+  product={{
+    ...product,
+    id: product._id,
+    image: product.image || "/placeholder.png",
+    name: product.name || "Unnamed Product",
+    layout,
+  }}
+  onToggleWishlist={handleWishlist}
+  isWishlisted={wishlist.some(
+    (item) => item.productId === product._id.toString()
+  )}
+/>
               ))}
         </div>
       )}
