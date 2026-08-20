@@ -40,7 +40,7 @@ const ProductActions = ({ product }) => {
             type="button"
             onClick={decrease}
             aria-label="Decrease quantity"
-            className="flex h-11 w-11 items-center justify-center transition hover:bg-neutral-100 sm:h-12 sm:w-12"
+            className="flex h-11 w-11 items-center justify-center text-black transition hover:bg-neutral-100 sm:h-12 sm:w-12"
           >
             <Minus size={17} />
           </button>
@@ -53,7 +53,7 @@ const ProductActions = ({ product }) => {
             type="button"
             onClick={increase}
             aria-label="Increase quantity"
-            className="flex h-11 w-11 items-center justify-center transition hover:bg-neutral-100 sm:h-12 sm:w-12"
+            className="flex h-11 w-11 items-center text-black justify-center transition hover:bg-neutral-100 sm:h-12 sm:w-12"
           >
             <Plus size={17} />
           </button>
@@ -76,7 +76,7 @@ const ProductActions = ({ product }) => {
       <button
         type="button"
         onClick={() => setWishlist(!wishlist)}
-        className={`flex w-full items-center justify-center gap-2 rounded-xl border py-3.5 text-sm font-medium transition sm:py-4 sm:text-base ${
+        className={`flex w-full items-center justify-center gap-2 rounded-xl border py-3.5 text-sm font-medium text-black ransition sm:py-4 sm:text-base  ${
           wishlist
             ? "border-red-500 bg-red-50 text-red-600"
             : "border-neutral-300 hover:bg-neutral-100"
