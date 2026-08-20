@@ -787,7 +787,7 @@ const handleFinalOrder = async () => {
 
                     <div className="min-w-0 flex-1">
 
-                      <h3 className="truncate text-sm font-semibold">
+                      <h3 className="truncate text-sm text-neutral-500  font-semibold">
                         {item.name || item.title}
                       </h3>
 
@@ -818,7 +818,7 @@ const handleFinalOrder = async () => {
 
               {/* PRICE */}
 
-              <div className="space-y-3 text-sm">
+              <div className="space-y-3 text-black text-sm">
 
                 <div className="flex justify-between">
 

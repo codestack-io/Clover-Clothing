@@ -128,6 +128,58 @@ const useCartStore = create(
       },
 
       // =========================
+// WISHLIST
+// =========================
+
+wishlist: [],
+
+// =========================
+// ADD / REMOVE WISHLIST
+// =========================
+
+toggleWishlist: (product) => {
+  const wishlist = get().wishlist;
+
+  const exists = wishlist.some(
+    (item) => String(item._id) === String(product._id)
+  );
+
+  if (exists) {
+    set({
+      wishlist: wishlist.filter(
+        (item) => String(item._id) !== String(product._id)
+      ),
+    });
+  } else {
+    set({
+      wishlist: [...wishlist, product],
+    });
+  }
+},
+
+// =========================
+// CHECK WISHLIST
+// =========================
+
+isInWishlist: (productId) => {
+  return get().wishlist.some(
+    (item) => String(item._id) === String(productId)
+  );
+},
+
+// =========================
+// REMOVE FROM WISHLIST
+// =========================
+
+removeFromWishlist: (productId) => {
+  set({
+    wishlist: get().wishlist.filter(
+      (item) => String(item._id) !== String(productId)
+    ),
+  });
+},
+
+      // =========================
       // TOTAL PRICE
       // =========================
 
@@ -139,6 +191,9 @@ const useCartStore = create(
         );
       },
     }),
+
+
+    
 
     {
       name: "clover-clothing-cart",

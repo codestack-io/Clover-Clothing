@@ -121,7 +121,7 @@ const CartItem = ({
             <AiOutlineMinus size={16} />
           </button>
 
-          <span className="flex min-w-[30px] items-center justify-center font-semibold">
+          <span className="flex min-w-[30px] text-black items-center justify-center font-semibold">
             {quantity}
           </span>
 
