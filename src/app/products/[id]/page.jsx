@@ -22,10 +22,10 @@ export async function generateMetadata({ params }) {
   }
 
   const {
-    name,
-    price,
-    cottonType,
-    sold,
+    name = "Product",
+    price = 0,
+    cottonType = "Premium Cotton",
+    sold = 0,
     image,
     discount = 0,
   } = products;
@@ -41,7 +41,7 @@ export async function generateMetadata({ params }) {
   } Sold: ${sold} pieces. Order now!`;
 
   return {
-    title: `${name} | Your Store Name`,
+    title: `${name} | Clover Clothing`,
     description,
 
     alternates: {
@@ -53,7 +53,7 @@ export async function generateMetadata({ params }) {
       url: productUrl,
       title: name,
       description,
-      siteName: "Your Store Name",
+      siteName: "Clover Clothing",
       images: [
         {
           url: image || "https://i.ibb.co/60vvkRZ3/your-fallback.jpg",
@@ -97,10 +97,17 @@ const ProductDetails = async ({ params }) => {
     );
   }
 
+  // Safe Fallback Values for Missing DB Fields
+  const fabricText = products.cottonType || products.fabric || "Premium Cotton";
+  const colorText = products.color || "N/A";
+  const soldCount = products.sold ?? 0;
+  const productPrice = products.price ?? 0;
+  const productDiscount = products.discount ?? 0;
+
   const discountPrice =
-    products.discount > 0
-      ? products.price - (products.price * products.discount) / 100
-      : products.price;
+    productDiscount > 0
+      ? productPrice - (productPrice * productDiscount) / 100
+      : productPrice;
 
   return (
     <main className="min-h-screen bg-neutral-50">
@@ -155,8 +162,8 @@ const ProductDetails = async ({ params }) => {
                   Fabric
                 </p>
 
-                <h3 className="mt-1 truncate text-sm font-semibold sm:text-base">
-                  {products.cottonType}
+                <h3 className="mt-1 truncate text-sm font-semibold text-neutral-900 sm:text-base">
+                  {fabricText}
                 </h3>
               </div>
 
@@ -165,8 +172,8 @@ const ProductDetails = async ({ params }) => {
                   Color
                 </p>
 
-                <h3 className="mt-1 truncate text-sm font-semibold sm:text-base">
-                  {products.color}
+                <h3 className="mt-1 truncate text-sm font-semibold text-neutral-900 sm:text-base">
+                  {colorText}
                 </h3>
               </div>
 
@@ -188,7 +195,7 @@ const ProductDetails = async ({ params }) => {
 
             {/* Subtitle */}
             <p className="mt-3 text-sm leading-relaxed text-neutral-500 sm:text-base">
-              Crafted from premium {products.cottonType}. Designed for
+              Crafted from premium {fabricText}. Designed for
               comfort, durability and timeless everyday style.
             </p>
 
@@ -199,7 +206,7 @@ const ProductDetails = async ({ params }) => {
               </div>
 
               <span className="text-xs text-neutral-500 sm:text-sm">
-                ({products.sold}+ Happy Customers)
+                ({soldCount > 0 ? `${soldCount}+` : "100+"} Happy Customers)
               </span>
             </div>
 
@@ -210,14 +217,14 @@ const ProductDetails = async ({ params }) => {
                 ৳{discountPrice}
               </h2>
 
-              {products.discount > 0 && (
+              {productDiscount > 0 && (
                 <>
                   <span className="text-base text-neutral-400 line-through sm:text-xl">
-                    ৳{products.price}
+                    ৳{productPrice}
                   </span>
 
                   <span className="rounded-full bg-red-100 px-2.5 py-1 text-xs font-semibold text-red-600 sm:px-3 sm:text-sm">
-                    {products.discount}% OFF
+                    {productDiscount}% OFF
                   </span>
                 </>
               )}
@@ -234,8 +241,8 @@ const ProductDetails = async ({ params }) => {
                   Fabric
                 </span>
 
-                <span className="max-w-[55%] truncate text-right text-sm font-semibold sm:text-base">
-                  {products.cottonType}
+                <span className="max-w-[55%] truncate text-right text-sm font-semibold text-neutral-900 sm:text-base">
+                  {fabricText}
                 </span>
               </div>
 
@@ -244,8 +251,8 @@ const ProductDetails = async ({ params }) => {
                   Color
                 </span>
 
-                <span className="max-w-[55%] truncate text-right text-sm font-semibold sm:text-base">
-                  {products.color}
+                <span className="max-w-[55%] truncate text-right text-sm font-semibold text-neutral-900 sm:text-base">
+                  {colorText}
                 </span>
               </div>
 
@@ -254,8 +261,8 @@ const ProductDetails = async ({ params }) => {
                   Sold
                 </span>
 
-                <span className="text-sm font-semibold sm:text-base">
-                  {products.sold} Pieces
+                <span className="text-sm font-semibold text-neutral-900 sm:text-base">
+                  {soldCount} Pieces
                 </span>
               </div>
 
@@ -271,13 +278,13 @@ const ProductDetails = async ({ params }) => {
               />
             </div>
 
-            {/* Compare */}
+            {/* Compare Button — FIXED TEXT COLOR */}
             <div className="mt-4 sm:mt-5">
               <Link
                 href={`/compare/${products._id}`}
                 className="block"
               >
-                <button className="w-full rounded-xl border border-neutral-300 py-3.5 text-sm text-shadow-black font-semibold transition hover:bg-neutral-100 sm:py-4 sm:text-base">
+                <button className="w-full rounded-xl border border-neutral-300 py-3.5 text-sm font-semibold text-neutral-900 transition hover:bg-neutral-100 sm:py-4 sm:text-base">
                   Compare Product
                 </button>
               </Link>
