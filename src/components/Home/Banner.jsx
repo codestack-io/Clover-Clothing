@@ -5,7 +5,7 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay, Navigation, Pagination, EffectFade } from "swiper/modules";
 
 import { motion, AnimatePresence } from "framer-motion";
-import {  ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 
 import "swiper/css";
 import "swiper/css/navigation";
@@ -51,13 +51,13 @@ const slides = [
   },
 ];
 
-export default function HeroCarousel() {
+export default function Banner() {
   const [activeIndex, setActiveIndex] = useState(0);
   const prevRef = useRef(null);
   const nextRef = useRef(null);
 
   return (
-    <section className="group relative h-screen w-full overflow-hidden bg-[#111]">
+    <section className="group relative h-[70vh] sm:h-[80vh] min-h-[500px] w-full overflow-hidden bg-[#111]">
       <Swiper
         modules={[Autoplay, Navigation, Pagination, EffectFade]}
         effect="fade"
@@ -90,7 +90,6 @@ export default function HeroCarousel() {
                 style={{ backgroundImage: `url(${slide.img})` }}
               />
 
-              {/* Layered gradient — grounds the text without flattening the image */}
               <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/25 to-black/10" />
               <div className="absolute inset-0 bg-gradient-to-r from-black/30 via-transparent to-black/30" />
             </div>
@@ -98,7 +97,6 @@ export default function HeroCarousel() {
         ))}
       </Swiper>
 
-      {/* Text content — synced to activeIndex, not tied to a single slide's DOM node */}
       <div className="pointer-events-none absolute inset-0 z-10 flex flex-col items-center justify-center px-6 text-center text-white">
         <AnimatePresence mode="wait">
           <motion.div
@@ -123,13 +121,10 @@ export default function HeroCarousel() {
             <p className="mt-6 max-w-md text-[15px] font-light tracking-wide text-white/75 md:text-base">
               {slides[activeIndex].sub}
             </p>
-
-         
           </motion.div>
         </AnimatePresence>
       </div>
 
-      {/* Custom navigation arrows — hidden until the hero is hovered */}
       <button
         ref={prevRef}
         aria-label="Previous slide"
@@ -145,7 +140,6 @@ export default function HeroCarousel() {
         <ChevronRight size={18} strokeWidth={1.75} />
       </button>
 
-      {/* Custom pagination — slim progress bars instead of dots */}
       <div className="hero-pagination absolute bottom-9 left-1/2 z-20 flex -translate-x-1/2 items-center gap-2.5" />
 
       <style jsx global>{`
