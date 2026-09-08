@@ -13,17 +13,17 @@ const rubik = Rubik({
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en" className="light" suppressHydrationWarning>
       <body
-        className={`${rubik.className} antialiased bg-gray-100 text-gray-900 dark:text-white transition-colors duration-300 dark:bg-slate-950 dark:text-white`}
+        className={`${rubik.className} antialiased bg-white text-gray-900 transition-colors duration-300`}
       >
         <Providers>
-          <header className="w-full">
+          <header className="w-full bg-white">
             <TopBar />
             <Navbar />
           </header>
 
-          <main className="w-full px-5 py-2 min-h-[calc(100vh-330px)]">
+          <main className="w-full min-h-[calc(100vh-330px)] bg-white text-gray-900">
             {children}
           </main>
 
