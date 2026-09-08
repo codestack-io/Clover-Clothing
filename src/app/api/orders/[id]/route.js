@@ -6,8 +6,6 @@ export async function GET(req, context) {
   try {
     const { id } = await context.params;
 
-    console.log("Received ID:", id); // ✅ DEBUG
-
     if (!id || !ObjectId.isValid(id)) {
       return NextResponse.json(
         { success: false, error: "Invalid ID" },

@@ -9,17 +9,11 @@ import Logo from "../Logo/Logo";
 import MegaMenu from "../MegaMenu";
 import PagesDropdown from "../PagesDropdown";
 import MobileMenu from "../MobileMenu";
-
 import ProfileMenu from "../ProfileMenu";
-import useCartStore from "@/store/cartStore";
-// Replace with real cart state (context / redux / query) when wiring this up.
 
+// ⚠️ FIXED IMPORT PATH HERE
+import useCartStore from "../../store/cartStore"; 
 
-/**
- * NavItem
- * Shared link styling for top-level nav entries: underline-on-hover,
- * no default blue focus rings, letter-spaced small caps feel.
- */
 const NavItem = ({ href, children, className = "" }) => (
   <Link
     href={href}
@@ -38,19 +32,16 @@ const Navbar = () => {
 
   const productsTimer = useRef(null);
   const pagesTimer = useRef(null);
-  const cart = useCartStore((state) => state.cart);
 
-  const cartCount = cart.reduce(
-  (total, item) => total + item.quantity,
-  0
-);
+  // Get total count directly using your store's getter
+  const getTotalItems = useCartStore((state) => state.getTotalItems);
+  const cartCount = getTotalItems ? getTotalItems() : 0;
 
-  // Small delay on leave prevents flicker when moving the cursor
-  // from the trigger toward the panel.
   const openProducts = useCallback(() => {
     clearTimeout(productsTimer.current);
     setProductsOpen(true);
   }, []);
+
   const closeProducts = useCallback(() => {
     productsTimer.current = setTimeout(() => setProductsOpen(false), 120);
   }, []);
@@ -59,6 +50,7 @@ const Navbar = () => {
     clearTimeout(pagesTimer.current);
     setPagesOpen(true);
   }, []);
+
   const closePages = useCallback(() => {
     pagesTimer.current = setTimeout(() => setPagesOpen(false), 120);
   }, []);
@@ -69,6 +61,7 @@ const Navbar = () => {
     <>
       <header className="sticky top-0 z-50 h-[72px] w-full border-b border-white/25 bg-white/65 shadow-[0_1px_24px_rgba(0,0,0,0.04)] backdrop-blur-xl">
         <div className="mx-auto flex h-full max-w-[1440px] items-center justify-between px-6 lg:px-10">
+          
           {/* Left: Logo */}
           <div className="flex items-center gap-4">
             <button
@@ -117,7 +110,6 @@ const Navbar = () => {
               <MegaMenu open={productsOpen} />
             </div>
 
-           
             <NavItem href="/about">About</NavItem>
 
             {/* Pages — floating dropdown */}
@@ -152,8 +144,6 @@ const Navbar = () => {
 
           {/* Right: Icons + Auth */}
           <div className="flex items-center gap-1.5">
-            
-
             <Link
               href="/wishlist"
               aria-label="Wishlist"
@@ -168,11 +158,11 @@ const Navbar = () => {
               className="relative flex h-9 w-9 items-center justify-center rounded-full text-[#111] transition-colors duration-300 hover:bg-black/[0.04]"
             >
               <ShoppingBag size={18} strokeWidth={1.75} />
-             {cartCount > 0 && (
-  <span className="absolute -right-0.5 -top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-[#16a34a] px-1 text-[10px] font-semibold leading-none text-white">
-    {cartCount}
-  </span>
-)}
+              {cartCount > 0 && (
+                <span className="absolute -right-0.5 -top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-[#16a34a] px-1 text-[10px] font-semibold leading-none text-white">
+                  {cartCount}
+                </span>
+              )}
             </Link>
 
             <div className="ml-1">

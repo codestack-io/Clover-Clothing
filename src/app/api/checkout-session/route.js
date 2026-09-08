@@ -141,6 +141,17 @@ export async function POST(req) {
       stripeSession.id
     );
 
+    // =========================
+    // CLEAR USER'S CART IN MONGODB
+    // =========================
+
+    const cartCollection = await dbConnect(Collection.CART);
+    
+    // Deletes all items associated with the logged-in user's email
+    await cartCollection.deleteMany({
+      email: session.user.email,
+    });
+
     return NextResponse.json({
       success: true,
       url: stripeSession.url,
