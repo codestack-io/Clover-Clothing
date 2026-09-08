@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import ProductCard from "../Card/ProductCard";
 import ProductSkeleton from "../Skeleton/ProductSkeleton";
 import LayoutSwitcher from "../LayoutSwicher/LayoutSwitcher";
-import { FaSeedling } from "react-[#16a34a]";
+
 import { RiSeedlingFill } from "react-icons/ri";
 import { Search, PackageX, SearchX } from "lucide-react";
 
