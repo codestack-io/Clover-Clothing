@@ -10,28 +10,28 @@ const Footer = () => {
       <div className="footer sm:footer-horizontal bg-base-200 text-base-content p-10">
         <Logo />
 
-        <nav>
+        {/* <nav>
           <h6 className="footer-title">Services</h6>
           <a className="link link-hover">Branding</a>
           <a className="link link-hover">Design</a>
           <a className="link link-hover">Marketing</a>
           <a className="link link-hover">Advertisement</a>
-        </nav>
+        </nav> */}
 
         <nav>
-          <h6 className="footer-title">Company</h6>
-          <Link href="/about" className="link link-hover">About us</Link>
+          
+          {/* <Link href="/about" className="link link-hover">About us</Link> */}
           <Link href="/help" className="link link-hover">Contact</Link>
-          <a className="link link-hover">Jobs</a>
+          {/* <a className="link link-hover">Jobs</a> */}
           <Link href="/faq" className="link link-hover">FAQ</Link>
         </nav>
 
-        <nav>
+        {/* <nav>
           <h6 className="footer-title">Legal</h6>
           <a className="link link-hover">Terms of use</a>
           <a className="link link-hover">Privacy policy</a>
           <a className="link link-hover">Cookie policy</a>
-        </nav>
+        </nav> */}
       </div>
 
       {/* Copyright Bar */}

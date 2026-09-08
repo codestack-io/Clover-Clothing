@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import Counter from "../../components/counter"; // Adjust import path if needed
 
 export const metadata = {
   title: "About Us | Clover Clothing",
@@ -8,6 +9,13 @@ export const metadata = {
 };
 
 export default function AboutPage() {
+  const stats = [
+    { value: 3, suffix: "+", label: "Years in Business" },
+    { value: 500, suffix: "+", label: "Products Sold" },
+    { value: 100, suffix: "%", label: "Cotton Certified" },
+    { value: 4.8, suffix: "★", decimals: 1, label: "Customer Rating" },
+  ];
+
   const values = [
     {
       icon: "🌱",
@@ -37,23 +45,25 @@ export default function AboutPage() {
 
   return (
     <div className="max-w-6xl mx-auto px-4 py-12">
-
       {/* Hero Section */}
       <section className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center mb-20">
         <div>
           <h1 className="text-4xl md:text-5xl font-bold leading-tight mb-4">
-            We Make Clothing <span className="text-green-600">You Can Feel Good About</span>
+            We Make Clothing{" "}
+            <span className="text-green-600">You Can Feel Good About</span>
           </h1>
           <p className="text-gray-600 text-lg leading-relaxed mb-6">
-            Clover Clothing was founded in 2022 with a simple belief: that style and sustainability
-            don't have to be in conflict. Every piece we make starts with premium cotton — sourced
-            responsibly, crafted carefully, and designed to last.
+            Clover Clothing was founded in 2022 with a simple belief: that
+            style and sustainability don't have to be in conflict. Every piece
+            we make starts with premium cotton — sourced responsibly, crafted
+            carefully, and designed to last.
           </p>
           <p className="text-gray-600 leading-relaxed mb-8">
-            From our signature Punjabi kurtas to our everyday organic tees, each item is a
-            reflection of our commitment to quality, comfort, and conscious fashion. We're based in
-            Bangladesh, home to some of the world's finest textile artisans, and we're proud to
-            support local communities through every stitch.
+            From our signature Punjabi kurtas to our everyday organic tees, each
+            item is a reflection of our commitment to quality, comfort, and
+            conscious fashion. We're based in Bangladesh, home to some of the
+            world's finest textile artisans, and we're proud to support local
+            communities through every stitch.
           </p>
           <Link
             href="/items"
@@ -79,19 +89,16 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* Stats */}
+      {/* Stats with Animated Counter */}
       <section className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-20">
-        {[
-          { value: "3+", label: "Years in Business" },
-          { value: "500+", label: "Products Sold" },
-          { value: "100%", label: "Cotton Certified" },
-          { value: "4.8★", label: "Customer Rating" },
-        ].map(({ value, label }) => (
+        {stats.map(({ value, suffix, decimals, label }) => (
           <div
             key={label}
             className="bg-white rounded-2xl shadow p-6 text-center"
           >
-            <p className="text-3xl font-bold text-green-600">{value}</p>
+            <p className="text-3xl font-bold text-green-600">
+              <Counter end={value} suffix={suffix} decimals={decimals} />
+            </p>
             <p className="text-gray-500 text-sm mt-1">{label}</p>
           </div>
         ))}
@@ -108,7 +115,9 @@ export default function AboutPage() {
             >
               <span className="text-3xl">{icon}</span>
               <h3 className="text-lg font-semibold mt-3 mb-2">{title}</h3>
-              <p className="text-gray-500 text-sm leading-relaxed">{description}</p>
+              <p className="text-gray-500 text-sm leading-relaxed">
+                {description}
+              </p>
             </div>
           ))}
         </div>
@@ -126,15 +135,18 @@ export default function AboutPage() {
           />
         </div>
         <div className="md:w-1/2">
-          <h2 className="text-2xl font-bold mb-4">Built on Passion, Grown on Trust</h2>
+          <h2 className="text-2xl font-bold mb-4">
+            Built on Passion, Grown on Trust
+          </h2>
           <p className="text-gray-600 leading-relaxed mb-4">
-            What started as a small workshop with four artisans has grown into a team of dedicated
-            craftspeople, designers, and sustainability advocates. We share one goal: to make
-            clothing that stands the test of time — both in quality and in ethical practice.
+            What started as a small workshop with four artisans has grown into a
+            team of dedicated craftspeople, designers, and sustainability
+            advocates. We share one goal: to make clothing that stands the test
+            of time — both in quality and in ethical practice.
           </p>
           <p className="text-gray-600 leading-relaxed">
-            Join thousands of happy customers who have made Clover Clothing part of their
-            everyday wardrobe.
+            Join thousands of happy customers who have made Clover Clothing part
+            of their everyday wardrobe.
           </p>
         </div>
       </section>
@@ -160,7 +172,6 @@ export default function AboutPage() {
           </Link>
         </div>
       </section>
-
     </div>
   );
 }

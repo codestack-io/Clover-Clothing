@@ -14,40 +14,66 @@ export async function GET() {
 
     if (!session?.user?.email) {
       return NextResponse.json(
-        {
-          success: false,
-          error: "Unauthorized",
-        },
+        { success: false, error: "Unauthorized" },
         { status: 401 }
       );
     }
 
     const collection = await dbConnect(Collection.WISHLIST);
 
+    // Join with PRODUCTS collection using MongoDB aggregation
     const wishlist = await collection
-      .find({
-        email: session.user.email,
-      })
-      .sort({ createdAt: -1 })
+      .aggregate([
+        { $match: { email: session.user.email } },
+        {
+          $addFields: {
+            productObjectId: { $toObjectId: "$productId" },
+          },
+        },
+        {
+          $lookup: {
+            from: "products", // Ensure this matches your products collection name
+            localField: "productObjectId",
+            foreignField: "_id",
+            as: "productDetails",
+          },
+        },
+        {
+          $unwind: {
+            path: "$productDetails",
+            preserveNullAndEmptyArrays: true, // Fallback if product was deleted
+          },
+        },
+        { $sort: { createdAt: -1 } },
+      ])
       .toArray();
+
+    // Map output to return full product details
+    const formattedWishlist = wishlist.map((item) => {
+      if (item.productDetails) {
+        return item.productDetails;
+      }
+      // Fallback to stored item details if referenced product was removed
+      return {
+        _id: item.productId,
+        name: item.name,
+        price: item.price,
+        image: item.image,
+      };
+    });
 
     return NextResponse.json({
       success: true,
-      wishlist,
+      wishlist: formattedWishlist,
     });
   } catch (error) {
     console.error("GET WISHLIST ERROR:", error);
-
     return NextResponse.json(
-      {
-        success: false,
-        error: error.message,
-      },
+      { success: false, error: error.message },
       { status: 500 }
     );
   }
 }
-
 // ==========================
 // ADD PRODUCT TO WISHLIST
 // ==========================

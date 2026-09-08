@@ -12,10 +12,10 @@ import {
 } from "lucide-react";
 
 const items = [
-  { label: "Compare", href: "/compare", icon: GitCompare },
+  
   { label: "Reviews", href: "/review", icon: Star },
   { label: "Orders", href: "/my-account/orders", icon: Package },
-  { label: "FAQ", href: "/faq", icon: HelpCircle },
+ 
   { label: "Contact", href: "/contact", icon: Mail },
 ];
 
