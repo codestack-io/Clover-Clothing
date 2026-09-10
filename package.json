@@ -2,10 +2,12 @@
   "name": "clover-clothing",
   "version": "0.1.0",
   "private": true,
+  "type": "module",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
+    "seed:admin": "node scripts/seedAdmin.js",
     "lint": "eslint"
   },
   "dependencies": {
@@ -40,6 +42,7 @@
     "@tailwindcss/postcss": "^4.2.0",
     "@types/node": "25.5.0",
     "@types/react": "19.2.14",
+    "dotenv": "^17.4.2",
     "eslint": "^10.0.1",
     "eslint-config-next": "^0.2.4",
     "tailwindcss": "^4.2.0",
