@@ -28,10 +28,10 @@ export default function ProductCard({ product }) {
           className="h-full w-full object-cover object-center transition-transform duration-300 group-hover:scale-105"
         />
 
-        {/* Wishlist Button: Always visible on mobile, hover-only on desktop */}
+        {/* Wishlist Button: Visible on mobile, hover-only on desktop */}
         <button
           onClick={() => toggleWishlist(product)}
-          className="absolute right-3 top-3 z-10 flex h-9 w-9 items-center justify-center rounded-full bg-black/80 text-white opacity-100 transition-all duration-300 backdrop-blur-sm sm:opacity-0 sm:group-hover:opacity-100 hover:scale-110 active:scale-95"
+          className="absolute right-3 top-3 z-10 flex h-9 w-9 items-center justify-center rounded-full bg-black/80 text-white backdrop-blur-sm transition-all duration-300 opacity-100 pointer-events-auto sm:opacity-0 sm:pointer-events-none sm:group-hover:opacity-100 sm:group-hover:pointer-events-auto hover:scale-110 active:scale-95"
           aria-label="Toggle Wishlist"
         >
           <svg
@@ -52,8 +52,8 @@ export default function ProductCard({ product }) {
           </svg>
         </button>
 
-        {/* View Details Button: Always visible on mobile, hover-only on desktop */}
-        <div className="absolute bottom-3 left-1/2 z-10 w-[90%] -translate-x-1/2 opacity-100 transition-opacity duration-300 sm:bottom-4 sm:w-auto sm:opacity-0 sm:group-hover:opacity-100">
+        {/* View Details Button: Visible on mobile, hover-only on desktop */}
+        <div className="absolute bottom-3 left-1/2 z-10 w-[90%] -translate-x-1/2 transition-all duration-300 opacity-100 pointer-events-auto sm:bottom-4 sm:w-auto sm:opacity-0 sm:pointer-events-none sm:group-hover:opacity-100 sm:group-hover:pointer-events-auto">
           <ViewDetails product={product} type="cottonType" />
         </div>
       </div>
