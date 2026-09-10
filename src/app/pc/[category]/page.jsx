@@ -1,9 +1,9 @@
 "use client";
 
-import CartButton from "../../../components/Buttons/CartButton";
-import ViewDetails from "../../../components/Buttons/ViewDetails";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
+import CartButton from "../../../components/Buttons/CartButton";
+import ViewDetails from "../../../components/Buttons/ViewDetails";
 import useCartStore from "../../../store/cartStore";
 
 export default function CategoryPage({ params }) {
@@ -12,6 +12,7 @@ export default function CategoryPage({ params }) {
   const cottonType = searchParams.get("cottonType");
 
   const [products, setProducts] = useState([]);
+  const [isMounted, setIsMounted] = useState(false);
 
   const toggleWishlist = useCartStore((state) => state.toggleWishlist);
   const wishlist = useCartStore((state) => state.wishlist) || [];
@@ -20,6 +21,8 @@ export default function CategoryPage({ params }) {
     wishlist.some((item) => (item._id || item.id) === id);
 
   useEffect(() => {
+    setIsMounted(true);
+
     let url = "/api/products";
     if (cottonType) url += `?cottonType=${cottonType}`;
 
@@ -29,7 +32,6 @@ export default function CategoryPage({ params }) {
         if (Array.isArray(data)) {
           setProducts(data);
         } else {
-          console.error("API returned not an array:", data);
           setProducts([]);
         }
       })
@@ -40,10 +42,10 @@ export default function CategoryPage({ params }) {
   }, [cottonType]);
 
   return (
-    <div className="min-h-screen bg-gray-50 px-3 py-6 sm:px-6 lg:px-12">
-      {/* Category Heading */}
+    <div className="min-h-screen bg-gray-50 px-4 py-8 sm:px-6 lg:px-12">
       <div className="mx-auto max-w-7xl">
-        <h1 className="mb-6 text-2xl font-black tracking-tight text-gray-900 sm:text-3xl md:text-4xl">
+        {/* Category Heading */}
+        <h1 className="mb-8 text-3xl font-black tracking-tight text-gray-900 sm:text-4xl capitalize">
           {cottonType || category}
         </h1>
 
@@ -56,32 +58,32 @@ export default function CategoryPage({ params }) {
           </div>
         )}
 
-        {/* Responsive Product Grid */}
-        <div className="grid grid-cols-2 gap-3 sm:gap-6 md:grid-cols-3 lg:grid-cols-4">
+        {/* Clean E-Commerce Product Grid */}
+        <div className="grid grid-cols-2 gap-4 sm:gap-6 md:grid-cols-3 lg:grid-cols-4">
           {products.map((p) => {
-            const activeWishlist = isWishlisted(p._id);
+            const activeWishlist = isMounted && isWishlisted(p._id);
 
             return (
               <div
                 key={p._id}
-                className="group flex flex-col overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-sm transition duration-300 hover:shadow-md"
+                className="group flex flex-col overflow-hidden rounded-2xl border border-gray-100 bg-white p-3 shadow-sm transition-all duration-300 hover:shadow-md h-fit"
               >
-                {/* Image Container with Wishlist Button & Fabric Badge */}
-                <div className="relative aspect-[4/3] w-full overflow-hidden bg-gray-100">
+                {/* Product Image Section */}
+                <div className="relative aspect-[4/5] w-full overflow-hidden rounded-xl bg-gray-100">
                   <img
                     src={p.image}
                     alt={p.name}
                     className="h-full w-full object-cover object-center transition-transform duration-500 group-hover:scale-105"
                   />
 
-                  {/* Fabric Type Badge */}
-                  {p.cottonType && (
-                    <span className="absolute left-2.5 top-2.5 rounded-full bg-emerald-700/95 px-2.5 py-0.5 text-[10px] font-semibold text-white backdrop-blur-sm sm:left-3 sm:top-3 sm:px-3 sm:py-1 sm:text-xs">
-                      {p.cottonType}
+                  {/* Fabric Tag */}
+                  {(p.cottonType || p.fabric) && (
+                    <span className="absolute left-2.5 top-2.5 rounded-full bg-emerald-800/90 px-3 py-1 text-[10px] font-bold text-white shadow-sm backdrop-blur-sm sm:left-3 sm:top-3 sm:text-[11px]">
+                      {p.cottonType || p.fabric}
                     </span>
                   )}
 
-                  {/* Wishlist Button Overlay */}
+                  {/* Wishlist Heart */}
                   <button
                     onClick={() => toggleWishlist(p)}
                     aria-label="Add to Wishlist"
@@ -106,32 +108,33 @@ export default function CategoryPage({ params }) {
                   </button>
                 </div>
 
-                {/* Card Content */}
-                <div className="flex flex-grow flex-col p-3 sm:p-5">
-                  <h2 className="line-clamp-1 text-xs font-bold text-gray-900 sm:text-base">
+                {/* Details Section */}
+                <div className="mt-3 px-1">
+                  <h2 className="line-clamp-1 text-sm font-bold text-gray-900 sm:text-base">
                     {p.name}
                   </h2>
-                  
-{/* Strictly Horizontal Single Line Action Row */}
-<div className="mt-3  items-center justify-between gap-1">
-  {/* Price Badge */}
-  <span className="shrink-0 rounded-lg bg-emerald-800 px-1.5 py-1.5 text-[11px] font-extrabold text-white sm:px-2.5 sm:text-xs">
-    ৳{p.price}
-  </span>
-<div className="flex flex-col gap-2 mt-3">
-  {/* Cart Button Container */}
-  <div className="w-full text-center [&>button]:w-full [&>button]:py-2 [&>button]:text-xs [&>button]:font-semibold [&>button]:whitespace-nowrap">
-    <CartButton product={p} />
-  </div>
 
-  {/* View Details Container */}
-  <div className="w-full [&>a]:block [&>button]:w-full [&>button]:py-2 [&>button]:text-xs [&>button]:font-semibold [&>button]:whitespace-nowrap">
-    <ViewDetails product={p} type="cottonType" />
-  </div>
-</div>
-  
-</div>
-                  
+                  <div className="mt-2 flex items-center justify-between">
+                    <span className="inline-block rounded-lg bg-emerald-800 px-2.5 py-1 text-xs font-extrabold text-white sm:text-sm">
+                      ৳{p.price}
+                    </span>
+                    {p.sold !== undefined && (
+                      <span className="text-[11px] font-medium text-gray-500">
+                        {p.sold} sold
+                      </span>
+                    )}
+                  </div>
+                </div>
+
+                {/* Action Buttons */}
+                <div className="mt-3 flex flex-col gap-1.5">
+                  {/* <div className="w-full text-center [&>button]:w-full [&>button]:rounded-lg [&>button]:bg-black [&>button]:py-2 [&>button]:text-xs [&>button]:font-semibold [&>button]:text-white transition hover:opacity-90">
+                    <CartButton product={p} />
+                  </div> */}
+
+                  <div className="w-full [&>a]:block [&>button]:w-full [&>button]:rounded-lg [&>button]:bg-gray-100 [&>button]:py-2 [&>button]:text-xs [&>button]:font-semibold [&>button]:text-gray-900 transition hover:bg-gray-200">
+                    <ViewDetails product={p} type="cottonType" />
+                  </div>
                 </div>
               </div>
             );
