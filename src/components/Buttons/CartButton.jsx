@@ -113,7 +113,7 @@ const CartButton = ({ product }) => {
       >
         <ShoppingBag size={20} />
 
-        {loading ? "Adding..." : "Add to Cart"}
+        {loading ? "Adding..." : "Add"}
       </button>
 
       {/* ==========================================

@@ -1,5 +1,4 @@
 import { getSingleProduct } from "../../../action/server/Product";
-
 import Image from "next/image";
 import React from "react";
 import ProductActions from "../../../components/productAction";
@@ -8,16 +7,12 @@ import Link from "next/link";
 
 export async function generateMetadata({ params }) {
   const { id } = params;
-
   const products = await getSingleProduct(id);
 
   if (!products) {
     return {
       title: "Product Not Found",
-      robots: {
-        index: false,
-        follow: false,
-      },
+      robots: { index: false, follow: false },
     };
   }
 
@@ -31,7 +26,6 @@ export async function generateMetadata({ params }) {
   } = products;
 
   const discountPrice = price - (price * discount) / 100;
-
   const productUrl = `https://clover-clothing.vercel.app/products/${id}`;
 
   const description = `${name} made with premium ${cottonType}. ${
@@ -43,11 +37,7 @@ export async function generateMetadata({ params }) {
   return {
     title: `${name} | Clover Clothing`,
     description,
-
-    alternates: {
-      canonical: productUrl,
-    },
-
+    alternates: { canonical: productUrl },
     openGraph: {
       type: "website",
       url: productUrl,
@@ -63,22 +53,16 @@ export async function generateMetadata({ params }) {
         },
       ],
     },
-
     twitter: {
       card: "summary_large_image",
       title: name,
       description,
-      images: [
-        image || "https://i.ibb.co/60vvkRZ3/your-fallback.jpg",
-      ],
+      images: [image || "https://i.ibb.co/60vvkRZ3/your-fallback.jpg"],
     },
-
     robots: {
       index: true,
       follow: true,
-      googleBot: {
-        "max-image-preview": "large",
-      },
+      googleBot: { "max-image-preview": "large" },
     },
   };
 }
@@ -90,14 +74,11 @@ const ProductDetails = async ({ params }) => {
   if (!products) {
     return (
       <div className="flex min-h-[60vh] items-center justify-center px-5">
-        <h1 className="text-2xl font-bold sm:text-3xl">
-          Product Not Found
-        </h1>
+        <h1 className="text-xl font-bold sm:text-2xl">Product Not Found</h1>
       </div>
     );
   }
 
-  // Safe Fallback Values for Missing DB Fields
   const fabricText = products.cottonType || products.fabric || "Premium Cotton";
   const colorText = products.color || "N/A";
   const soldCount = products.sold ?? 0;
@@ -110,166 +91,118 @@ const ProductDetails = async ({ params }) => {
       : productPrice;
 
   return (
-    <main className="min-h-screen bg-neutral-50">
-
-      {/* Breadcrumb */}
-      <section className="border-b bg-white">
-        <div className="mx-auto max-w-7xl px-4 py-3 sm:px-5 sm:py-4 lg:px-10">
-          <nav className="flex min-w-0 items-center gap-2 overflow-x-auto whitespace-nowrap text-xs text-neutral-500 sm:text-sm">
-            <Link
-              href="/"
-              className="shrink-0 transition hover:text-black"
-            >
+    <main className="min-h-screen bg-white pb-12 lg:bg-neutral-50">
+      {/* Breadcrumb Navigation */}
+      <section className="border-b bg-neutral-50/50 lg:bg-white">
+        <div className="mx-auto max-w-7xl px-4 py-2.5 sm:px-5 sm:py-3.5 lg:px-10">
+          <nav className="flex min-w-0 items-center gap-1.5 overflow-x-auto whitespace-nowrap text-[11px] text-neutral-500 sm:text-xs">
+            <Link href="/" className="shrink-0 transition hover:text-black">
               Home
             </Link>
-
             <span>/</span>
-
-            <Link
-              href="/products"
-              className="shrink-0 transition hover:text-black"
-            >
+            <Link href="/products" className="shrink-0 transition hover:text-black">
               Products
             </Link>
-
             <span>/</span>
-
-            <span className="max-w-[180px] truncate font-medium text-black sm:max-w-none">
+            <span className="max-w-[150px] truncate font-medium text-black sm:max-w-none">
               {products.name}
             </span>
           </nav>
         </div>
       </section>
 
-      {/* Main Container */}
-      <section className="mx-auto max-w-7xl px-4 py-6 sm:px-5 sm:py-10 lg:px-10 lg:py-12">
-
-        <div className="grid grid-cols-1 items-start gap-8 md:gap-10 lg:grid-cols-2 lg:gap-16">
-
-          {/* LEFT SIDE */}
+      {/* Main Content Area */}
+      <section className="mx-auto max-w-7xl px-0 py-0 sm:px-5 sm:py-6 lg:px-10 lg:py-10">
+        <div className="grid grid-cols-1 items-start gap-0 lg:grid-cols-2 lg:gap-12">
+          
+          {/* LEFT SIDE: Image Gallery & Mobile Highlights */}
           <div className="lg:sticky lg:top-24">
-
-            {/* Image */}
-            <div className="overflow-hidden rounded-2xl border border-neutral-200 bg-white shadow-md sm:rounded-3xl sm:shadow-lg">
+            <div className="overflow-hidden border-b border-neutral-100 sm:rounded-2xl sm:border sm:border-neutral-200 sm:bg-white sm:shadow-sm">
               <ImageGallery product={products} />
             </div>
 
-            {/* Feature Cards */}
-            <div className="mt-4 grid grid-cols-2 gap-3 sm:mt-6 sm:gap-4">
-
-              <div className="rounded-xl border border-neutral-200 bg-white p-3 sm:rounded-2xl sm:p-4">
-                <p className="text-xs text-neutral-500 sm:text-sm">
-                  Fabric
-                </p>
-
-                <h3 className="mt-1 truncate text-sm font-semibold text-neutral-900 sm:text-base">
+            {/* Quick Specs Cards (Shown on Tablet/Desktop) */}
+            <div className="hidden grid-cols-2 gap-3 p-4 sm:grid lg:mt-4 lg:p-0">
+              <div className="rounded-xl border border-neutral-200/80 bg-neutral-50 p-3.5">
+                <p className="text-xs text-neutral-500">Fabric</p>
+                <h3 className="mt-0.5 truncate text-sm font-semibold text-neutral-900">
                   {fabricText}
                 </h3>
               </div>
-
-              <div className="rounded-xl border border-neutral-200 bg-white p-3 sm:rounded-2xl sm:p-4">
-                <p className="text-xs text-neutral-500 sm:text-sm">
-                  Color
-                </p>
-
-                <h3 className="mt-1 truncate text-sm font-semibold text-neutral-900 sm:text-base">
+              <div className="rounded-xl border border-neutral-200/80 bg-neutral-50 p-3.5">
+                <p className="text-xs text-neutral-500">Color</p>
+                <h3 className="mt-0.5 truncate text-sm font-semibold text-neutral-900">
                   {colorText}
                 </h3>
               </div>
-
             </div>
           </div>
 
-          {/* RIGHT SIDE */}
-          <div className="rounded-2xl border border-neutral-200 bg-white p-5 shadow-md sm:rounded-3xl sm:p-7 md:p-8 lg:shadow-lg">
+          {/* RIGHT SIDE: Details & Actions */}
+          <div className="bg-white px-4 py-6 sm:rounded-2xl sm:border sm:border-neutral-200 sm:p-7 sm:shadow-sm">
+            
+            {/* Collection Badge & Rating */}
+            <div className="flex items-center justify-between gap-2">
+              <span className="inline-flex rounded-full bg-emerald-50 px-2.5 py-1 text-[11px] font-semibold text-emerald-700 sm:text-xs">
+                Premium Collection
+              </span>
+              <div className="flex items-center gap-1">
+                <span className="text-xs text-amber-400 sm:text-sm">★</span>
+                <span className="text-xs font-semibold text-neutral-800">4.9</span>
+                <span className="text-[11px] text-neutral-400">
+                  ({soldCount > 0 ? `${soldCount}+` : "100+"} sold)
+                </span>
+              </div>
+            </div>
 
-            {/* Product Badge */}
-            <span className="inline-flex rounded-full bg-green-100 px-3 py-1 text-xs font-medium text-green-700 sm:px-4 sm:text-sm">
-              Premium Collection
-            </span>
-
-            {/* Product Name */}
-            <h1 className="mt-4 text-2xl font-bold leading-tight tracking-tight text-neutral-900 sm:mt-5 sm:text-3xl md:text-4xl">
+            {/* Title */}
+            <h1 className="mt-2.5 text-xl font-bold leading-tight text-neutral-900 sm:mt-3 sm:text-2xl md:text-3xl">
               {products.name}
             </h1>
 
-            {/* Subtitle */}
-            <p className="mt-3 text-sm leading-relaxed text-neutral-500 sm:text-base">
-              Crafted from premium {fabricText}. Designed for
-              comfort, durability and timeless everyday style.
-            </p>
-
-            {/* Rating */}
-            <div className="mt-5 flex flex-wrap items-center gap-2 sm:mt-6 sm:gap-3">
-              <div className="text-base text-yellow-500 sm:text-lg">
-                ★★★★★
-              </div>
-
-              <span className="text-xs text-neutral-500 sm:text-sm">
-                ({soldCount > 0 ? `${soldCount}+` : "100+"} Happy Customers)
+            {/* Price Tag */}
+            <div className="mt-3 flex items-baseline gap-2.5 sm:mt-4">
+              <span className="text-2xl font-extrabold text-neutral-900 sm:text-3xl">
+                ৳{discountPrice.toLocaleString()}
               </span>
-            </div>
-
-            {/* Price */}
-            <div className="mt-6 flex flex-wrap items-center gap-2 sm:mt-8 sm:gap-4">
-
-              <h2 className="text-3xl font-bold text-neutral-900 sm:text-4xl md:text-5xl">
-                ৳{discountPrice}
-              </h2>
 
               {productDiscount > 0 && (
                 <>
-                  <span className="text-base text-neutral-400 line-through sm:text-xl">
-                    ৳{productPrice}
+                  <span className="text-sm text-neutral-400 line-through sm:text-base">
+                    ৳{productPrice.toLocaleString()}
                   </span>
-
-                  <span className="rounded-full bg-red-100 px-2.5 py-1 text-xs font-semibold text-red-600 sm:px-3 sm:text-sm">
+                  <span className="rounded-md bg-rose-50 px-2 py-0.5 text-xs font-bold text-rose-600">
                     {productDiscount}% OFF
                   </span>
                 </>
               )}
             </div>
 
-            {/* Divider */}
-            <div className="my-6 border-t border-neutral-200 sm:my-8" />
+            {/* Subtitle / Description */}
+            <p className="mt-3 text-xs leading-relaxed text-neutral-600 sm:text-sm">
+              Crafted from high-grade {fabricText}. Designed for long-lasting comfort, ideal weight, and effortless daily styling.
+            </p>
 
-            {/* Product Information */}
-            <div className="space-y-4 sm:space-y-5">
+            <div className="my-5 border-t border-neutral-100 sm:my-6" />
 
-              <div className="flex items-center justify-between gap-4">
-                <span className="text-sm text-neutral-500 sm:text-base">
-                  Fabric
-                </span>
-
-                <span className="max-w-[55%] truncate text-right text-sm font-semibold text-neutral-900 sm:text-base">
-                  {fabricText}
-                </span>
+            {/* Specs Grid for Mobile */}
+            <div className="grid grid-cols-2 gap-2.5 rounded-xl bg-neutral-50 p-3 text-xs sm:grid-cols-3">
+              <div>
+                <span className="block text-[10px] uppercase tracking-wider text-neutral-400">Fabric</span>
+                <span className="font-semibold text-neutral-800">{fabricText}</span>
               </div>
-
-              <div className="flex items-center justify-between gap-4">
-                <span className="text-sm text-neutral-500 sm:text-base">
-                  Color
-                </span>
-
-                <span className="max-w-[55%] truncate text-right text-sm font-semibold text-neutral-900 sm:text-base">
-                  {colorText}
-                </span>
+              <div>
+                <span className="block text-[10px] uppercase tracking-wider text-neutral-400">Color</span>
+                <span className="font-semibold text-neutral-800">{colorText}</span>
               </div>
-
-              <div className="flex items-center justify-between gap-4">
-                <span className="text-sm text-neutral-500 sm:text-base">
-                  Sold
-                </span>
-
-                <span className="text-sm font-semibold text-neutral-900 sm:text-base">
-                  {soldCount} Pieces
-                </span>
+              <div>
+                <span className="block text-[10px] uppercase tracking-wider text-neutral-400">Orders</span>
+                <span className="font-semibold text-neutral-800">{soldCount} Pieces</span>
               </div>
-
             </div>
 
-            {/* Actions */}
-            <div className="mt-8 sm:mt-10">
+            {/* Actions (Add to Cart / Size Selector) */}
+            <div className="mt-6">
               <ProductActions
                 product={{
                   ...products,
@@ -278,14 +211,11 @@ const ProductDetails = async ({ params }) => {
               />
             </div>
 
-            {/* Compare Button — FIXED TEXT COLOR */}
-            <div className="mt-4 sm:mt-5">
-              <Link
-                href={`/compare/${products._id}`}
-                className="block"
-              >
-                <button className="w-full rounded-xl border border-neutral-300 py-3.5 text-sm font-semibold text-neutral-900 transition hover:bg-neutral-100 sm:py-4 sm:text-base">
-                  Compare Product
+            {/* Compare Button */}
+            <div className="mt-3 sm:mt-4">
+              <Link href={`/compare/${products._id}`} className="block">
+                <button className="w-full rounded-xl border border-neutral-200 bg-white py-3 text-xs font-semibold text-neutral-700 transition active:scale-[0.98] sm:py-3.5 sm:text-sm">
+                  Compare Product Specs
                 </button>
               </Link>
             </div>

@@ -1,230 +1,139 @@
-import { getSingleProduct } from "../../../action/server/Product";
-import Image from "next/image";
-import React from "react";
-import ProductActions from "../../../components/productAction";
-import ImageGallery from "./ImageGallery";
+"use client";
+
+import { useEffect, useState } from "react";
 import Link from "next/link";
+import useCartStore from "../../store/cartStore";
+import CartButton from "../../components/Buttons/CartButton";
+import ViewDetails from "../../components/Buttons/ViewDetails";
 
-export async function generateMetadata({ params }) {
-  const { id } = params;
-  const products = await getSingleProduct(id);
+export default function WishlistPage() {
+  const [isMounted, setIsMounted] = useState(false);
+  const wishlist = useCartStore((state) => state.wishlist) || [];
+  const toggleWishlist = useCartStore((state) => state.toggleWishlist);
 
-  if (!products) {
-    return {
-      title: "Product Not Found",
-      robots: { index: false, follow: false },
-    };
-  }
+  // Ensure initial client render matches server HTML to fix hydration error
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
-  const {
-    name = "Product",
-    price = 0,
-    cottonType = "Premium Cotton",
-    sold = 0,
-    image,
-    discount = 0,
-  } = products;
-
-  const discountPrice = price - (price * discount) / 100;
-  const productUrl = `https://clover-clothing.vercel.app/products/${id}`;
-
-  const description = `${name} made with premium ${cottonType}. ${
-    discount > 0
-      ? `Now available for ৳${discountPrice.toFixed(0)} (${discount}% OFF).`
-      : `Available now for ৳${price}.`
-  } Sold: ${sold} pieces. Order now!`;
-
-  return {
-    title: `${name} | Clover Clothing`,
-    description,
-    alternates: { canonical: productUrl },
-    openGraph: {
-      type: "website",
-      url: productUrl,
-      title: name,
-      description,
-      siteName: "Clover Clothing",
-      images: [
-        {
-          url: image || "https://i.ibb.co/60vvkRZ3/your-fallback.jpg",
-          width: 1200,
-          height: 1200,
-          alt: name,
-        },
-      ],
-    },
-    twitter: {
-      card: "summary_large_image",
-      title: name,
-      description,
-      images: [image || "https://i.ibb.co/60vvkRZ3/your-fallback.jpg"],
-    },
-    robots: {
-      index: true,
-      follow: true,
-      googleBot: { "max-image-preview": "large" },
-    },
-  };
-}
-
-const ProductDetails = async ({ params }) => {
-  const { id } = params;
-  const products = await getSingleProduct(id);
-
-  if (!products) {
+  if (!isMounted) {
     return (
-      <div className="flex min-h-[60vh] items-center justify-center px-5">
-        <h1 className="text-xl font-bold sm:text-2xl">Product Not Found</h1>
+      <div className="min-h-screen bg-neutral-50/50 px-4 py-8 sm:px-6 lg:px-12">
+        <div className="mx-auto max-w-7xl">
+          <div className="mb-6 h-10 w-48 animate-pulse rounded-lg bg-neutral-200" />
+          <div className="grid grid-cols-2 gap-3.5 sm:gap-6 md:grid-cols-3 lg:grid-cols-4">
+            {[1, 2, 3, 4].map((n) => (
+              <div
+                key={n}
+                className="h-64 animate-pulse rounded-2xl bg-neutral-200"
+              />
+            ))}
+          </div>
+        </div>
       </div>
     );
   }
 
-  const fabricText = products.cottonType || products.fabric || "Premium Cotton";
-  const colorText = products.color || "N/A";
-  const soldCount = products.sold ?? 0;
-  const productPrice = products.price ?? 0;
-  const productDiscount = products.discount ?? 0;
-
-  const discountPrice =
-    productDiscount > 0
-      ? productPrice - (productPrice * productDiscount) / 100
-      : productPrice;
-
   return (
-    <main className="min-h-screen bg-white pb-12 lg:bg-neutral-50">
-      {/* Breadcrumb Navigation */}
-      <section className="border-b bg-neutral-50/50 lg:bg-white">
-        <div className="mx-auto max-w-7xl px-4 py-2.5 sm:px-5 sm:py-3.5 lg:px-10">
-          <nav className="flex min-w-0 items-center gap-1.5 overflow-x-auto whitespace-nowrap text-[11px] text-neutral-500 sm:text-xs">
-            <Link href="/" className="shrink-0 transition hover:text-black">
-              Home
-            </Link>
-            <span>/</span>
-            <Link href="/products" className="shrink-0 transition hover:text-black">
-              Products
-            </Link>
-            <span>/</span>
-            <span className="max-w-[150px] truncate font-medium text-black sm:max-w-none">
-              {products.name}
-            </span>
-          </nav>
+    <div className="min-h-screen bg-neutral-50/50 px-4 py-8 sm:px-6 lg:px-12">
+      <div className="mx-auto max-w-7xl">
+        <div className="mb-6 flex items-center justify-between">
+          <h1 className="text-2xl font-black tracking-tight text-neutral-900 sm:text-3xl md:text-4xl">
+            My Wishlist ({wishlist.length})
+          </h1>
         </div>
-      </section>
 
-      {/* Main Content Area */}
-      <section className="mx-auto max-w-7xl px-0 py-0 sm:px-5 sm:py-6 lg:px-10 lg:py-10">
-        <div className="grid grid-cols-1 items-start gap-0 lg:grid-cols-2 lg:gap-12">
-          
-          {/* LEFT SIDE: Image Gallery & Mobile Highlights */}
-          <div className="lg:sticky lg:top-24">
-            <div className="overflow-hidden border-b border-neutral-100 sm:rounded-2xl sm:border sm:border-neutral-200 sm:bg-white sm:shadow-sm">
-              <ImageGallery product={products} />
-            </div>
-
-            {/* Quick Specs Cards (Shown on Tablet/Desktop) */}
-            <div className="hidden grid-cols-2 gap-3 p-4 sm:grid lg:mt-4 lg:p-0">
-              <div className="rounded-xl border border-neutral-200/80 bg-neutral-50 p-3.5">
-                <p className="text-xs text-neutral-500">Fabric</p>
-                <h3 className="mt-0.5 truncate text-sm font-semibold text-neutral-900">
-                  {fabricText}
-                </h3>
-              </div>
-              <div className="rounded-xl border border-neutral-200/80 bg-neutral-50 p-3.5">
-                <p className="text-xs text-neutral-500">Color</p>
-                <h3 className="mt-0.5 truncate text-sm font-semibold text-neutral-900">
-                  {colorText}
-                </h3>
-              </div>
-            </div>
-          </div>
-
-          {/* RIGHT SIDE: Details & Actions */}
-          <div className="bg-white px-4 py-6 sm:rounded-2xl sm:border sm:border-neutral-200 sm:p-7 sm:shadow-sm">
-            
-            {/* Collection Badge & Rating */}
-            <div className="flex items-center justify-between gap-2">
-              <span className="inline-flex rounded-full bg-emerald-50 px-2.5 py-1 text-[11px] font-semibold text-emerald-700 sm:text-xs">
-                Premium Collection
-              </span>
-              <div className="flex items-center gap-1">
-                <span className="text-xs text-amber-400 sm:text-sm">★</span>
-                <span className="text-xs font-semibold text-neutral-800">4.9</span>
-                <span className="text-[11px] text-neutral-400">
-                  ({soldCount > 0 ? `${soldCount}+` : "100+"} sold)
-                </span>
-              </div>
-            </div>
-
-            {/* Title */}
-            <h1 className="mt-2.5 text-xl font-bold leading-tight text-neutral-900 sm:mt-3 sm:text-2xl md:text-3xl">
-              {products.name}
-            </h1>
-
-            {/* Price Tag */}
-            <div className="mt-3 flex items-baseline gap-2.5 sm:mt-4">
-              <span className="text-2xl font-extrabold text-neutral-900 sm:text-3xl">
-                ৳{discountPrice.toLocaleString()}
-              </span>
-
-              {productDiscount > 0 && (
-                <>
-                  <span className="text-sm text-neutral-400 line-through sm:text-base">
-                    ৳{productPrice.toLocaleString()}
-                  </span>
-                  <span className="rounded-md bg-rose-50 px-2 py-0.5 text-xs font-bold text-rose-600">
-                    {productDiscount}% OFF
-                  </span>
-                </>
-              )}
-            </div>
-
-            {/* Subtitle / Description */}
-            <p className="mt-3 text-xs leading-relaxed text-neutral-600 sm:text-sm">
-              Crafted from high-grade {fabricText}. Designed for long-lasting comfort, ideal weight, and effortless daily styling.
-            </p>
-
-            <div className="my-5 border-t border-neutral-100 sm:my-6" />
-
-            {/* Specs Grid for Mobile */}
-            <div className="grid grid-cols-2 gap-2.5 rounded-xl bg-neutral-50 p-3 text-xs sm:grid-cols-3">
-              <div>
-                <span className="block text-[10px] uppercase tracking-wider text-neutral-400">Fabric</span>
-                <span className="font-semibold text-neutral-800">{fabricText}</span>
-              </div>
-              <div>
-                <span className="block text-[10px] uppercase tracking-wider text-neutral-400">Color</span>
-                <span className="font-semibold text-neutral-800">{colorText}</span>
-              </div>
-              <div>
-                <span className="block text-[10px] uppercase tracking-wider text-neutral-400">Orders</span>
-                <span className="font-semibold text-neutral-800">{soldCount} Pieces</span>
-              </div>
-            </div>
-
-            {/* Actions (Add to Cart / Size Selector) */}
-            <div className="mt-6">
-              <ProductActions
-                product={{
-                  ...products,
-                  id: products?._id?.toString?.() || products?._id,
-                }}
+        {wishlist.length === 0 ? (
+          <div className="my-16 flex flex-col items-center justify-center rounded-2xl border border-dashed border-neutral-300 bg-white p-12 text-center shadow-sm">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              strokeWidth={1.5}
+              stroke="currentColor"
+              className="mb-4 h-16 w-16 text-neutral-400"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z"
               />
-            </div>
-
-            {/* Compare Button */}
-            <div className="mt-3 sm:mt-4">
-              <Link href={`/compare/${products._id}`} className="block">
-                <button className="w-full rounded-xl border border-neutral-200 bg-white py-3 text-xs font-semibold text-neutral-700 transition active:scale-[0.98] sm:py-3.5 sm:text-sm">
-                  Compare Product Specs
-                </button>
-              </Link>
-            </div>
-
+            </svg>
+            <h2 className="text-xl font-bold text-neutral-800">
+              Your wishlist is empty
+            </h2>
+            <p className="mt-2 text-sm text-neutral-500">
+              Explore our collection and add your favorite products here!
+            </p>
+            <Link
+              href="/products"
+              className="mt-6 rounded-xl bg-emerald-800 px-6 py-2.5 text-sm font-semibold text-white transition hover:bg-emerald-900"
+            >
+              Browse Products
+            </Link>
           </div>
-        </div>
-      </section>
-    </main>
-  );
-};
+        ) : (
+          <div className="grid grid-cols-2 gap-3.5 sm:gap-6 md:grid-cols-3 lg:grid-cols-4">
+            {wishlist.map((p) => (
+              <div
+                key={p._id || p.id}
+                className="group relative flex flex-col overflow-hidden rounded-2xl border border-neutral-200/80 bg-white shadow-sm transition-all duration-300 hover:shadow-md"
+              >
+                {/* Product Image & Remove Button */}
+                <div className="relative aspect-[4/3] w-full overflow-hidden bg-neutral-100">
+                  <img
+                    src={p.image}
+                    alt={p.name}
+                    className="h-full w-full object-cover object-center transition-transform duration-500 group-hover:scale-105"
+                  />
 
-export default ProductDetails;
+                  {/* Remove from Wishlist Button */}
+                  <button
+                    onClick={() => toggleWishlist(p)}
+                    aria-label="Remove from Wishlist"
+                    className="absolute right-2.5 top-2.5 z-10 flex h-8 w-8 items-center justify-center rounded-full bg-white/90 text-rose-500 shadow-sm backdrop-blur-sm transition hover:scale-110 active:scale-95 sm:right-3 sm:top-3 sm:h-9 sm:w-9"
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="currentColor"
+                      viewBox="0 0 24 24"
+                      className="h-4 w-4 sm:h-5 sm:w-5"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z"
+                      />
+                    </svg>
+                  </button>
+                </div>
+
+                {/* Card Content */}
+                <div className="z-10 flex flex-grow flex-col justify-between p-3 sm:p-4">
+                  <div>
+                    <h2 className="line-clamp-1 text-xs font-bold text-neutral-900 sm:text-base">
+                      {p.name}
+                    </h2>
+                    <span className="mt-1 block text-sm font-extrabold text-neutral-900 sm:text-lg">
+                      ৳{p.price}
+                    </span>
+                  </div>
+
+                  {/* Action Buttons */}
+                  <div className="mt-3 flex flex-col gap-2">
+                    <div className="w-full text-center [&>button]:w-full [&>button]:py-2 [&>button]:text-xs [&>button]:font-semibold [&>button]:whitespace-nowrap">
+                      <CartButton product={p} />
+                    </div>
+                    <div className="w-full [&>a]:block [&>button]:w-full [&>button]:py-2 [&>button]:text-xs [&>button]:font-semibold [&>button]:whitespace-nowrap">
+                      <ViewDetails product={p} type="cottonType" />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
