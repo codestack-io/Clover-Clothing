@@ -10,8 +10,8 @@ const MONGODB_URI = process.env.MONGODB_URI;
 // Admin Credentials
 const ADMIN_DETAILS = {
   name: "Site Owner",
-  email: "admin@yourstore.com",
-  password: "YourSecurePassword123!", // Change this to your password
+  email: "admin@cloverclothing.com",
+  password: "CloverClothing123!", // Change this to your password
   role: "admin",
 };
 

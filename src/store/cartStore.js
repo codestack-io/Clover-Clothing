@@ -9,27 +9,19 @@ const useCartStore = create(
       // =========================
       // CART
       // =========================
-
       cart: [],
-
-      // =========================
-      // ADD TO CART
-      // =========================
 
       addToCart: (product) => {
         const cart = get().cart;
-
         const existingItem = cart.find(
           (item) =>
-            item.productId === product.productId &&
-            item.size === product.size
+            item.productId === product.productId && item.size === product.size
         );
 
         if (existingItem) {
           set({
             cart: cart.map((item) =>
-              item.productId === product.productId &&
-              item.size === product.size
+              item.productId === product.productId && item.size === product.size
                 ? {
                     ...item,
                     quantity: item.quantity + (product.quantity || 1),
@@ -37,7 +29,6 @@ const useCartStore = create(
                 : item
             ),
           });
-
           return;
         }
 
@@ -56,10 +47,6 @@ const useCartStore = create(
         });
       },
 
-      // =========================
-      // INCREASE QUANTITY
-      // =========================
-
       increaseQuantity: (productId, size) => {
         set((state) => ({
           cart: state.cart.map((item) =>
@@ -73,128 +60,95 @@ const useCartStore = create(
         }));
       },
 
-      // =========================
-      // DECREASE QUANTITY
-      // =========================
-
-    decreaseQuantity: (productId, size) => {
-  set((state) => ({
-    cart: state.cart.map((item) =>
-      item.productId === productId && item.size === size
-        ? {
-            ...item,
-            quantity: Math.max(item.quantity - 1, 1),
-          }
-        : item
-    ),
-  }));
-},
-
-      // =========================
-      // REMOVE ITEM
-      // =========================
+      decreaseQuantity: (productId, size) => {
+        set((state) => ({
+          cart: state.cart.map((item) =>
+            item.productId === productId && item.size === size
+              ? {
+                  ...item,
+                  quantity: Math.max(item.quantity - 1, 1),
+                }
+              : item
+          ),
+        }));
+      },
 
       removeFromCart: (productId, size) => {
         set((state) => ({
           cart: state.cart.filter(
             (item) =>
-              !(
-                item.productId === productId &&
-                item.size === size
-              )
+              !(item.productId === productId && item.size === size)
           ),
         }));
       },
 
-      // =========================
-      // CLEAR CART
-      // =========================
-
       clearCart: () => {
-        set({
-          cart: [],
-        });
+        set({ cart: [] });
       },
-
-      // =========================
-      // TOTAL ITEMS
-      // =========================
 
       getTotalItems: () => {
-        return get().cart.reduce(
-          (total, item) => total + item.quantity,
-          0
-        );
+        return get().cart.reduce((total, item) => total + item.quantity, 0);
       },
-
-      // =========================
-// WISHLIST
-// =========================
-
-wishlist: [],
-
-// =========================
-// ADD / REMOVE WISHLIST
-// =========================
-
-toggleWishlist: (product) => {
-  const wishlist = get().wishlist;
-
-  const exists = wishlist.some(
-    (item) => String(item._id) === String(product._id)
-  );
-
-  if (exists) {
-    set({
-      wishlist: wishlist.filter(
-        (item) => String(item._id) !== String(product._id)
-      ),
-    });
-  } else {
-    set({
-      wishlist: [...wishlist, product],
-    });
-  }
-},
-
-// =========================
-// CHECK WISHLIST
-// =========================
-
-isInWishlist: (productId) => {
-  return get().wishlist.some(
-    (item) => String(item._id) === String(productId)
-  );
-},
-
-// =========================
-// REMOVE FROM WISHLIST
-// =========================
-
-removeFromWishlist: (productId) => {
-  set({
-    wishlist: get().wishlist.filter(
-      (item) => String(item._id) !== String(productId)
-    ),
-  });
-},
-
-      // =========================
-      // TOTAL PRICE
-      // =========================
 
       getTotalPrice: () => {
         return get().cart.reduce(
-          (total, item) =>
-            total + item.price * item.quantity,
+          (total, item) => total + item.price * item.quantity,
           0
         );
       },
+
+      // =========================
+      // WISHLIST
+      // =========================
+      wishlist: [],
+
+      addToWishlist: (product) => {
+        const wishlist = get().wishlist;
+        const pId = String(product._id || product.id || product.productId);
+        const exists = wishlist.some(
+          (item) => String(item._id || item.id || item.productId) === pId
+        );
+
+        if (!exists) {
+          set({ wishlist: [...wishlist, product] });
+        }
+      },
+
+      removeFromWishlist: (productId) => {
+        set((state) => ({
+          wishlist: state.wishlist.filter(
+            (item) =>
+              String(item._id || item.id || item.productId) !== String(productId)
+          ),
+        }));
+      },
+
+      toggleWishlist: (product) => {
+        const wishlist = get().wishlist;
+        const pId = String(product._id || product.id || product.productId);
+        const exists = wishlist.some(
+          (item) => String(item._id || item.id || item.productId) === pId
+        );
+
+        if (exists) {
+          set({
+            wishlist: wishlist.filter(
+              (item) =>
+                String(item._id || item.id || item.productId) !== pId
+            ),
+          });
+        } else {
+          set({ wishlist: [...wishlist, product] });
+        }
+      },
+
+      isInWishlist: (productId) => {
+        return get().wishlist.some(
+          (item) =>
+            String(item._id || item.id || item.productId) === String(productId)
+        );
+      },
     }),
-
-
-    
-
     {
       name: "clover-clothing-cart",
     }

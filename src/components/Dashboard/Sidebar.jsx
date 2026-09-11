@@ -28,8 +28,6 @@ const NAV_ITEMS = [
   { href: "/dashboard/categories", icon: FolderTree, label: "Categories" },
   { href: "/dashboard/analytics", icon: BarChart3, label: "Analytics" },
   { href: "/dashboard/reviews", icon: Star, label: "Reviews" },
-  { href: "/dashboard/banners", icon: ImageIcon, label: "Banners" },
-  { href: "/dashboard/coupons", icon: Ticket, label: "Coupons" },
   { href: "/dashboard/settings", icon: SettingsIcon, label: "Settings" },
 ];
 

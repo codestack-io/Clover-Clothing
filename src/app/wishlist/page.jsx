@@ -11,11 +11,11 @@ export default function WishlistPage() {
   const wishlist = useCartStore((state) => state.wishlist) || [];
   const toggleWishlist = useCartStore((state) => state.toggleWishlist);
 
-  // Ensure initial client render matches server HTML to fix hydration error
   useEffect(() => {
     setIsMounted(true);
   }, []);
 
+  // Return skeleton during initial hydration matching server render
   if (!isMounted) {
     return (
       <div className="min-h-screen bg-neutral-50/50 px-4 py-8 sm:px-6 lg:px-12">

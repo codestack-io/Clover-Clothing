@@ -1,28 +1,19 @@
 "use client";
 
-import useCartStore from "@/store/cartStore"; // Adjust import path
+import useCartStore from "@/store/cartStore";
 import { useEffect, useState } from "react";
 
 export default function WishlistButton({ product }) {
-  const { wishlist, addToWishlist, removeFromWishlist } = useCartStore();
+  const toggleWishlist = useCartStore((state) => state.toggleWishlist);
+  const isInWishlist = useCartStore((state) => state.isInWishlist);
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
     setMounted(true);
   }, []);
 
-  const productId = product._id || product.id;
-  const isWishlisted = wishlist.some(
-    (item) => (item._id || item.id) === productId
-  );
-
-  const toggleWishlist = () => {
-    if (isWishlisted) {
-      removeFromWishlist(productId);
-    } else {
-      addToWishlist(product);
-    }
-  };
+  const productId = product?._id || product?.id || product?.productId;
+  const isWishlisted = mounted && isInWishlist(productId);
 
   if (!mounted) {
     return (
@@ -37,7 +28,7 @@ export default function WishlistButton({ product }) {
 
   return (
     <button
-      onClick={toggleWishlist}
+      onClick={() => toggleWishlist(product)}
       aria-label={isWishlisted ? "Remove from wishlist" : "Add to wishlist"}
       className={`flex items-center justify-center rounded-xl border p-3 transition active:scale-95 ${
         isWishlisted
